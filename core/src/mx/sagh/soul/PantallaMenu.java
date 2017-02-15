@@ -19,22 +19,19 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 /**
  * Created by Adrian on 11/02/2017.
  */
-public class PantallaMenu implements Screen {
-    private static final float ANCHO = 1280 ;
-    private static final float ALTO = 800 ;
+public class PantallaMenu extends Pantalla {
     private final colourlessSoul menu;
-    // Camara y vista
-    private OrthographicCamera camara;
-    private Viewport vista;
+
     //texturas
     private Texture texturaFondoMenu;
-    private Texture texturaBotonIniciar;
+    private Texture texturaBotonInicio;
+    private Texture texturaBotonLogros;
+    private Texture texturaBotonCargar;
+    private Texture texturaBotonAjustes;
+
     //Escena
     private Stage escena;
     private SpriteBatch batch;
-
-
-
 
 
     public PantallaMenu(colourlessSoul menu) {
@@ -44,11 +41,8 @@ public class PantallaMenu implements Screen {
     @Override
     public void show() {
         // Cuando cargan la pantalla
-        crearCamara();
         cargarTexturas();
         crearObjetos();
-
-
     }
 
     private void crearObjetos() {
@@ -57,18 +51,58 @@ public class PantallaMenu implements Screen {
         Image imgFondo = new Image(texturaFondoMenu);
         escena.addActor(imgFondo);
 
-        //Boton
+        //Botones del menú principal
+        TextureRegionDrawable trdBtnSettings = new TextureRegionDrawable(new TextureRegion(texturaBotonAjustes));
+        ImageButton btnSettings = new ImageButton(trdBtnSettings);
+        btnSettings.scaleBy(0.25f);
+        btnSettings.setPosition(ANCHO-btnSettings.getWidth(), ALTO-btnSettings.getHeight());
+        escena.addActor(btnSettings);
 
-        TextureRegionDrawable trdBtnPlay = new TextureRegionDrawable(new TextureRegion(texturaBotonIniciar));
-        ImageButton btnPlay = new ImageButton(trdBtnPlay);
-        btnPlay.setPosition(ANCHO/2-btnPlay.getWidth()/2, 3*ALTO/4-btnPlay.getHeight()/2);
-        escena.addActor(btnPlay);
+        TextureRegionDrawable trdBtnStart = new TextureRegionDrawable(new TextureRegion(texturaBotonInicio));
+        ImageButton btnStart = new ImageButton(trdBtnStart);
+        btnStart.setPosition(2*ANCHO/3, 2*ALTO/3-btnStart.getHeight());
+        escena.addActor(btnStart);
+
+        TextureRegionDrawable trdBtnAchievs = new TextureRegionDrawable(new TextureRegion(texturaBotonLogros));
+        ImageButton btnAchievs = new ImageButton(trdBtnAchievs);
+        btnAchievs.setPosition(2*ANCHO/3, 2*ALTO/3-2*btnAchievs.getHeight());
+        escena.addActor(btnAchievs);
+
+        TextureRegionDrawable trdBtnLoad = new TextureRegionDrawable(new TextureRegion(texturaBotonCargar));
+        ImageButton btnLoad = new ImageButton(trdBtnLoad);
+        btnLoad.setPosition(2*ANCHO/3, 2*ALTO/3-3*btnLoad.getHeight());
+        escena.addActor(btnLoad);
+
         // Evento del boton
-        btnPlay.addListener(new ClickListener(){
+        btnStart.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log("clicked","Me hicieron click");
+                Gdx.app.log("clicked","Hiciste click en Start");
                 menu.setScreen(new PantallaPrincipal(menu));
+            }
+        });
+
+        btnLoad.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.log("clicked","Hiciste click en Load");
+                //menu.setScreen(new PantallaPrincipal(menu));
+            }
+        });
+
+        btnAchievs.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.log("clicked","Hiciste click en Achievements");
+                menu.setScreen(new PantallaLogros(menu));
+            }
+        });
+
+        btnSettings.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.log("clicked","Hiciste click en Settings");
+                //menu.setScreen(new PantallaPrincipal(menu));
             }
         });
 
@@ -77,38 +111,21 @@ public class PantallaMenu implements Screen {
     }
 
     private void cargarTexturas() {
-        texturaFondoMenu = new Texture("negro.jpg");
-        texturaBotonIniciar = new Texture("play-boton-300x300.jpg");
+        texturaFondoMenu = new Texture("fondoMenu.jpg");
+        texturaBotonInicio = new Texture("startButton.png");
+        texturaBotonLogros = new Texture("achievsButton.png");
+        texturaBotonCargar = new Texture("loadButton.png");
+        texturaBotonAjustes = new Texture("settingsButton.png");
     }
 
-    private void crearCamara() {
-        camara = new OrthographicCamera(ANCHO,ALTO);
-        camara.position.set(ANCHO/2, ALTO/2,0);
-        camara.update();
-        vista = new StretchViewport(ANCHO,ALTO,camara);
-
-    }
 
     @Override
     public void render(float delta) {
         // 60 x seg
         borrarPantalla();
-
         escena.draw();
-
-
     }
 
-    private void borrarPantalla() {
-        Gdx.gl.glClearColor(1,1,0,1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-    }
-
-    @Override
-    public void resize(int width, int height) {
-        vista.update(width, height);
-
-    }
 
     @Override
     public void pause() {
@@ -121,14 +138,11 @@ public class PantallaMenu implements Screen {
     }
 
     @Override
-    public void hide() {
-        dispose();
-    }
-
-    @Override
     public void dispose() {
         escena.dispose();
         texturaFondoMenu.dispose();
-        texturaBotonIniciar.dispose();
+        texturaBotonInicio.dispose();
+        texturaBotonLogros.dispose();
+        texturaBotonCargar.dispose();
     }
 }

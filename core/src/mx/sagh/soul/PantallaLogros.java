@@ -21,18 +21,19 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-public class PantallaPrincipal extends Pantalla {
+public class PantallaLogros extends Pantalla {
     private final colourlessSoul menu;
 
     //texturas
     private Texture texturaFondo;
+    private Texture texturaLogroNivel1;
     private Texture texturaBotonPausa;
 
     //Escena
     private Stage escena;
     private SpriteBatch batch;
 
-    public PantallaPrincipal(colourlessSoul menu) {
+    public PantallaLogros(colourlessSoul menu) {
         this.menu = menu;
     }
 
@@ -55,12 +56,18 @@ public class PantallaPrincipal extends Pantalla {
         ImageButton btnBack = new ImageButton(trdBtnBack);
         btnBack.setPosition(0,0);
         escena.addActor(btnBack);
+
+        TextureRegionDrawable trdAchLev1 = new TextureRegionDrawable(new TextureRegion(texturaLogroNivel1));
+        ImageButton btnAchLev1 = new ImageButton(trdAchLev1);
+        btnAchLev1.setPosition(ANCHO/2-btnAchLev1.getWidth()/2,ALTO/2-btnAchLev1.getHeight()/2);
+        escena.addActor(btnAchLev1);
+
         // Evento del boton
         btnBack.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.log("clicked","Me hicieron click");
-                menu.setScreen(new PantallaPrincipal(menu));
+                menu.setScreen(new PantallaMenu(menu));
             }
         });
 
@@ -69,8 +76,9 @@ public class PantallaPrincipal extends Pantalla {
     }
 
     private void cargarTexturas() {
-        texturaFondo = new Texture("azul.jpg");
+        texturaFondo = new Texture("fondoMenu.jpg");
         texturaBotonPausa = new Texture("back_button.png");
+        texturaLogroNivel1 = new Texture("achievsScreen1.png");
     }
 
 
@@ -80,7 +88,7 @@ public class PantallaPrincipal extends Pantalla {
         borrarPantalla();
         escena.draw();
         if(Gdx.input.isKeyJustPressed(Input.Keys.BACK)){
-            menu.setScreen(new PantallaPrincipal(menu));
+            menu.setScreen(new PantallaMenu(menu));
         }
     }
 

@@ -21,7 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-public class PantallaPrincipal extends Pantalla {
+public class PantallaOpciones extends Pantalla {
     private final colourlessSoul menu;
 
     //texturas
@@ -32,7 +32,7 @@ public class PantallaPrincipal extends Pantalla {
     private Stage escena;
     private SpriteBatch batch;
 
-    public PantallaPrincipal(colourlessSoul menu) {
+    public PantallaOpciones(colourlessSoul menu) {
         this.menu = menu;
     }
 
@@ -60,7 +60,7 @@ public class PantallaPrincipal extends Pantalla {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.log("clicked","Me hicieron click");
-                menu.setScreen(new PantallaPrincipal(menu));
+                menu.setScreen(new PantallaOpciones(menu));
             }
         });
 
@@ -80,7 +80,7 @@ public class PantallaPrincipal extends Pantalla {
         borrarPantalla();
         escena.draw();
         if(Gdx.input.isKeyJustPressed(Input.Keys.BACK)){
-            menu.setScreen(new PantallaPrincipal(menu));
+            menu.setScreen(new PantallaOpciones(menu));
         }
     }
 
