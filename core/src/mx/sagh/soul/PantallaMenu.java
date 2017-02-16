@@ -28,6 +28,7 @@ public class PantallaMenu extends Pantalla {
     private Texture texturaBotonLogros;
     private Texture texturaBotonCargar;
     private Texture texturaBotonAjustes;
+    private Texture texturaBotonAcercaDe;
 
     //Escena
     private Stage escena;
@@ -73,6 +74,12 @@ public class PantallaMenu extends Pantalla {
         btnLoad.setPosition(2*ANCHO/3, 2*ALTO/3-3*btnLoad.getHeight());
         escena.addActor(btnLoad);
 
+        TextureRegionDrawable trdBtnAcercade = new TextureRegionDrawable(new TextureRegion(texturaBotonAcercaDe));
+        ImageButton btnAcerca = new ImageButton(trdBtnAcercade);
+        btnAcerca.setPosition(2*ANCHO/3, 2*ALTO/3-4*btnLoad.getHeight());
+        escena.addActor(btnAcerca);
+
+
         // Evento del boton
         btnStart.addListener(new ClickListener(){
             @Override
@@ -98,6 +105,14 @@ public class PantallaMenu extends Pantalla {
             }
         });
 
+        btnAcerca.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.log("clicked","Hiciste click en About us");
+                menu.setScreen(new PantallaLogros(menu));
+            }
+        });
+
         btnSettings.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -106,16 +121,18 @@ public class PantallaMenu extends Pantalla {
             }
         });
 
+
         Gdx.input.setInputProcessor(escena);
         Gdx.input.setCatchBackKey(false);
     }
 
     private void cargarTexturas() {
-        texturaFondoMenu = new Texture("fondoMenu.jpg");
+        texturaFondoMenu = new Texture("Menu.jpeg");
         texturaBotonInicio = new Texture("startButton.png");
         texturaBotonLogros = new Texture("achievsButton.png");
         texturaBotonCargar = new Texture("loadButton.png");
         texturaBotonAjustes = new Texture("settingsButton.png");
+        texturaBotonAcercaDe=new Texture("loadButton.png");
     }
 
 

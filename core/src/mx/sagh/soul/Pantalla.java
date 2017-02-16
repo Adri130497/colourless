@@ -14,8 +14,8 @@ import com.badlogic.gdx.utils.viewport.Viewport;
  */
 public abstract class Pantalla implements Screen
 {
-    public static final float ANCHO = 1280;
-    public static final float ALTO = 800;
+    public static final float ANCHO = 1170;
+    public static final float ALTO = 640;
 
     // Disponibles en las subclases
     protected OrthographicCamera camara;

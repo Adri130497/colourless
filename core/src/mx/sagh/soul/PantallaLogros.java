@@ -116,7 +116,7 @@ public class PantallaLogros extends Pantalla {
     }
 
     private void cargarTexturas() {
-        texturaFondo = new Texture("fondoMenu.jpg");
+        texturaFondo = new Texture("Menu.jpeg");
         texturaBotonRetorno = new Texture("previousButton.png");
         texturaBotonAnterior = new Texture("previousButton.png");
         texturaBotonSiguiente = new Texture("nextButton.png");
