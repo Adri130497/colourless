@@ -55,12 +55,13 @@ public class PantallaPrincipal extends Pantalla {
         ImageButton btnBack = new ImageButton(trdBtnBack);
         btnBack.setPosition(0,0);
         escena.addActor(btnBack);
+
         // Evento del boton
         btnBack.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.log("clicked","Me hicieron click");
-                menu.setScreen(new PantallaPrincipal(menu));
+                menu.setScreen(new PantallaMenu(menu));
             }
         });
 
@@ -80,7 +81,7 @@ public class PantallaPrincipal extends Pantalla {
         borrarPantalla();
         escena.draw();
         if(Gdx.input.isKeyJustPressed(Input.Keys.BACK)){
-            menu.setScreen(new PantallaPrincipal(menu));
+            menu.setScreen(new PantallaMenu(menu));
         }
     }
 

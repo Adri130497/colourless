@@ -6,9 +6,6 @@ package mx.sagh.soul;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -18,16 +15,21 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
+import com.badlogic.gdx.utils.Array;
 
 public class PantallaLogros extends Pantalla {
     private final colourlessSoul menu;
 
     //texturas
     private Texture texturaFondo;
-    private Texture texturaLogroNivel1;
-    private Texture texturaBotonPausa;
+    private Texture texturaBotonRetorno;
+    private Texture texturaBotonAnterior;
+    private Texture texturaBotonSiguiente;
+    private Texture texturaLogro;
+
+    // Las 5 pantallas de logros
+    private final int NUM_NIVELES = 5;
+    private Array<Objeto> arrLogros;
 
     //Escena
     private Stage escena;
@@ -46,21 +48,36 @@ public class PantallaLogros extends Pantalla {
 
     private void crearObjetos() {
         batch = new SpriteBatch();
+
+        // Crea los topos y los guarda en el arreglo
+        arrLogros = new Array<Objeto>(NUM_NIVELES);
+        for (int x = 0; x < NUM_NIVELES; x++) {
+            float posX = (x*Pantalla.ANCHO) + (Pantalla.ANCHO/2 - texturaLogro.getWidth()/2);
+            float posY = (Pantalla.ALTO/2 - texturaLogro.getHeight()/2);
+            Logro logro = new Logro(texturaLogro, posX, posY);
+            arrLogros.add(logro);
+        }
+
         escena = new Stage(vista, batch);
         Image imgFondo = new Image(texturaFondo);
         escena.addActor(imgFondo);
 
-        //Boton
+        //Botones
 
-        TextureRegionDrawable trdBtnBack = new TextureRegionDrawable(new TextureRegion(texturaBotonPausa));
+        TextureRegionDrawable trdBtnBack = new TextureRegionDrawable(new TextureRegion(texturaBotonRetorno));
         ImageButton btnBack = new ImageButton(trdBtnBack);
         btnBack.setPosition(0,0);
         escena.addActor(btnBack);
 
-        TextureRegionDrawable trdAchLev1 = new TextureRegionDrawable(new TextureRegion(texturaLogroNivel1));
-        ImageButton btnAchLev1 = new ImageButton(trdAchLev1);
-        btnAchLev1.setPosition(ANCHO/2-btnAchLev1.getWidth()/2,ALTO/2-btnAchLev1.getHeight()/2);
-        escena.addActor(btnAchLev1);
+        TextureRegionDrawable trdBtnPrev = new TextureRegionDrawable(new TextureRegion(texturaBotonAnterior));
+        ImageButton btnPrev = new ImageButton(trdBtnPrev);
+        btnPrev.setPosition(ANCHO/2-texturaLogro.getWidth()/2-texturaBotonAnterior.getWidth(),ALTO/2);
+        escena.addActor(btnPrev);
+
+        TextureRegionDrawable trdBtnNext = new TextureRegionDrawable(new TextureRegion(texturaBotonSiguiente));
+        ImageButton btnNext = new ImageButton(trdBtnNext);
+        btnNext.setPosition(ANCHO/2+texturaLogro.getWidth()/2,ALTO/2);
+        escena.addActor(btnNext);
 
         // Evento del boton
         btnBack.addListener(new ClickListener(){
@@ -71,24 +88,68 @@ public class PantallaLogros extends Pantalla {
             }
         });
 
+        btnNext.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.log("clicked","Hiciste click en Next");
+                for(Objeto obj : arrLogros){
+                    Logro logro = (Logro)obj;
+                    logro.estado=EstadoLogro.CAMBIANDO_IZQ;
+                }
+            }
+        });
+
+        btnPrev.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.log("clicked","Hiciste click en Next");
+                for(Objeto obj : arrLogros){
+                    Logro logro = (Logro)obj;
+                    logro.estado=EstadoLogro.CAMBIANDO_DER;
+                }
+            }
+        });
+
+
         Gdx.input.setInputProcessor(escena);
         Gdx.input.setCatchBackKey(true);
     }
 
     private void cargarTexturas() {
         texturaFondo = new Texture("fondoMenu.jpg");
-        texturaBotonPausa = new Texture("back_button.png");
-        texturaLogroNivel1 = new Texture("achievsScreen1.png");
+        texturaBotonRetorno = new Texture("previousButton.png");
+        texturaBotonAnterior = new Texture("previousButton.png");
+        texturaBotonSiguiente = new Texture("nextButton.png");
+        texturaLogro = new Texture("achievsScreen1.png");
     }
 
 
     @Override
     public void render(float delta) {
         // 60 x seg
+        actualizarObjetos(delta);   // mandamos el tiempo para calcular distancia
         borrarPantalla();
         escena.draw();
         if(Gdx.input.isKeyJustPressed(Input.Keys.BACK)){
             menu.setScreen(new PantallaMenu(menu));
+        }
+
+        batch.setProjectionMatrix(camara.combined); // Para ajustar la escala con la cámara
+        batch.begin();
+
+        dibujarObjetos(arrLogros);
+        batch.end();
+    }
+
+    private void dibujarObjetos(Array<Objeto> arrLogros) {
+        for (Objeto objeto : arrLogros) {
+            objeto.dibujar(batch);
+        }
+    }
+
+    private void actualizarObjetos(float delta) {
+        for (Objeto logro : arrLogros) {
+            ((Logro)logro).actualizar(delta);
         }
     }
 
@@ -107,6 +168,9 @@ public class PantallaLogros extends Pantalla {
     public void dispose() {
         escena.dispose();
         texturaFondo.dispose();
-        texturaBotonPausa.dispose();
+        texturaBotonRetorno.dispose();
+        texturaBotonAnterior.dispose();
+        texturaBotonSiguiente.dispose();
+        texturaLogro.dispose();
     }
 }
