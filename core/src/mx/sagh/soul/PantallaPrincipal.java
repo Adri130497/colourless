@@ -91,7 +91,7 @@ public class PantallaPrincipal extends Pantalla {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.log("clicked","Me hicieron click");
-                menu.setScreen(new PantallaPausa(menu));
+                menu.setScreen(new PantallaMenu(menu));
             }
         });
 

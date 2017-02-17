@@ -93,7 +93,7 @@ public class PantallaMenu extends Pantalla {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.log("clicked","Hiciste click en Settings");
-                //menu.setScreen(new PantallaPrincipal(menu));
+                menu.setScreen(new PantallaSettings(menu));
             }
         });
 
@@ -109,7 +109,7 @@ public class PantallaMenu extends Pantalla {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.log("clicked","Hiciste click en Settings");
-                //menu.setScreen(new PantallaPrincipal(menu));
+                menu.setScreen(new PantallaSettings(menu));
             }
         });
 
