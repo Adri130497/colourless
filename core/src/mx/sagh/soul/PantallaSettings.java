@@ -72,7 +72,7 @@ public class PantallaSettings extends Pantalla {
         btnRegreso.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log("clicked","Hiciste click en Regreasar");
+                Gdx.app.log("clicked","Hiciste click en Regresar");
                 menu.setScreen(new PantallaMenu(menu));
             }
         });
