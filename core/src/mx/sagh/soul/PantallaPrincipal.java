@@ -27,7 +27,11 @@ public class PantallaPrincipal extends Pantalla {
     //texturas
     private Texture texturaFondo;
     private Texture texturaBotonPausa;
-
+    private Texture texturaKai;
+    private Texture texturaPez;
+    private Texture texturaPocion;
+    private Texture texturaBaba;
+    private Texture texturaScore;
     //Escena
     private Stage escena;
     private SpriteBatch batch;
@@ -51,17 +55,43 @@ public class PantallaPrincipal extends Pantalla {
 
         //Boton
 
-        TextureRegionDrawable trdBtnBack = new TextureRegionDrawable(new TextureRegion(texturaBotonPausa));
-        ImageButton btnBack = new ImageButton(trdBtnBack);
-        btnBack.setPosition(0,0);
-        escena.addActor(btnBack);
+        TextureRegionDrawable trdBtnPausa = new TextureRegionDrawable(new TextureRegion(texturaBotonPausa));
+        ImageButton btnPausa = new ImageButton(trdBtnPausa);
+        btnPausa.setPosition(2*ANCHO/3+220,2*ALTO/3-btnPausa.getHeight()+220);
+        escena.addActor(btnPausa);
+        //KAi
+        TextureRegionDrawable Kai = new TextureRegionDrawable(new TextureRegion(texturaKai));
+        ImageButton personajekai = new ImageButton(Kai);
+        personajekai.setPosition(0,0);
+        escena.addActor(personajekai);
+        //Baba
+        TextureRegionDrawable Baba = new TextureRegionDrawable(new TextureRegion(texturaBaba));
+        ImageButton personajeBaba = new ImageButton(Baba);
+        personajeBaba.setPosition(ANCHO/2+220,ALTO/35-30);
+        escena.addActor(personajeBaba);
+        //Pez
+        TextureRegionDrawable Peces = new TextureRegionDrawable(new TextureRegion(texturaPez));
+        ImageButton coinspeces = new ImageButton(Peces);
+        coinspeces.setPosition(ANCHO/2-300,ALTO/35-10);
+        escena.addActor(coinspeces);
+        //Pocion
+        TextureRegionDrawable Pocion = new TextureRegionDrawable(new TextureRegion(texturaPocion));
+        ImageButton pociones = new ImageButton(Pocion);
+        pociones.setPosition(ANCHO/2,ALTO/35-10);
+        escena.addActor(pociones);
+        //Score
+        TextureRegionDrawable Score = new TextureRegionDrawable(new TextureRegion(texturaScore));
+        ImageButton puntaje = new ImageButton(Score);
+        puntaje.setPosition(ANCHO/2-600,ALTO/35+680);
+        escena.addActor(puntaje);
+
 
         // Evento del boton
-        btnBack.addListener(new ClickListener(){
+        btnPausa.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.log("clicked","Me hicieron click");
-                menu.setScreen(new PantallaMenu(menu));
+                menu.setScreen(new PantallaPausa(menu));
             }
         });
 
@@ -71,7 +101,12 @@ public class PantallaPrincipal extends Pantalla {
 
     private void cargarTexturas() {
         texturaFondo = new Texture("fondoPrincipal.jpg");
-        texturaBotonPausa = new Texture("backButton.png");
+        texturaBotonPausa = new Texture("Pausa.png");
+        texturaKai=new Texture("Gato-1.png");
+        texturaBaba=new Texture("Baba3.png");
+        texturaPez=new Texture("pez.png");
+        texturaPocion=new Texture("pocion.png");
+        texturaScore=new Texture("ingamescore.png");
     }
 
 
