@@ -2,6 +2,7 @@ package mx.sagh.soul;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -9,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.FloatAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -21,6 +23,9 @@ import com.badlogic.gdx.utils.viewport.Viewport;
  */
 public class PantallaMenu extends Pantalla {
     private final colourlessSoul menu;
+
+    //sonidos
+    private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("click.mp3"));
 
     //texturas
     private Texture texturaFondoMenu;
@@ -77,6 +82,8 @@ public class PantallaMenu extends Pantalla {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.log("clicked","Hiciste click en Start");
+                clickSound.play();
+                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaPrincipal(menu));
             }
         });
@@ -85,6 +92,8 @@ public class PantallaMenu extends Pantalla {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.log("clicked","Hiciste click en Load");
+                clickSound.play();
+                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaPrincipal(menu));
             }
         });
@@ -93,6 +102,8 @@ public class PantallaMenu extends Pantalla {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.log("clicked","Hiciste click en Settings");
+                clickSound.play();
+                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaSettings(menu));
             }
         });
@@ -101,18 +112,11 @@ public class PantallaMenu extends Pantalla {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.log("clicked","Hiciste click en Extras");
+                clickSound.play();
+                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaExtras(menu));
             }
         });
-
-        btnSettings.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log("clicked","Hiciste click en Settings");
-                menu.setScreen(new PantallaSettings(menu));
-            }
-        });
-
 
         Gdx.input.setInputProcessor(escena);
         Gdx.input.setCatchBackKey(false);
@@ -153,5 +157,6 @@ public class PantallaMenu extends Pantalla {
         texturaBotonCargar.dispose();
         texturaBotonAjustes.dispose();
         texturaBotonExtras.dispose();
+        clickSound.dispose();
     }
 }

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -21,6 +22,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 public class PantallaCreditos extends Pantalla {
     private final colourlessSoul menu;
+
+    //sonidos
+    private Music windMusic = Gdx.audio.newMusic(Gdx.files.internal("wind.mp3"));
 
     //texturas
     private Texture texturaFondo;
@@ -55,7 +59,7 @@ public class PantallaCreditos extends Pantalla {
         imgCredits = new Image(texturaCreditos);
         imgCredits.setPosition(0,-ALTO+140);
         escena.addActor(imgCredits);
-
+        windMusic.play();
         Gdx.input.setInputProcessor(escena);
         Gdx.input.setCatchBackKey(true);
     }
@@ -70,7 +74,10 @@ public class PantallaCreditos extends Pantalla {
     public void render(float delta) {
         // 60 x seg
         actualizarObjetos(delta);
-        if (vanish) imgCredits.setColor(1,1,1,imgCredits.getColor().a-0.01f);
+        if (vanish){
+            imgCredits.setColor(1,1,1,imgCredits.getColor().a-0.01f);
+            windMusic.setVolume(windMusic.getVolume()-0.01f);
+        }
         if(imgCredits.getColor().a<=0) menu.setScreen(new PantallaExtras(menu));
         borrarPantalla();
         escena.draw();
@@ -100,6 +107,7 @@ public class PantallaCreditos extends Pantalla {
         escena.dispose();
         texturaFondo.dispose();
         texturaCreditos.dispose();
+        windMusic.dispose();
     }
 
     private class Procesador implements InputProcessor {

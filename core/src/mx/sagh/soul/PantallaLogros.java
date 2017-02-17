@@ -6,6 +6,7 @@ package mx.sagh.soul;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -19,6 +20,9 @@ import com.badlogic.gdx.utils.Array;
 
 public class PantallaLogros extends Pantalla {
     private final colourlessSoul menu;
+
+    //sonidos
+    private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("click.mp3"));
 
     //texturas
     private Texture texturaFondo;
@@ -64,11 +68,6 @@ public class PantallaLogros extends Pantalla {
 
         //Botones
 
-        TextureRegionDrawable trdBtnBack = new TextureRegionDrawable(new TextureRegion(texturaBotonRetorno));
-        ImageButton btnBack = new ImageButton(trdBtnBack);
-        btnBack.setPosition(0,0);
-        escena.addActor(btnBack);
-
         TextureRegionDrawable trdBtnPrev = new TextureRegionDrawable(new TextureRegion(texturaBotonAnterior));
         ImageButton btnPrev = new ImageButton(trdBtnPrev);
         btnPrev.setPosition(ANCHO/2-texturaLogro.getWidth()/2-texturaBotonAnterior.getWidth(),ALTO/2);
@@ -80,11 +79,18 @@ public class PantallaLogros extends Pantalla {
         //btnNext.setSize(100,120);
         escena.addActor(btnNext);
 
+        TextureRegionDrawable trdBtnBack = new TextureRegionDrawable(new TextureRegion(texturaBotonRetorno));
+        ImageButton btnBack = new ImageButton(trdBtnBack);
+        btnBack.setPosition(ANCHO/2-texturaBotonRetorno.getWidth()/2,5);
+        escena.addActor(btnBack);
+
         // Evento del boton
         btnBack.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.log("clicked","Me hicieron click");
+                clickSound.play();
+                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaExtras(menu));
             }
         });
@@ -103,7 +109,7 @@ public class PantallaLogros extends Pantalla {
         btnPrev.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log("clicked","Hiciste click en Next");
+                Gdx.app.log("clicked","Hiciste click en Prev");
                 for(Objeto obj : arrLogros){
                     Logro logro = (Logro)obj;
                     logro.estado=EstadoLogro.CAMBIANDO_DER;
@@ -118,7 +124,7 @@ public class PantallaLogros extends Pantalla {
 
     private void cargarTexturas() {
         texturaFondo = new Texture("fondoPrincipal.jpg");
-        texturaBotonRetorno = new Texture("backButton.png");
+        texturaBotonRetorno = new Texture("replayButton.png");
         texturaBotonAnterior = new Texture("backButton.png");
         texturaBotonSiguiente = new Texture("nextButton.png");
         texturaLogro = new Texture("achievsScreen1.png");
@@ -173,5 +179,6 @@ public class PantallaLogros extends Pantalla {
         texturaBotonAnterior.dispose();
         texturaBotonSiguiente.dispose();
         texturaLogro.dispose();
+        clickSound.dispose();
     }
 }
