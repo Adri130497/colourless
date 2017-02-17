@@ -91,7 +91,7 @@ public class PantallaExtras extends Pantalla {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.log("clicked","Hiciste click en Credits");
-                //menu.setScreen(new PantallaLogros(menu));
+                menu.setScreen(new PantallaCreditos(menu));
             }
         });
 
