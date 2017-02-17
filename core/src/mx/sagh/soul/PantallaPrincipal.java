@@ -32,6 +32,10 @@ public class PantallaPrincipal extends Pantalla {
     private Texture texturaPocion;
     private Texture texturaBaba;
     private Texture texturaScore;
+    private Texture texturaMenuPausa;
+    private Texture texturaPlay;
+    private Texture texturaMainMenu;
+    private Texture texturaReplay;
     //Escena
     private Stage escena;
     private SpriteBatch batch;
@@ -84,6 +88,8 @@ public class PantallaPrincipal extends Pantalla {
         ImageButton puntaje = new ImageButton(Score);
         puntaje.setPosition(ANCHO/2-600,ALTO/35+680);
         escena.addActor(puntaje);
+        //Pantalla pausa
+
 
 
         // Evento del boton
@@ -91,7 +97,34 @@ public class PantallaPrincipal extends Pantalla {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.log("clicked","Me hicieron click");
-                menu.setScreen(new PantallaMenu(menu));
+                TextureRegionDrawable Pausa = new TextureRegionDrawable(new TextureRegion(texturaMenuPausa));
+                ImageButton pause = new ImageButton(Pausa);
+                pause.setPosition(ANCHO/50+250,ALTO/2-200);
+                escena.addActor(pause);
+
+                TextureRegionDrawable trbtnMainMenu = new TextureRegionDrawable(new TextureRegion(texturaMainMenu));
+                ImageButton btnMainMenu = new ImageButton(trbtnMainMenu);
+                btnMainMenu.setPosition(ANCHO/50+450,ALTO/2-75);
+                escena.addActor(btnMainMenu);
+
+                TextureRegionDrawable trbtnReplay = new TextureRegionDrawable(new TextureRegion(texturaReplay));
+                ImageButton btnReplay = new ImageButton(trbtnReplay);
+                btnReplay.setPosition(ANCHO/50+650,ALTO/2+30);
+                escena.addActor(btnReplay);
+
+                TextureRegionDrawable trbtnPlay = new TextureRegionDrawable(new TextureRegion(texturaPlay));
+                ImageButton btnPlay = new ImageButton(trbtnPlay);
+                btnPlay.setPosition(ANCHO/50+450,ALTO/2+30);
+                escena.addActor(btnPlay);
+
+                btnMainMenu.addListener(new ClickListener(){
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        Gdx.app.log("clicked","Hiciste click en Main Menu");
+                        menu.setScreen(new PantallaMenu(menu));
+                    }
+                });
+
             }
         });
 
@@ -107,6 +140,10 @@ public class PantallaPrincipal extends Pantalla {
         texturaPez=new Texture("pez.png");
         texturaPocion=new Texture("pocion.png");
         texturaScore=new Texture("ingamescore.png");
+        texturaMenuPausa=new Texture("Fondo opciones.jpg");
+        texturaMainMenu=new Texture("Main Menu.png");
+        texturaPlay=new Texture("PlayB.png");
+        texturaReplay=new Texture("replay.png");
     }
 
 

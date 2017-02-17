@@ -50,12 +50,12 @@ public class PantallaSettings extends Pantalla {
 
         TextureRegionDrawable trdBtnMusic = new TextureRegionDrawable(new TextureRegion(texturaMusica));
         ImageButton btnMusica = new ImageButton(trdBtnMusic);
-        btnMusica.setPosition(2*ANCHO/3, 2*ALTO/3-2*btnMusica.getHeight());
+        btnMusica.setPosition(2*ANCHO/3-200, 2*ALTO/3-30);
         escena.addActor(btnMusica);
 
         TextureRegionDrawable trdBtnSonidos = new TextureRegionDrawable(new TextureRegion(texturaSonidos));
         ImageButton btnsounds = new ImageButton(trdBtnSonidos);
-        btnsounds.setPosition(2*ANCHO/3, 2*ALTO/3-3*btnsounds.getHeight());
+        btnsounds.setPosition(2*ANCHO/3-50, 2*ALTO/3+50);
         escena.addActor(btnsounds);
 
         TextureRegionDrawable trdBtnBotonesEnable = new TextureRegionDrawable(new TextureRegion(texturaBotonesEnable));
@@ -87,7 +87,7 @@ public class PantallaSettings extends Pantalla {
         texturaSetings = new Texture("Settingsfondo.jpg");
         texturaBotonesEnable = new Texture("Pausa.png");
         texturaMusica=new Texture("Gato-1.png");
-        texturaSonidos=new Texture("Baba3.png");
+        texturaSonidos=new Texture("Boton sonido.png");
         texturaBotonRegreso=new Texture("backButton.png");
 
     }
