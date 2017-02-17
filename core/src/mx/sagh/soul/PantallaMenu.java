@@ -128,10 +128,10 @@ public class PantallaMenu extends Pantalla {
 
     private void cargarTexturas() {
         texturaFondoMenu = new Texture("Menu.jpeg");
-        texturaBotonInicio = new Texture("startButton.png");
+        texturaBotonInicio = new Texture("NewGame.png");
         texturaBotonLogros = new Texture("achievsButton.png");
-        texturaBotonCargar = new Texture("loadButton.png");
-        texturaBotonAjustes = new Texture("settingsButton.png");
+        texturaBotonCargar = new Texture("Load Game.png");
+        texturaBotonAjustes = new Texture("Settings.png");
         texturaBotonAcercaDe=new Texture("loadButton.png");
     }
 

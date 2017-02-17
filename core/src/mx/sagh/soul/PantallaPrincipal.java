@@ -71,7 +71,7 @@ public class PantallaPrincipal extends Pantalla {
 
     private void cargarTexturas() {
         texturaFondo = new Texture("azul.jpg");
-        texturaBotonPausa = new Texture("back_button.png");
+        texturaBotonPausa = new Texture("back.png");
     }
 
 
