@@ -77,6 +77,7 @@ public class PantallaLogros extends Pantalla {
         TextureRegionDrawable trdBtnNext = new TextureRegionDrawable(new TextureRegion(texturaBotonSiguiente));
         ImageButton btnNext = new ImageButton(trdBtnNext);
         btnNext.setPosition(ANCHO/2+texturaLogro.getWidth()/2,ALTO/2);
+        //btnNext.setSize(100,120);
         escena.addActor(btnNext);
 
         // Evento del boton
@@ -84,7 +85,7 @@ public class PantallaLogros extends Pantalla {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.log("clicked","Me hicieron click");
-                menu.setScreen(new PantallaMenu(menu));
+                menu.setScreen(new PantallaExtras(menu));
             }
         });
 
@@ -116,10 +117,10 @@ public class PantallaLogros extends Pantalla {
     }
 
     private void cargarTexturas() {
-        texturaFondo = new Texture("Menu.jpeg");
-        texturaBotonRetorno = new Texture("back.png");
-        texturaBotonAnterior = new Texture("back.png");
-        texturaBotonSiguiente = new Texture("siguiente.png");
+        texturaFondo = new Texture("fondoPrincipal.jpg");
+        texturaBotonRetorno = new Texture("backButton.png");
+        texturaBotonAnterior = new Texture("backButton.png");
+        texturaBotonSiguiente = new Texture("nextButton.png");
         texturaLogro = new Texture("achievsScreen1.png");
     }
 
