@@ -1,7 +1,6 @@
 package mx.sagh.soul;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -22,11 +21,12 @@ public class PantallaSettings extends Pantalla {
     private Stage escena;
     private SpriteBatch batch;
     //texturas
-    private Texture texturaFondo;
+    private Texture texturaSetings;
     private Texture texturaMusica;
     private Texture texturaSonidos;
     private Texture texturaBotonesEnable;
     private Texture texturaBotonRegreso;
+
 
 
 
@@ -43,7 +43,7 @@ public class PantallaSettings extends Pantalla {
     private void crearObjetos() {
         batch = new SpriteBatch();
         escena = new Stage(vista, batch);
-        Image imgFondo = new Image(texturaFondo);
+        Image imgFondo = new Image(texturaSetings);
         escena.addActor(imgFondo);
 
         //Botones
@@ -84,7 +84,7 @@ public class PantallaSettings extends Pantalla {
 
 
     private void cargarTexturas() {
-        texturaFondo = new Texture("fondoPrincipal.jpg");
+        texturaSetings = new Texture("Settingsfondo.jpg");
         texturaBotonesEnable = new Texture("Pausa.png");
         texturaMusica=new Texture("Gato-1.png");
         texturaSonidos=new Texture("Baba3.png");
@@ -113,6 +113,6 @@ public class PantallaSettings extends Pantalla {
         texturaSonidos.dispose();
         texturaMusica.dispose();
         texturaBotonesEnable.dispose();
-        texturaFondo.dispose();
+        texturaSetings.dispose();
     }
 }
