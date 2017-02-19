@@ -1,22 +1,16 @@
 package mx.sagh.soul;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.actions.FloatAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 
 /**
  * Created by Adrian on 11/02/2017.
@@ -54,6 +48,7 @@ public class PantallaMenu extends Pantalla {
         batch = new SpriteBatch();
         escena = new Stage(vista, batch);
         Image imgFondo = new Image(texturaFondoMenu);
+        imgFondo.setSize(1280,800);
         escena.addActor(imgFondo);
 
         //Botones del menú principal
@@ -85,6 +80,7 @@ public class PantallaMenu extends Pantalla {
                 clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaPrincipal(menu));
+                clickSound.stop();
             }
         });
 
@@ -95,6 +91,7 @@ public class PantallaMenu extends Pantalla {
                 clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaPrincipal(menu));
+                clickSound.stop();
             }
         });
 
@@ -102,9 +99,11 @@ public class PantallaMenu extends Pantalla {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.log("clicked","Hiciste click en Settings");
+                PantallaAjustes.estado = EstadoInvocado.PANTALLA_MENU;
                 clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                menu.setScreen(new PantallaSettings(menu));
+                menu.setScreen(new PantallaAjustes(menu));
+                clickSound.stop();
             }
         });
 
@@ -115,6 +114,7 @@ public class PantallaMenu extends Pantalla {
                 clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaExtras(menu));
+                clickSound.stop();
             }
         });
 
@@ -123,10 +123,10 @@ public class PantallaMenu extends Pantalla {
     }
 
     private void cargarTexturas() {
-        texturaFondoMenu = new Texture("fondoMenu.jpg");
+        texturaFondoMenu = new Texture("fondoMenu.png");
         texturaBotonInicio = new Texture("startButton.png");
         texturaBotonCargar = new Texture("loadButton.png");
-        texturaBotonAjustes = new Texture("settingsButton.png");
+        texturaBotonAjustes = new Texture("settingsButton1.png");
         texturaBotonExtras = new Texture("extrasButton.png");
     }
 

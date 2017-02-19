@@ -10,6 +10,9 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -31,6 +34,9 @@ public class PantallaLogros extends Pantalla {
     private Texture texturaBotonSiguiente;
     private Texture texturaLogro;
 
+    //botones
+    private ImageButton btnBack;
+
     // Las 5 pantallas de logros
     private final int NUM_NIVELES = 5;
     private Array<Objeto> arrLogros;
@@ -48,6 +54,8 @@ public class PantallaLogros extends Pantalla {
         // Cuando cargan la pantalla
         cargarTexturas();
         crearObjetos();
+
+        Gdx.input.setInputProcessor(new GestureDetector(new Procesador()));
     }
 
     private void crearObjetos() {
@@ -68,24 +76,20 @@ public class PantallaLogros extends Pantalla {
 
         //Botones
 
-        TextureRegionDrawable trdBtnPrev = new TextureRegionDrawable(new TextureRegion(texturaBotonAnterior));
-        ImageButton btnPrev = new ImageButton(trdBtnPrev);
+        /*TextureRegionDrawable trdBtnPrev = new TextureRegionDrawable(new TextureRegion(texturaBotonAnterior));
+        btnPrev = new ImageButton(trdBtnPrev);
         btnPrev.setPosition(ANCHO/2-texturaLogro.getWidth()/2-texturaBotonAnterior.getWidth(),ALTO/2);
-        escena.addActor(btnPrev);
 
         TextureRegionDrawable trdBtnNext = new TextureRegionDrawable(new TextureRegion(texturaBotonSiguiente));
-        ImageButton btnNext = new ImageButton(trdBtnNext);
-        btnNext.setPosition(ANCHO/2+texturaLogro.getWidth()/2,ALTO/2);
-        //btnNext.setSize(100,120);
-        escena.addActor(btnNext);
+        btnNext = new ImageButton(trdBtnNext);
+        btnNext.setPosition(ANCHO/2+texturaLogro.getWidth()/2,ALTO/2);*/
 
         TextureRegionDrawable trdBtnBack = new TextureRegionDrawable(new TextureRegion(texturaBotonRetorno));
-        ImageButton btnBack = new ImageButton(trdBtnBack);
+        btnBack = new ImageButton(trdBtnBack);
         btnBack.setPosition(ANCHO/2-texturaBotonRetorno.getWidth()/2,5);
-        escena.addActor(btnBack);
 
         // Evento del boton
-        btnBack.addListener(new ClickListener(){
+        /*btnBack.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.log("clicked","Me hicieron click");
@@ -115,7 +119,7 @@ public class PantallaLogros extends Pantalla {
                     logro.estado=EstadoLogro.CAMBIANDO_DER;
                 }
             }
-        });
+        });*/
 
 
         Gdx.input.setInputProcessor(escena);
@@ -134,7 +138,9 @@ public class PantallaLogros extends Pantalla {
     @Override
     public void render(float delta) {
         // 60 x seg
+        escena.addActor(btnBack);
         actualizarObjetos(delta);   // mandamos el tiempo para calcular distancia
+
         borrarPantalla();
         escena.draw();
         if(Gdx.input.isKeyJustPressed(Input.Keys.BACK)){
@@ -180,5 +186,66 @@ public class PantallaLogros extends Pantalla {
         texturaBotonSiguiente.dispose();
         texturaLogro.dispose();
         clickSound.dispose();
+    }
+
+    private class Procesador implements GestureDetector.GestureListener {
+        Vector3 v = new Vector3(); //Para convertir coordenadas del touch
+        @Override
+        public boolean touchDown(float x, float y, int pointer, int button) {
+            return false;
+        }
+
+        @Override
+        public boolean tap(float x, float y, int count, int button) {
+            v.set(x,y,0);
+            camara.unproject(v);
+            if (v.x>btnBack.getX() && v.x<(btnBack.getX()+btnBack.getWidth())
+                    && v.y>btnBack.getY() && v.y<(btnBack.getY()+btnBack.getHeight())) {
+                Gdx.app.log("clicked", "Me hicieron click");
+                clickSound.play();
+                while (clickSound.isPlaying()) if (clickSound.getPosition() > 0.5f) break;
+                menu.setScreen(new PantallaExtras(menu));
+            }
+            return true;
+        }
+
+        @Override
+        public boolean longPress(float x, float y) {
+            return false;
+        }
+
+        @Override
+        public boolean fling(float velocityX, float velocityY, int button) {
+            for(Objeto obj : arrLogros){
+                Logro logro = (Logro)obj;
+                if(velocityX<0) logro.estado=EstadoLogro.CAMBIANDO_IZQ;
+                if(velocityX>0) logro.estado=EstadoLogro.CAMBIANDO_DER;
+            }
+            return true;
+        }
+
+        @Override
+        public boolean pan(float x, float y, float deltaX, float deltaY) {
+            return false;
+        }
+
+        @Override
+        public boolean panStop(float x, float y, int pointer, int button) {
+            return false;
+        }
+
+        @Override
+        public boolean zoom(float initialDistance, float distance) {
+            return false;
+        }
+
+        @Override
+        public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1, Vector2 pointer2) {
+            return false;
+        }
+
+        @Override
+        public void pinchStop() {
+        }
     }
 }

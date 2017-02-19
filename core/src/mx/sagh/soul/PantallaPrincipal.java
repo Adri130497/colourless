@@ -7,6 +7,7 @@ package mx.sagh.soul;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -24,6 +25,9 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 public class PantallaPrincipal extends Pantalla {
     private final colourlessSoul menu;
 
+    //sonidos
+    private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("click.mp3"));
+
     //texturas
     private Texture texturaFondo;
     private Texture texturaBotonPausa;
@@ -33,9 +37,11 @@ public class PantallaPrincipal extends Pantalla {
     private Texture texturaBaba;
     private Texture texturaScore;
     private Texture texturaMenuPausa;
-    private Texture texturaPlay;
-    private Texture texturaMainMenu;
-    private Texture texturaReplay;
+    private Texture texturaGamePaused;
+    private Texture texturaResumeButton;
+    private Texture texturaRestartButton;
+    private Texture texturaSettingsButton;
+    private Texture texturaMainMenuButton;
     //Escena
     private Stage escena;
     private SpriteBatch batch;
@@ -53,21 +59,23 @@ public class PantallaPrincipal extends Pantalla {
 
     private void crearObjetos() {
         batch = new SpriteBatch();
+
         escena = new Stage(vista, batch);
         Image imgFondo = new Image(texturaFondo);
         escena.addActor(imgFondo);
 
         //Boton
-
         TextureRegionDrawable trdBtnPausa = new TextureRegionDrawable(new TextureRegion(texturaBotonPausa));
         ImageButton btnPausa = new ImageButton(trdBtnPausa);
         btnPausa.setPosition(2*ANCHO/3+220,2*ALTO/3-btnPausa.getHeight()+220);
         escena.addActor(btnPausa);
-        //KAi
+
+        //Kai
         TextureRegionDrawable Kai = new TextureRegionDrawable(new TextureRegion(texturaKai));
         ImageButton personajekai = new ImageButton(Kai);
         personajekai.setPosition(0,0);
         escena.addActor(personajekai);
+
         //Baba
         TextureRegionDrawable Baba = new TextureRegionDrawable(new TextureRegion(texturaBaba));
         ImageButton personajeBaba = new ImageButton(Baba);
@@ -78,17 +86,42 @@ public class PantallaPrincipal extends Pantalla {
         ImageButton coinspeces = new ImageButton(Peces);
         coinspeces.setPosition(ANCHO/2-300,ALTO/35-10);
         escena.addActor(coinspeces);
-        //Pocion
+
+        //Poción
         TextureRegionDrawable Pocion = new TextureRegionDrawable(new TextureRegion(texturaPocion));
         ImageButton pociones = new ImageButton(Pocion);
         pociones.setPosition(ANCHO/2,ALTO/35-10);
         escena.addActor(pociones);
+
         //Score
         TextureRegionDrawable Score = new TextureRegionDrawable(new TextureRegion(texturaScore));
         ImageButton puntaje = new ImageButton(Score);
         puntaje.setPosition(ANCHO/2-600,ALTO/35+680);
         escena.addActor(puntaje);
+
         //Pantalla pausa
+        final Image imgPause = new Image(texturaMenuPausa);
+        imgPause.setPosition(ANCHO/2-imgPause.getWidth()/2,ALTO/2-imgPause.getHeight()/2);
+
+        final Image imgGamePaused = new Image(texturaGamePaused);
+        imgGamePaused.setPosition(ANCHO/2-imgGamePaused.getWidth()/2,imgPause.getY()+imgPause.getHeight()-2*imgGamePaused.getHeight()-10);
+
+        TextureRegionDrawable trdBtnResume = new TextureRegionDrawable(new TextureRegion(texturaResumeButton));
+        final ImageButton btnResume = new ImageButton(trdBtnResume);
+        btnResume.setPosition(ANCHO/2-btnResume.getWidth()/2,imgGamePaused.getY()-2*btnResume.getHeight());
+
+        TextureRegionDrawable trdBtnRestart = new TextureRegionDrawable(new TextureRegion(texturaRestartButton));
+        final ImageButton btnRestart = new ImageButton(trdBtnRestart);
+        btnRestart.setPosition(ANCHO/2-btnRestart.getWidth()/2,btnResume.getY()-35-btnRestart.getHeight());
+
+        TextureRegionDrawable trdBtnSettings = new TextureRegionDrawable(new TextureRegion(texturaSettingsButton));
+        final ImageButton btnSettings = new ImageButton(trdBtnSettings);
+        btnSettings.setPosition(ANCHO/2-btnSettings.getWidth()/2,btnRestart.getY()-35-btnSettings.getHeight());
+
+        TextureRegionDrawable trdBtnMainMenu = new TextureRegionDrawable(new TextureRegion(texturaMainMenuButton));
+        final ImageButton btnMainMenu = new ImageButton(trdBtnMainMenu);
+        btnMainMenu.setPosition(ANCHO/2-btnMainMenu.getWidth()/2,btnSettings.getY()-35-btnMainMenu.getHeight());
+
 
 
 
@@ -96,32 +129,56 @@ public class PantallaPrincipal extends Pantalla {
         btnPausa.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log("clicked","Me hicieron click");
-                TextureRegionDrawable Pausa = new TextureRegionDrawable(new TextureRegion(texturaMenuPausa));
-                ImageButton pause = new ImageButton(Pausa);
-                pause.setPosition(ANCHO/50+250,ALTO/2-200);
-                escena.addActor(pause);
-
-                TextureRegionDrawable trbtnMainMenu = new TextureRegionDrawable(new TextureRegion(texturaMainMenu));
-                ImageButton btnMainMenu = new ImageButton(trbtnMainMenu);
-                btnMainMenu.setPosition(ANCHO/50+450,ALTO/2-75);
+                escena.addActor(imgPause);
+                escena.addActor(imgGamePaused);
+                escena.addActor(btnResume);
+                escena.addActor(btnRestart);
+                escena.addActor(btnSettings);
                 escena.addActor(btnMainMenu);
 
-                TextureRegionDrawable trbtnReplay = new TextureRegionDrawable(new TextureRegion(texturaReplay));
-                ImageButton btnReplay = new ImageButton(trbtnReplay);
-                btnReplay.setPosition(ANCHO/50+650,ALTO/2+30);
-                escena.addActor(btnReplay);
+                btnResume.addListener(new ClickListener(){
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        clickSound.play();
+                        while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
+                        imgPause.remove();
+                        imgGamePaused.remove();
+                        btnResume.remove();
+                        btnRestart.remove();
+                        btnSettings.remove();
+                        btnMainMenu.remove();
+                        clickSound.stop();
+                    }
+                });
 
-                TextureRegionDrawable trbtnPlay = new TextureRegionDrawable(new TextureRegion(texturaPlay));
-                ImageButton btnPlay = new ImageButton(trbtnPlay);
-                btnPlay.setPosition(ANCHO/50+450,ALTO/2+30);
-                escena.addActor(btnPlay);
+                btnSettings.addListener(new ClickListener(){
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        clickSound.play();
+                        while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
+                        PantallaAjustes.estado = EstadoInvocado.PANTALLA_PRINCIPAL;
+                        menu.setScreen(new PantallaAjustes(menu));
+                        clickSound.stop();
+                    }
+                });
+
+                btnRestart.addListener(new ClickListener(){
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        clickSound.play();
+                        while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
+                        menu.setScreen(new PantallaPrincipal(menu));
+                        clickSound.stop();
+                    }
+                });
 
                 btnMainMenu.addListener(new ClickListener(){
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
-                        Gdx.app.log("clicked","Hiciste click en Main Menu");
+                        clickSound.play();
+                        while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                         menu.setScreen(new PantallaMenu(menu));
+                        clickSound.stop();
                     }
                 });
 
@@ -140,10 +197,12 @@ public class PantallaPrincipal extends Pantalla {
         texturaPez=new Texture("pez.png");
         texturaPocion=new Texture("pocion.png");
         texturaScore=new Texture("ingamescore.png");
-        texturaMenuPausa=new Texture("Fondo opciones.jpg");
-        texturaMainMenu=new Texture("Main Menu.png");
-        texturaPlay=new Texture("PlayB.png");
-        texturaReplay=new Texture("replay.png");
+        texturaMenuPausa=new Texture("fondoMadera.png");
+        texturaGamePaused=new Texture("gamePaused.png");
+        texturaResumeButton=new Texture("resumeButton.png");
+        texturaRestartButton=new Texture("restartButton.png");
+        texturaSettingsButton=new Texture("settingsButton.png");
+        texturaMainMenuButton=new Texture("mainMenuButton.png");
     }
 
 
@@ -173,5 +232,17 @@ public class PantallaPrincipal extends Pantalla {
         escena.dispose();
         texturaFondo.dispose();
         texturaBotonPausa.dispose();
+        texturaKai.dispose();
+        texturaBaba.dispose();
+        texturaPez.dispose();
+        texturaPocion.dispose();
+        texturaScore.dispose();
+        texturaMenuPausa.dispose();
+        texturaGamePaused.dispose();
+        texturaResumeButton.dispose();
+        texturaRestartButton.dispose();
+        texturaSettingsButton.dispose();
+        texturaMainMenuButton.dispose();
+        clickSound.dispose();
     }
 }

@@ -82,6 +82,7 @@ public class PantallaExtras extends Pantalla {
                 clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaMenu(menu));
+                clickSound.stop();
             }
         });
 
@@ -92,6 +93,7 @@ public class PantallaExtras extends Pantalla {
                 clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaLogros(menu));
+                clickSound.stop();
             }
         });
 
@@ -99,9 +101,11 @@ public class PantallaExtras extends Pantalla {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.log("clicked","Hiciste click en Credits");
-                clickSound.play();
+                if(!clickSound.isPlaying())
+                    clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaCreditos(menu));
+                clickSound.stop();
             }
         });
 
@@ -158,5 +162,6 @@ public class PantallaExtras extends Pantalla {
         texturaBotonHowToPlay.dispose();
         texturaBotonRetorno.dispose();
         clickSound.dispose();
+        clickSound.stop();
     }
 }

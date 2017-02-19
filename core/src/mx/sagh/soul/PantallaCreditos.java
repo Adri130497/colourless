@@ -24,13 +24,13 @@ public class PantallaCreditos extends Pantalla {
     private final colourlessSoul menu;
 
     //sonidos
-    private Music windMusic = Gdx.audio.newMusic(Gdx.files.internal("wind.mp3"));
+    Music windMusic = Gdx.audio.newMusic(Gdx.files.internal("wind.mp3"));
 
     //texturas
     private Texture texturaFondo;
     private Texture texturaCreditos;
     private Image imgCredits;
-    boolean vanish = false;
+    private boolean vanish = false;
 
     //Escena
     private Stage escena;
@@ -76,9 +76,13 @@ public class PantallaCreditos extends Pantalla {
         actualizarObjetos(delta);
         if (vanish){
             imgCredits.setColor(1,1,1,imgCredits.getColor().a-0.01f);
-            windMusic.setVolume(windMusic.getVolume()-0.01f);
+            windMusic.setVolume(windMusic.getVolume()-0.009f);
         }
-        if(imgCredits.getColor().a<=0) menu.setScreen(new PantallaExtras(menu));
+        if(imgCredits.getColor().a<=0){
+            windMusic.stop();
+            Gdx.app.log("MUSIC",Float.toString(windMusic.getVolume()));
+            menu.setScreen(new PantallaExtras(menu));
+        }
         borrarPantalla();
         escena.draw();
 
