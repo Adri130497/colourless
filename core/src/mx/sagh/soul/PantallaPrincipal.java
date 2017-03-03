@@ -13,10 +13,14 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -45,6 +49,10 @@ public class PantallaPrincipal extends Pantalla {
     //Escena
     private Stage escena;
     private SpriteBatch batch;
+    //HUD
+    private OrthographicCamera camaraHUD;
+    private Viewport vistaHUD;
+    private Stage escenaHUD;
 
     public PantallaPrincipal(colourlessSoul menu) {
         this.menu = menu;
@@ -205,6 +213,43 @@ public class PantallaPrincipal extends Pantalla {
         texturaMainMenuButton=new Texture("mainMenuButton.png");
     }
 
+    private void crearHUD() {
+        // Cámara HUD
+        camaraHUD = new OrthographicCamera(ANCHO,ALTO);
+        camaraHUD.position.set(ANCHO/2, ALTO/2, 0);
+        camaraHUD.update();
+        vistaHUD = new StretchViewport(ANCHO, ALTO, camaraHUD);
+
+        // HUD
+        Skin skin = new Skin();
+        skin.add("padBack", new Texture("padBack.png"));
+        skin.add("padKnob", new Texture("padKnob.png"));
+
+        Touchpad.TouchpadStyle estilo = new Touchpad.TouchpadStyle();
+        estilo.background = skin.getDrawable("padBack");
+        estilo.knob = skin.getDrawable("padKnob");
+
+        Touchpad pad = new Touchpad(20, estilo);
+        pad.setBounds(0, 0, 200, 200);
+        pad.setColor(1,1,1,.1f);
+
+        pad.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Touchpad pad = (Touchpad) actor;
+                if (pad.getKnobPercentX()>0.20) {
+                    //Kai.setEstadoMovimiento(Personaje.EstadoMovimiento.MOV_DERECHA);
+                } else if (pad.getKnobPercentX()<-0.20){
+                    //Kai.setEstadoMovimiento(Personaje.EstadoMovimiento.MOV_IZQUIERDA);
+                } else {
+                    //Kai.setEstadoMovimiento(Personaje.EstadoMovimiento.QUIETO);
+                }
+            }
+        });
+
+        escenaHUD = new Stage(vistaHUD);
+        escenaHUD.addActor(pad);
+    }
 
     @Override
     public void render(float delta) {
