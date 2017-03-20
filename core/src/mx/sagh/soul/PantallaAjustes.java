@@ -82,36 +82,37 @@ public class PantallaAjustes extends Pantalla {
 
         TextureRegionDrawable trdBtnMusicOn = new TextureRegionDrawable(new TextureRegion(texturaMusicaOn));
         final ImageButton btnMusicaOn = new ImageButton(trdBtnMusicOn);
+        btnMusicaOn.setSize(120,120);
         btnMusicaOn.setPosition(imgControlMS.getX()-23,imgControlMS.getY()-11.5f);
         escena.addActor(btnMusicaOn);
 
         TextureRegionDrawable trdBtnMusicOff = new TextureRegionDrawable(new TextureRegion(texturaMusicaOff));
         final ImageButton btnMusicaOff = new ImageButton(trdBtnMusicOff);
+        btnMusicaOff.setSize(120,120);
         btnMusicaOff.setPosition(imgControlMS.getX()-23,imgControlMS.getY()-11.5f);
         //escena.addActor(btnMusicaOff);
 
         TextureRegionDrawable trdBtnSoundsOn = new TextureRegionDrawable(new TextureRegion(texturaSonidosOn));
         final ImageButton btnSoundsOn = new ImageButton(trdBtnSoundsOn);
+        btnSoundsOn.setSize(120,120);
         btnSoundsOn.setPosition(imgControlMS.getX()+23+imgControlMS.getWidth()-btnSoundsOn.getWidth(),btnMusicaOn.getY());
         escena.addActor(btnSoundsOn);
 
         TextureRegionDrawable trdBtnSoundsOff = new TextureRegionDrawable(new TextureRegion(texturaSonidosOff));
         final ImageButton btnSoundsOff = new ImageButton(trdBtnSoundsOff);
+        btnSoundsOff.setSize(120,120);
         btnSoundsOff.setPosition(imgControlMS.getX()+23+imgControlMS.getWidth()-btnSoundsOff.getWidth(),btnMusicaOn.getY());
         //escena.addActor(btnSoundsOff);
 
         TextureRegionDrawable trdBtnL = new TextureRegionDrawable(new TextureRegion(texturaBotonL));
         final ImageButton btnL = new ImageButton(trdBtnL);
+        btnL.setSize(120,120);
         btnL.setPosition(imgControlChange.getX()-23,imgControlChange.getY()-11.5f);
         escena.addActor(btnL);
 
-        TextureRegionDrawable trdBtnR = new TextureRegionDrawable(new TextureRegion(texturaBotonR));
-        final ImageButton btnR = new ImageButton(trdBtnR);
-        btnR.setPosition(imgControlChange.getX()+23+imgControlChange.getWidth()-btnR.getWidth(),imgControlChange.getY()-11.5f);
-        escena.addActor(btnR);
-
         TextureRegionDrawable trdBtnBack = new TextureRegionDrawable(new TextureRegion(texturaBotonRegreso));
         ImageButton btnRegreso = new ImageButton(trdBtnBack);
+        btnRegreso.setSize(120,120);
         btnRegreso.setPosition(0,0);
         escena.addActor(btnRegreso);
 
@@ -178,22 +179,6 @@ public class PantallaAjustes extends Pantalla {
             }
         });
 
-        btnR.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if(imgControlB.getStage() == null){
-                    Gdx.app.log("LOG","BUTTON OFF");
-                    imgControlT.remove();
-                    escena.addActor(imgControlB);
-                }
-                else if(imgControlT.getStage() == null){
-                    Gdx.app.log("LOG","TOUCH OFF");
-                    escena.addActor(imgControlT);
-                    imgControlB.remove();
-                }
-            }
-        });
-
         Gdx.input.setInputProcessor(escena);
         Gdx.input.setCatchBackKey(false);
     }
@@ -211,7 +196,6 @@ public class PantallaAjustes extends Pantalla {
         texturaControlsChange = new Texture("controlsChange.png");
         texturaControlTouch = new Texture("controlsTouch.png");
         texturaControlButton = new Texture("controlsButton.png");
-        texturaBotonR = new Texture("changeButtonR.png");
         texturaBotonL = new Texture("changeButtonL.png");
         texturaBotonRegreso = new Texture("backButton.png");
     }
@@ -242,7 +226,6 @@ public class PantallaAjustes extends Pantalla {
         texturaSonidosOff.dispose();
         texturaMusicSounds.dispose();
         texturaControlsChange.dispose();
-        texturaBotonR.dispose();
         texturaBotonL.dispose();
         texturaBotonRegreso.dispose();
         clickSound.dispose();

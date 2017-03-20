@@ -21,6 +21,7 @@ public abstract class Pantalla implements Screen
     protected OrthographicCamera camara;
     protected Viewport vista;
 
+
     public Pantalla() {
         camara = new OrthographicCamera(ANCHO, ALTO);
         camara.position.set(ANCHO/2, ALTO/2, 0);
