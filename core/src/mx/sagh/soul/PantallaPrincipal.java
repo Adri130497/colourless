@@ -291,15 +291,7 @@ public class PantallaPrincipal extends Pantalla {
     public void render(float delta) {
         // Actualizar
         kai.actualizar(mapa);
-        if(kai.recolectarItems(mapa)){
-            int x = (int)(kai.sprite.getX()/32)+3;
-            int y = (int)(kai.sprite.getY()/32);
-            sistemaParticulas.getEmitters().first().setPosition(x,y);
-            efectoCroqueta.play();
-            sistemaParticulas.draw(batch);
-            //if(sistemaParticulas.getEmitters().first().getActiveCount()>=1)
-                //sistemaParticulas.allowCompletion();
-        }
+
 
         //Mover la camara
         actualizarCamara();
@@ -308,7 +300,17 @@ public class PantallaPrincipal extends Pantalla {
         borrarPantalla();
         batch.setProjectionMatrix(camara.combined);
         renderer.setView(camara);
-        renderer.render();
+        //renderer.render();
+
+        if(kai.recolectarItems(mapa)){
+            int x = (int)(kai.sprite.getX()/32)+3;
+            int y = (int)(kai.sprite.getY()/32);
+            sistemaParticulas.getEmitters().first().setPosition(x,y);
+            efectoCroqueta.play();
+            sistemaParticulas.draw(batch);
+            //if(sistemaParticulas.getEmitters().first().getActiveCount()>=1)
+            //sistemaParticulas.allowCompletion();
+        }
 
         batch.begin();
         kai.dibujar(batch);
