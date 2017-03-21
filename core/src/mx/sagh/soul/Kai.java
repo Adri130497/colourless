@@ -3,6 +3,7 @@ package mx.sagh.soul;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -26,8 +27,17 @@ public class Kai extends Objeto{
     private float alturaSalto;  // altura actual, inicia en cero
     private float yOriginal;
 
+    //Sistema de partículas
+    private ParticleEffect sistemaParticulas;
+
     // Recibe una imagen con varios frames (ver restingKai.png)
     public Kai(Texture textura, float x, float y) {
+        sistemaParticulas = new ParticleEffect();
+
+        sistemaParticulas.load(Gdx.files.internal("lluvia2.pe"),Gdx.files.internal("")); //no se pone nada porque está en el mismo lugar
+        //Posicionar partículas
+        sistemaParticulas.getEmitters().first().setPosition(PantallaPrincipal.ANCHO,PantallaPrincipal.ALTO/2); //cada uno de los efectos dentro del sistema
+
         // Lee la textura como región
         TextureRegion texturaCompleta = new TextureRegion(textura);
         // La divide en 3 frames de 120x120 (ver restingKai.png)
@@ -48,6 +58,7 @@ public class Kai extends Objeto{
     // Dibuja el personaje
     public void dibujar(SpriteBatch batch) {
         // Dibuja el personaje dependiendo del estadoMovimiento
+        sistemaParticulas.draw(batch);
         switch (estadoMovimiento) {
             case MOV_DERECHA:
             case MOV_IZQUIERDA:
@@ -160,19 +171,21 @@ public class Kai extends Objeto{
         }
     }
 
+
     // Revisa si toca una moneda
-    public boolean recolectarMonedas(TiledMap mapa) {
+    public boolean recolectarItems(TiledMap mapa) {
         // Revisar si toca una moneda (pies)
         TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(1); //puedes recuperar una capa del mapa
-
         int x = (int)(sprite.getX()/32);
         int y = (int)(sprite.getY()/32);
         TiledMapTileLayer.Cell celda = capa.getCell(x,y);
         if (celda!=null ) {
             Object tipo = celda.getTile().getProperties().get("tipo");
             if ( "pez".equals(tipo) ) {
-                capa.setCell(x,y,null);    // Borra la moneda del mapa
-                capa.setCell(x,y,capa.getCell(0,4)); // Cuadro azul en lugar de la moneda
+                //capaPez.setOpacity(1);
+                //actualizarItems(delta, capa, x,y+1,celda);
+                //capa.setCell(x,y,null);    // Borra la moneda del mapa
+                //capa.setCell(x,y,capa.getCell(0,4)); // Cuadro azul en lugar de la moneda
                 return true;
             }
         }
@@ -213,6 +226,14 @@ public class Kai extends Objeto{
             }
         }*/
         return false;
+    }
+
+    private void actualizarItems(float delta, TiledMapTileLayer capa, int x, int y, TiledMapTileLayer.Cell celda) {
+
+            //imgCredits.setColor(1,1,1,imgCredits.getColor().a-0.01f);
+
+        capa.setCell(x,y,celda);
+
     }
 
     // Accesor de estadoMovimiento

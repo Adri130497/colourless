@@ -12,6 +12,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -36,6 +37,9 @@ public class PantallaPrincipal extends Pantalla {
     public static final float ANCHO_MAPA = 5120;
     private OrthogonalTiledMapRenderer renderer, renderer2; // Dibuja el mapa
     private TiledMap mapa;
+
+    //Sistema de partículas
+    private ParticleEffect sistemaParticulas;
 
     private SpriteBatch batch;
 
@@ -76,6 +80,11 @@ public class PantallaPrincipal extends Pantalla {
         // Cuando cargan la pantalla
         cargarTexturas();
         crearObjetos();
+        sistemaParticulas = new ParticleEffect();
+
+        sistemaParticulas.load(Gdx.files.internal("pezVanish.pe"),Gdx.files.internal(""));
+        //Posicionar partículas
+        sistemaParticulas.getEmitters().first().setPosition(ANCHO/2,ALTO/2);
     }
 
     private void crearObjetos() {
@@ -157,7 +166,7 @@ public class PantallaPrincipal extends Pantalla {
 
 
 
-        // Evento del boton
+        // Evento del botón
         btnPausa.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -282,8 +291,14 @@ public class PantallaPrincipal extends Pantalla {
     public void render(float delta) {
         // Actualizar
         kai.actualizar(mapa);
-        if(kai.recolectarMonedas(mapa)){
+        if(kai.recolectarItems(mapa)){
+            int x = (int)(kai.sprite.getX()/32)+3;
+            int y = (int)(kai.sprite.getY()/32);
+            sistemaParticulas.getEmitters().first().setPosition(x,y);
             efectoCroqueta.play();
+            sistemaParticulas.draw(batch);
+            //if(sistemaParticulas.getEmitters().first().getActiveCount()>=1)
+                //sistemaParticulas.allowCompletion();
         }
 
         //Mover la camara

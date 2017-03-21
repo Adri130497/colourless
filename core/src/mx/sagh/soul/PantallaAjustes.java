@@ -37,7 +37,6 @@ public class PantallaAjustes extends Pantalla {
     private Texture texturaControlButton;
     private Texture texturaMusicSounds;
     private Texture texturaBotonRegreso;
-    private Texture texturaBotonR;
     private Texture texturaBotonL;
 
 
