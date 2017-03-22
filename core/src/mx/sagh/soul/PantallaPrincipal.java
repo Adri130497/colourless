@@ -60,9 +60,6 @@ public class PantallaPrincipal extends Pantalla {
     //texturas
     private Texture texturaPrimerPlano;
     private Texture texturaBotonPausa;
-    private Texture texturaPez;
-    private Texture texturaPocion;
-    private Texture texturaBaba;
     private Texture texturaScore;
     private Texture texturaMenuPausa;
     private Texture texturaGamePaused;
@@ -119,22 +116,10 @@ public class PantallaPrincipal extends Pantalla {
         btnPausa.setPosition(2*ANCHO/3+220,2*ALTO/3-btnPausa.getHeight()+220);
         escenaHUD.addActor(btnPausa);
 
-        //Baba
-        TextureRegionDrawable Baba = new TextureRegionDrawable(new TextureRegion(texturaBaba));
-        ImageButton personajeBaba = new ImageButton(Baba);
-        personajeBaba.setPosition(ANCHO/2+220,ALTO/35-30);
-        escenaHUD.addActor(personajeBaba);
-        //Pez
-        TextureRegionDrawable Peces = new TextureRegionDrawable(new TextureRegion(texturaPez));
-        ImageButton coinspeces = new ImageButton(Peces);
-        coinspeces.setPosition(ANCHO/2-300,ALTO/35-10);
-        escenaHUD.addActor(coinspeces);
 
-        //Poción
-        TextureRegionDrawable Pocion = new TextureRegionDrawable(new TextureRegion(texturaPocion));
-        ImageButton pociones = new ImageButton(Pocion);
-        pociones.setPosition(ANCHO/2,ALTO/35-10);
-        escenaHUD.addActor(pociones);
+
+
+
 
         //Score
         TextureRegionDrawable Score = new TextureRegionDrawable(new TextureRegion(texturaScore));
@@ -276,9 +261,6 @@ public class PantallaPrincipal extends Pantalla {
     private void cargarTexturas() {
         texturaPrimerPlano = new Texture("primerPlano_01.png");
         texturaBotonPausa = new Texture("Boton Pausa.png");
-        texturaBaba=new Texture("Baba3.png");
-        texturaPez=new Texture("pez.png");
-        texturaPocion=new Texture("pocion.png");
         texturaScore=new Texture("ingamescore.png");
         texturaMenuPausa=new Texture("fondoMadera.png");
         texturaGamePaused=new Texture("gamePaused.png");
@@ -365,9 +347,6 @@ public class PantallaPrincipal extends Pantalla {
         escenaHUD.dispose();
         texturaPrimerPlano.dispose();
         texturaBotonPausa.dispose();
-        texturaBaba.dispose();
-        texturaPez.dispose();
-        texturaPocion.dispose();
         texturaScore.dispose();
         texturaMenuPausa.dispose();
         texturaGamePaused.dispose();
