@@ -115,6 +115,7 @@ public class PantallaPrincipal extends Pantalla {
         //Boton
         TextureRegionDrawable trdBtnPausa = new TextureRegionDrawable(new TextureRegion(texturaBotonPausa));
         ImageButton btnPausa = new ImageButton(trdBtnPausa);
+        btnPausa.setSize(40,40);
         btnPausa.setPosition(2*ANCHO/3+220,2*ALTO/3-btnPausa.getHeight()+220);
         escenaHUD.addActor(btnPausa);
 
@@ -274,7 +275,7 @@ public class PantallaPrincipal extends Pantalla {
 
     private void cargarTexturas() {
         texturaPrimerPlano = new Texture("primerPlano_01.png");
-        texturaBotonPausa = new Texture("Pausa.png");
+        texturaBotonPausa = new Texture("Boton Pausa.png");
         texturaBaba=new Texture("Baba3.png");
         texturaPez=new Texture("pez.png");
         texturaPocion=new Texture("pocion.png");
