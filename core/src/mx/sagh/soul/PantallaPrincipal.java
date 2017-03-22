@@ -30,6 +30,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.sun.org.apache.xalan.internal.xsltc.runtime.StringValueHandler;
 
 public class PantallaPrincipal extends Pantalla {
     private final colourlessSoul menu;
@@ -45,7 +46,7 @@ public class PantallaPrincipal extends Pantalla {
 
     // Personaje
     private Kai kai;
-    private Texture texturaKai;
+    private Texture texturaKaiCaminando, texturaKaiReposo;
 
     // Música / efectos
     private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("click.mp3"));
@@ -70,6 +71,8 @@ public class PantallaPrincipal extends Pantalla {
     private Texture texturaSettingsButton;
     private Texture texturaMainMenuButton;
 
+    private boolean flag;
+
 
     public PantallaPrincipal(colourlessSoul menu) {
         this.menu = menu;
@@ -81,10 +84,8 @@ public class PantallaPrincipal extends Pantalla {
         cargarTexturas();
         crearObjetos();
         sistemaParticulas = new ParticleEffect();
-
+        flag = false;
         sistemaParticulas.load(Gdx.files.internal("pezVanish.pe"),Gdx.files.internal(""));
-        //Posicionar partículas
-        sistemaParticulas.getEmitters().first().setPosition(ANCHO/2,ALTO/2);
     }
 
     private void crearObjetos() {
@@ -109,7 +110,7 @@ public class PantallaPrincipal extends Pantalla {
 
         crearHUD();
         Gdx.input.setInputProcessor(escenaHUD);
-        kai = new Kai(texturaKai,0,128);
+        kai = new Kai(texturaKaiCaminando, texturaKaiReposo,0,128);
 
         //Boton
         TextureRegionDrawable trdBtnPausa = new TextureRegionDrawable(new TextureRegion(texturaBotonPausa));
@@ -284,7 +285,8 @@ public class PantallaPrincipal extends Pantalla {
         texturaRestartButton=new Texture("restartButton.png");
         texturaSettingsButton=new Texture("settingsButton.png");
         texturaMainMenuButton=new Texture("mainMenuButton.png");
-        texturaKai = new Texture("restingKai.png");
+        texturaKaiCaminando = new Texture("kaiWalkingSprite.png");
+        texturaKaiReposo = new Texture("kaiRestingSprite.png");
     }
 
     @Override
@@ -300,19 +302,24 @@ public class PantallaPrincipal extends Pantalla {
         borrarPantalla();
         batch.setProjectionMatrix(camara.combined);
         renderer.setView(camara);
-        //renderer.render();
-
-        if(kai.recolectarItems(mapa)){
-            int x = (int)(kai.sprite.getX()/32)+3;
-            int y = (int)(kai.sprite.getY()/32);
-            sistemaParticulas.getEmitters().first().setPosition(x,y);
-            efectoCroqueta.play();
+        renderer.render();
+        batch.begin();
+        if(flag){
+            sistemaParticulas.update(delta);
             sistemaParticulas.draw(batch);
-            //if(sistemaParticulas.getEmitters().first().getActiveCount()>=1)
-            //sistemaParticulas.allowCompletion();
+            if(sistemaParticulas.getEmitters().first().getActiveCount()>=1)
+                sistemaParticulas.allowCompletion();
+        }
+        if(kai.recolectarItems(mapa)){
+            int x = (int)(kai.sprite.getX());
+            int y = (int)(kai.sprite.getY());
+            sistemaParticulas = new ParticleEffect();
+            sistemaParticulas.load(Gdx.files.internal("pezVanish.pe"),Gdx.files.internal(""));
+            sistemaParticulas.getEmitters().first().setPosition(x+kai.sprite.getWidth(),y+kai.sprite.getHeight());
+            efectoCroqueta.play();
+            flag=true;
         }
 
-        batch.begin();
         kai.dibujar(batch);
         batch.end();
 
@@ -357,7 +364,6 @@ public class PantallaPrincipal extends Pantalla {
         escenaHUD.dispose();
         texturaPrimerPlano.dispose();
         texturaBotonPausa.dispose();
-        texturaKai.dispose();
         texturaBaba.dispose();
         texturaPez.dispose();
         texturaPocion.dispose();
@@ -369,6 +375,7 @@ public class PantallaPrincipal extends Pantalla {
         texturaSettingsButton.dispose();
         texturaMainMenuButton.dispose();
         clickSound.dispose();
-        texturaKai.dispose();
+        texturaKaiCaminando.dispose();
+        texturaKaiReposo.dispose();
     }
 }

@@ -17,8 +17,8 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 public class Kai extends Objeto{
     private final float VELOCIDAD_X = 4;      // Velocidad horizontal
 
-    private Animation<TextureRegion> spriteAnimado;         // Animación caminando
-    private float timerAnimacion;                           // Tiempo para cambiar frames de la animación
+    private Animation<TextureRegion> spriteAnimado, spriteReposo;           // Animación caminando, en reposo y parándose
+    private float timerAnimacion, timerAnimacion2;                                           // Tiempo para cambiar frames de la animación
 
     private EstadoMovimiento estadoMovimiento = EstadoMovimiento.QUIETO;
 
@@ -27,27 +27,23 @@ public class Kai extends Objeto{
     private float alturaSalto;  // altura actual, inicia en cero
     private float yOriginal;
 
-    //Sistema de partículas
-    private ParticleEffect sistemaParticulas;
-
-    // Recibe una imagen con varios frames (ver restingKai.png)
-    public Kai(Texture textura, float x, float y) {
-        sistemaParticulas = new ParticleEffect();
-
-        sistemaParticulas.load(Gdx.files.internal("lluvia2.pe"),Gdx.files.internal("")); //no se pone nada porque está en el mismo lugar
-        //Posicionar partículas
-        sistemaParticulas.getEmitters().first().setPosition(PantallaPrincipal.ANCHO,PantallaPrincipal.ALTO/2); //cada uno de los efectos dentro del sistema
-
-        // Lee la textura como región
-        TextureRegion texturaCompleta = new TextureRegion(textura);
-        // La divide en 3 frames de 120x120 (ver restingKai.png)
+    public Kai(Texture texturaCaminando, Texture texturaReposo, float x, float y) {
+        TextureRegion texturaCompleta = new TextureRegion(texturaCaminando);
         TextureRegion[][] texturaPersonaje = texturaCompleta.split(120,120);
-        // Crea la animación con tiempo de 0.15 segundos entre frames.
-        spriteAnimado = new Animation(0.15f, texturaPersonaje[0][2], texturaPersonaje[0][1], texturaPersonaje[0][0] );
-        // Animación infinita
+        spriteAnimado = new Animation(0.15f, texturaPersonaje[0][0], texturaPersonaje[0][1],
+                texturaPersonaje[0][2], texturaPersonaje[0][3], texturaPersonaje[0][4],
+                texturaPersonaje[0][5], texturaPersonaje[0][6], texturaPersonaje[0][7],
+                texturaPersonaje[0][8], texturaPersonaje[0][9], texturaPersonaje[0][10]);
         spriteAnimado.setPlayMode(Animation.PlayMode.LOOP);
+
+        texturaCompleta =  new TextureRegion(texturaReposo);
+        texturaPersonaje = texturaCompleta.split(120,120);
+        spriteReposo = new Animation(0.25f, texturaPersonaje[0][0], texturaPersonaje[0][1], texturaPersonaje[0][2],texturaPersonaje[0][1]);
+        spriteReposo.setPlayMode(Animation.PlayMode.LOOP);
+
         // Inicia el timer que contará tiempo para saber qué frame se dibuja
         timerAnimacion = 0;
+        timerAnimacion2 = 0;
         // Crea el sprite con el personaje quieto (idle)
         sprite = new Sprite(texturaPersonaje[0][0]);    // QUIETO
         sprite.setPosition(x,y);    // Posición inicial
@@ -58,13 +54,13 @@ public class Kai extends Objeto{
     // Dibuja el personaje
     public void dibujar(SpriteBatch batch) {
         // Dibuja el personaje dependiendo del estadoMovimiento
-        sistemaParticulas.draw(batch);
+        TextureRegion region;
         switch (estadoMovimiento) {
             case MOV_DERECHA:
             case MOV_IZQUIERDA:
                 timerAnimacion += Gdx.graphics.getDeltaTime();
                 // Frame que se dibujará
-                TextureRegion region = spriteAnimado.getKeyFrame(timerAnimacion);
+                region = spriteAnimado.getKeyFrame(timerAnimacion);
                 if (estadoMovimiento==EstadoMovimiento.MOV_IZQUIERDA) {
                     if (!region.isFlipX()) {
                         region.flip(true,false);
@@ -78,7 +74,9 @@ public class Kai extends Objeto{
                 break;
             case QUIETO:
             case INICIANDO:
-                sprite.draw(batch); // Dibuja el sprite estático
+                timerAnimacion2 += Gdx.graphics.getDeltaTime();
+                region = spriteReposo.getKeyFrame(timerAnimacion2);
+                batch.draw(region,sprite.getX(),sprite.getY());
                 break;
         }
     }
@@ -195,7 +193,7 @@ public class Kai extends Objeto{
         celda = capa.getCell(x,y);
         if (celda!=null ) {
             Object tipo = celda.getTile().getProperties().get("tipo");
-            if ( "pez".equals(tipo) ) {
+            if ( "pez".equals(tipo) || "pocion".equals(tipo)) {
                 capa.setCell(x,y,null);    // Borra la moneda del mapa
                 capa.setCell(x,y,capa.getCell(0,4)); // Cuadro azul en lugar de la moneda
                 return true;
