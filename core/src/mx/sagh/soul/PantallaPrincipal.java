@@ -32,6 +32,8 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sun.org.apache.xalan.internal.xsltc.runtime.StringValueHandler;
 
+import static com.badlogic.gdx.scenes.scene2d.ui.Table.Debug.actor;
+
 public class PantallaPrincipal extends Pantalla {
     private final colourlessSoul menu;
 
@@ -60,13 +62,16 @@ public class PantallaPrincipal extends Pantalla {
     //texturas
     private Texture texturaPrimerPlano;
     private Texture texturaBotonPausa;
-    private Texture texturaScore;
     private Texture texturaMenuPausa;
     private Texture texturaGamePaused;
     private Texture texturaResumeButton;
     private Texture texturaRestartButton;
     private Texture texturaSettingsButton;
     private Texture texturaMainMenuButton;
+
+    // Marcador
+    private int marcador=0;
+    private Texto texto;
 
     private boolean flag;
 
@@ -118,14 +123,6 @@ public class PantallaPrincipal extends Pantalla {
 
 
 
-
-
-
-        //Score
-        TextureRegionDrawable Score = new TextureRegionDrawable(new TextureRegion(texturaScore));
-        ImageButton puntaje = new ImageButton(Score);
-        puntaje.setPosition(ANCHO/2-600,ALTO/35+680);
-        escenaHUD.addActor(puntaje);
 
         //Pantalla pausa
         final Image imgPause = new Image(texturaMenuPausa);
@@ -234,6 +231,7 @@ public class PantallaPrincipal extends Pantalla {
         estilo.background = skin.getDrawable("padBack");
         estilo.knob = skin.getDrawable("padKnob");
 
+
         Touchpad pad = new Touchpad(20, estilo);
         pad.setBounds(0, 0, 200, 200);
         pad.setColor(1,1,1,0.5f);
@@ -256,12 +254,13 @@ public class PantallaPrincipal extends Pantalla {
 
         escenaHUD = new Stage(vistaHUD);
         escenaHUD.addActor(pad);
+
+
     }
 
     private void cargarTexturas() {
         texturaPrimerPlano = new Texture("primerPlano_01.png");
         texturaBotonPausa = new Texture("Boton Pausa.png");
-        texturaScore=new Texture("ingamescore.png");
         texturaMenuPausa=new Texture("fondoMadera.png");
         texturaGamePaused=new Texture("gamePaused.png");
         texturaResumeButton=new Texture("resumeButton.png");
@@ -287,6 +286,11 @@ public class PantallaPrincipal extends Pantalla {
         renderer.setView(camara);
         renderer.render();
         batch.begin();
+        texto = new Texto("Fonts/WorldOfWater.fnt");
+
+        texto.mostrarMensaje(batch,Integer.toString(marcador), ANCHO/7,(ALTO/2)+350);
+        batch.end();
+        batch.begin();
         if(flag){
             sistemaParticulas.update(delta);
             sistemaParticulas.draw(batch);
@@ -296,6 +300,7 @@ public class PantallaPrincipal extends Pantalla {
         if(kai.recolectarItems(mapa)){
             int x = (int)(kai.sprite.getX());
             int y = (int)(kai.sprite.getY());
+            marcador+=1;
             sistemaParticulas = new ParticleEffect();
             sistemaParticulas.load(Gdx.files.internal("pezVanish.pe"),Gdx.files.internal(""));
             sistemaParticulas.getEmitters().first().setPosition(x+kai.sprite.getWidth(),y+kai.sprite.getHeight());
@@ -303,8 +308,13 @@ public class PantallaPrincipal extends Pantalla {
             flag=true;
         }
 
+
+
         kai.dibujar(batch);
         batch.end();
+
+
+
 
         //OTRA CAMARA
         batch.setProjectionMatrix(camaraHUD.combined);
@@ -313,6 +323,8 @@ public class PantallaPrincipal extends Pantalla {
             menu.setScreen(new PantallaMenu(menu));
         }
     }
+
+
 
 
     // Actualiza la posición de la cámara para que el personaje esté en el centro,
@@ -339,7 +351,6 @@ public class PantallaPrincipal extends Pantalla {
 
     @Override
     public void resume() {
-
     }
 
     @Override
@@ -347,7 +358,6 @@ public class PantallaPrincipal extends Pantalla {
         escenaHUD.dispose();
         texturaPrimerPlano.dispose();
         texturaBotonPausa.dispose();
-        texturaScore.dispose();
         texturaMenuPausa.dispose();
         texturaGamePaused.dispose();
         texturaResumeButton.dispose();

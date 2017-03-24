@@ -22,6 +22,7 @@ public class Kai extends Objeto{
 
     private EstadoMovimiento estadoMovimiento = EstadoMovimiento.QUIETO;
 
+
     // Salto
     private EstadoSalto estadoSalto = EstadoSalto.EN_PISO;
     private float alturaSalto;  // altura actual, inicia en cero
@@ -180,6 +181,7 @@ public class Kai extends Objeto{
         if (celda!=null ) {
             Object tipo = celda.getTile().getProperties().get("tipo");
             if ( "pez".equals(tipo) ) {
+                
                 //capaPez.setOpacity(1);
                 //actualizarItems(delta, capa, x,y+1,celda);
                 //capa.setCell(x,y,null);    // Borra la moneda del mapa
