@@ -56,6 +56,7 @@ public class PantallaExtras extends Pantalla {
 
         TextureRegionDrawable trdBtnBack = new TextureRegionDrawable(new TextureRegion(texturaBotonRetorno));
         ImageButton btnBack = new ImageButton(trdBtnBack);
+        btnBack.setSize(120,120);
         btnBack.setPosition(0,0);
         escena.addActor(btnBack);
 
