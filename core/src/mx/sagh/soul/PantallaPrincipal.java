@@ -30,7 +30,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.sun.org.apache.xalan.internal.xsltc.runtime.StringValueHandler;
 
 public class PantallaPrincipal extends Pantalla {
     private final colourlessSoul menu;
@@ -56,6 +55,7 @@ public class PantallaPrincipal extends Pantalla {
     private OrthographicCamera camaraHUD;
     private Viewport vistaHUD;
     private Stage escenaHUD;
+    private Touchpad pad;
 
     //texturas
     private Texture texturaPrimerPlano;
@@ -71,7 +71,12 @@ public class PantallaPrincipal extends Pantalla {
     private Texture texturaSettingsButton;
     private Texture texturaMainMenuButton;
 
+    // Puntos del jugador y computadora
+    private int score = 0;
+    private Texto texto;
+
     private boolean flag;
+    public EstadoNivel estado;
 
 
     public PantallaPrincipal(colourlessSoul menu) {
@@ -89,7 +94,8 @@ public class PantallaPrincipal extends Pantalla {
     }
 
     private void crearObjetos() {
-
+        texto = new Texto();
+        estado = EstadoNivel.ACTIVE;
 
         AssetManager manager = new AssetManager();
         manager.setLoader(TiledMap.class,
@@ -108,40 +114,22 @@ public class PantallaPrincipal extends Pantalla {
         renderer = new OrthogonalTiledMapRenderer(mapa, batch);
         renderer.setView(camara);
 
+
         crearHUD();
         Gdx.input.setInputProcessor(escenaHUD);
-        kai = new Kai(texturaKaiCaminando, texturaKaiReposo,0,128);
+        kai = new Kai(texturaKaiCaminando, texturaKaiReposo,64,128);
+
+
 
         //Boton
         TextureRegionDrawable trdBtnPausa = new TextureRegionDrawable(new TextureRegion(texturaBotonPausa));
         ImageButton btnPausa = new ImageButton(trdBtnPausa);
+        btnPausa.setSize(32,32);
         btnPausa.setPosition(2*ANCHO/3+220,2*ALTO/3-btnPausa.getHeight()+220);
         escenaHUD.addActor(btnPausa);
 
-        //Baba
-        TextureRegionDrawable Baba = new TextureRegionDrawable(new TextureRegion(texturaBaba));
-        ImageButton personajeBaba = new ImageButton(Baba);
-        personajeBaba.setPosition(ANCHO/2+220,ALTO/35-30);
-        escenaHUD.addActor(personajeBaba);
-        //Pez
-        TextureRegionDrawable Peces = new TextureRegionDrawable(new TextureRegion(texturaPez));
-        ImageButton coinspeces = new ImageButton(Peces);
-        coinspeces.setPosition(ANCHO/2-300,ALTO/35-10);
-        escenaHUD.addActor(coinspeces);
 
-        //Poción
-        TextureRegionDrawable Pocion = new TextureRegionDrawable(new TextureRegion(texturaPocion));
-        ImageButton pociones = new ImageButton(Pocion);
-        pociones.setPosition(ANCHO/2,ALTO/35-10);
-        escenaHUD.addActor(pociones);
-
-        //Score
-        TextureRegionDrawable Score = new TextureRegionDrawable(new TextureRegion(texturaScore));
-        ImageButton puntaje = new ImageButton(Score);
-        puntaje.setPosition(ANCHO/2-600,ALTO/35+680);
-        escenaHUD.addActor(puntaje);
-
-        //Pantalla pausa
+       //Pantalla pausa
         final Image imgPause = new Image(texturaMenuPausa);
         imgPause.setPosition(ANCHO/2-imgPause.getWidth()/2,ALTO/2-imgPause.getHeight()/2);
 
@@ -171,6 +159,8 @@ public class PantallaPrincipal extends Pantalla {
         btnPausa.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                estado = EstadoNivel.PAUSED;
+                pad.remove();
                 escenaHUD.addActor(imgPause);
                 escenaHUD.addActor(imgGamePaused);
                 escenaHUD.addActor(btnResume);
@@ -181,6 +171,8 @@ public class PantallaPrincipal extends Pantalla {
                 btnResume.addListener(new ClickListener(){
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
+                        estado = EstadoNivel.ACTIVE;
+                        escenaHUD.addActor(pad);
                         clickSound.play();
                         while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                         imgPause.remove();
@@ -248,7 +240,7 @@ public class PantallaPrincipal extends Pantalla {
         estilo.background = skin.getDrawable("padBack");
         estilo.knob = skin.getDrawable("padKnob");
 
-        Touchpad pad = new Touchpad(20, estilo);
+        pad = new Touchpad(20, estilo);
         pad.setBounds(0, 0, 200, 200);
         pad.setColor(1,1,1,0.5f);
 
@@ -274,7 +266,7 @@ public class PantallaPrincipal extends Pantalla {
 
     private void cargarTexturas() {
         texturaPrimerPlano = new Texture("primerPlano_01.png");
-        texturaBotonPausa = new Texture("Pausa.png");
+        texturaBotonPausa = new Texture("pauseButton.png");
         texturaBaba=new Texture("Baba3.png");
         texturaPez=new Texture("pez.png");
         texturaPocion=new Texture("pocion.png");
@@ -291,44 +283,56 @@ public class PantallaPrincipal extends Pantalla {
 
     @Override
     public void render(float delta) {
-        // Actualizar
-        kai.actualizar(mapa);
-
-
-        //Mover la camara
-        actualizarCamara();
+        if(estado != EstadoNivel.PAUSED) {
+            kai.actualizar(mapa);
+            actualizarCamara();
+        }
 
         // 60 x seg
         borrarPantalla();
         batch.setProjectionMatrix(camara.combined);
         renderer.setView(camara);
         renderer.render();
+
         batch.begin();
-        if(flag){
+
+        if (flag) {
             sistemaParticulas.update(delta);
             sistemaParticulas.draw(batch);
-            if(sistemaParticulas.getEmitters().first().getActiveCount()>=1)
+            if (sistemaParticulas.getEmitters().first().getActiveCount() >= 1)
                 sistemaParticulas.allowCompletion();
         }
-        if(kai.recolectarItems(mapa)){
-            int x = (int)(kai.sprite.getX());
-            int y = (int)(kai.sprite.getY());
+        if (kai.recolectarItems(mapa)) {
+            int x = (int) (kai.sprite.getX());
+            int y = (int) (kai.sprite.getY());
             sistemaParticulas = new ParticleEffect();
-            sistemaParticulas.load(Gdx.files.internal("pezVanish.pe"),Gdx.files.internal(""));
-            sistemaParticulas.getEmitters().first().setPosition(x+kai.sprite.getWidth(),y+kai.sprite.getHeight());
+            sistemaParticulas.load(Gdx.files.internal("pezVanish.pe"), Gdx.files.internal(""));
+            sistemaParticulas.getEmitters().first().setPosition(x + kai.sprite.getWidth(), y + kai.sprite.getHeight());
             efectoCroqueta.play();
-            flag=true;
+            score++;
+            flag = true;
         }
 
+        if (kai.esAlcanzado(mapa, camara)) {
+            menu.setScreen(new PantallaMenu(menu));
+        }
         kai.dibujar(batch);
         batch.end();
 
         //OTRA CAMARA
         batch.setProjectionMatrix(camaraHUD.combined);
+
         escenaHUD.draw();
-        if(Gdx.input.isKeyJustPressed(Input.Keys.BACK)){
+
+        if(PantallaAjustes.estadoJugabilidad == PantallaAjustes.EstadoJugabilidad.TOUCH)
+            pad.remove();
+        batch.begin();
+        texto.mostrarMensaje(batch, Integer.toString(score), ANCHO / 2 - 600, ALTO / 35 + 680);
+        batch.end();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
             menu.setScreen(new PantallaMenu(menu));
         }
+
     }
 
 
@@ -337,7 +341,7 @@ public class PantallaPrincipal extends Pantalla {
     private void actualizarCamara() {
         float posX = kai.sprite.getX(); //siempre es el sprite quien me da la x o la y del personaje
         // Si está en la parte 'media'
-        if (posX>=ANCHO/2 && posX<=ANCHO_MAPA-ANCHO/2) {
+        /*if (posX>=ANCHO/2 && posX<=ANCHO_MAPA-ANCHO/2) {
             // El personaje define el centro de la cámara
             camara.position.set((int)posX, camara.position.y, 0);
         } else if (posX>ANCHO_MAPA-ANCHO/2) {    // Si está en la última mitad
@@ -345,7 +349,11 @@ public class PantallaPrincipal extends Pantalla {
             camara.position.set(ANCHO_MAPA-ANCHO/2, camara.position.y, 0);
         } else if ( posX<ANCHO/2 ) { // La primera mitad
             camara.position.set(ANCHO/2, ALTO/2,0);
-        }
+        }*/
+
+
+        camara.position.set(camara.position.x+35*Gdx.graphics.getDeltaTime(), camara.position.y, 0);
+
         camara.update();
     }
 
@@ -378,4 +386,5 @@ public class PantallaPrincipal extends Pantalla {
         texturaKaiCaminando.dispose();
         texturaKaiReposo.dispose();
     }
+
 }

@@ -1,6 +1,7 @@
 package mx.sagh.soul;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
@@ -104,7 +105,7 @@ public class Kai extends Objeto{
             case SUBIENDO:
                 sprite.setY(sprite.getY()+delta);
                 alturaSalto += delta;
-                if (alturaSalto>=2*sprite.getHeight()) {
+                if (alturaSalto>=sprite.getHeight()) {
                     estadoSalto = EstadoSalto.BAJANDO;
                 }
                 break;
@@ -180,28 +181,24 @@ public class Kai extends Objeto{
         if (celda!=null ) {
             Object tipo = celda.getTile().getProperties().get("tipo");
             if ( "pez".equals(tipo) ) {
-                //capaPez.setOpacity(1);
-                //actualizarItems(delta, capa, x,y+1,celda);
-                //capa.setCell(x,y,null);    // Borra la moneda del mapa
-                //capa.setCell(x,y,capa.getCell(0,4)); // Cuadro azul en lugar de la moneda
+                capa.setCell(x,y,null);    // Borra la moneda del mapa
+                capa.setCell(x,y,capa.getCell(0,4)); // Cuadro azul en lugar de la moneda
                 return true;
             }
         }
-
         x = (int)(sprite.getX()/32)+3;
         y = (int)(sprite.getY()/32);
         celda = capa.getCell(x,y);
         if (celda!=null ) {
             Object tipo = celda.getTile().getProperties().get("tipo");
-            if ( "pez".equals(tipo) || "pocion".equals(tipo)) {
+            if ( "pez".equals(tipo)) {
                 capa.setCell(x,y,null);    // Borra la moneda del mapa
                 capa.setCell(x,y,capa.getCell(0,4)); // Cuadro azul en lugar de la moneda
                 return true;
             }
         }
-/*
-        x = (int)(sprite.getX()/64);
-        y = (int)(sprite.getY()/64)+1;
+        x = (int)(sprite.getX()/32);
+        y = (int)(sprite.getY()/32)+1;
         celda = capa.getCell(x,y);
         if (celda!=null ) {
             Object tipo = celda.getTile().getProperties().get("tipo");
@@ -211,9 +208,8 @@ public class Kai extends Objeto{
                 return true;
             }
         }
-
-        x = (int)(sprite.getX()/64)+1;
-        y = (int)(sprite.getY()/64)+1;
+        x = (int)(sprite.getX()/32)+1;
+        y = (int)(sprite.getY()/32)+1;
         celda = capa.getCell(x,y);
         if (celda!=null ) {
             Object tipo = celda.getTile().getProperties().get("tipo");
@@ -222,7 +218,7 @@ public class Kai extends Objeto{
                 capa.setCell(x,y,capa.getCell(0,4)); // Cuadro azul en lugar de la moneda
                 return true;
             }
-        }*/
+        }
         return false;
     }
 
@@ -253,6 +249,10 @@ public class Kai extends Objeto{
             yOriginal = sprite.getY();
             alturaSalto = 0;
         }
+    }
+
+    public boolean esAlcanzado(TiledMap mapa, OrthographicCamera camara) {
+        return (camara.position.x-Pantalla.ANCHO/2+sprite.getWidth()/2) >= (sprite.getX()+sprite.getWidth());
     }
 
     public enum EstadoMovimiento {

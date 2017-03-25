@@ -12,6 +12,7 @@ public class colourlessSoul extends Game {
 
 	@Override
 	public void create() {
+		PantallaAjustes.estadoJugabilidad = PantallaAjustes.EstadoJugabilidad.TOUCH;
 		setScreen(new PantallaMenu(this));
 	}
 }

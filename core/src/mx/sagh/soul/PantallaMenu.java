@@ -54,12 +54,12 @@ public class PantallaMenu extends Pantalla {
         //Botones del menú principal
         TextureRegionDrawable trdBtnStart = new TextureRegionDrawable(new TextureRegion(texturaBotonInicio));
         ImageButton btnStart = new ImageButton(trdBtnStart);
-        btnStart.setPosition(2*ANCHO/3, 2*ALTO/3+btnStart.getHeight());
+        btnStart.setPosition(2*ANCHO/3, 2*ALTO/3-btnStart.getHeight());
         escena.addActor(btnStart);
 
         TextureRegionDrawable trdBtnLoad = new TextureRegionDrawable(new TextureRegion(texturaBotonCargar));
         ImageButton btnLoad = new ImageButton(trdBtnLoad);
-        btnLoad.setPosition(2*ANCHO/3, 2*ALTO/3-btnLoad.getHeight());
+        btnLoad.setPosition(2*ANCHO/3, 2*ALTO/3-2*btnLoad.getHeight());
         escena.addActor(btnLoad);
 
         TextureRegionDrawable trdBtnSettings = new TextureRegionDrawable(new TextureRegion(texturaBotonAjustes));
@@ -69,7 +69,7 @@ public class PantallaMenu extends Pantalla {
 
         TextureRegionDrawable trdBtnExtras = new TextureRegionDrawable(new TextureRegion(texturaBotonExtras));
         ImageButton btnExtras = new ImageButton(trdBtnExtras);
-        btnExtras.setPosition(2*ANCHO/3, 2*ALTO/3-5*btnLoad.getHeight());
+        btnExtras.setPosition(2*ANCHO/3, 2*ALTO/3-4*btnLoad.getHeight());
         escena.addActor(btnExtras);
 
         // Evento del boton

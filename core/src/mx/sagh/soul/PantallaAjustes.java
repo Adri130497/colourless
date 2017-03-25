@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 public class PantallaAjustes extends Pantalla {
     private final colourlessSoul menu;
     public static EstadoInvocado estado;
+    public static  EstadoJugabilidad estadoJugabilidad;
 
     //sonidos
     private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("click.mp3"));
@@ -166,12 +167,14 @@ public class PantallaAjustes extends Pantalla {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if(imgControlB.getStage() == null){
-                    Gdx.app.log("LOG","BUTTON OFF");
+                    estadoJugabilidad = EstadoJugabilidad.BOTONES;
+                    Gdx.app.log("LOG","TOUCH OFF");
                     escena.addActor(imgControlB);
                     imgControlT.remove();
                 }
                 else if(imgControlT.getStage() == null){
-                    Gdx.app.log("LOG","TOUCH OFF");
+                    estadoJugabilidad = EstadoJugabilidad.TOUCH;
+                    Gdx.app.log("LOG","BUTTONS OFF");
                     escena.addActor(imgControlT);
                     imgControlB.remove();
                 }
@@ -228,5 +231,10 @@ public class PantallaAjustes extends Pantalla {
         texturaBotonL.dispose();
         texturaBotonRegreso.dispose();
         clickSound.dispose();
+    }
+
+    public enum EstadoJugabilidad {
+        BOTONES,
+        TOUCH
     }
 }
