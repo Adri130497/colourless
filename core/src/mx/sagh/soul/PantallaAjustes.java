@@ -69,10 +69,13 @@ public class PantallaAjustes extends Pantalla {
 
         final Image imgControlT = new Image(texturaControlTouch);
         imgControlT.setPosition(ANCHO/2-imgControlT.getWidth()/2,imgControlChange.getY()+1);
-        escena.addActor(imgControlT);
+        if(estadoJugabilidad == EstadoJugabilidad.TOUCH)
+            escena.addActor(imgControlT);
 
         final Image imgControlB = new Image(texturaControlButton);
         imgControlB.setPosition(ANCHO/2-imgControlB.getWidth()/2,imgControlChange.getY()+1);
+        if(estadoJugabilidad == EstadoJugabilidad.BOTONES)
+            escena.addActor(imgControlB);
 
         Image imgControlMS = new Image(texturaMusicSounds);
         imgControlMS.setPosition(ANCHO/2-imgControlMS.getWidth()/2,imgSettings.getY()+4*imgControlChange.getHeight());

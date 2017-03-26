@@ -6,6 +6,7 @@ package mx.sagh.soul;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Music;
@@ -15,12 +16,16 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.FloatAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -87,10 +92,13 @@ public class PantallaPrincipal extends Pantalla {
     public void show() {
         // Cuando cargan la pantalla
         cargarTexturas();
-        crearObjetos();
         sistemaParticulas = new ParticleEffect();
         flag = false;
         sistemaParticulas.load(Gdx.files.internal("pezVanish.pe"),Gdx.files.internal(""));
+        if(PantallaAjustes.estadoJugabilidad == PantallaAjustes.EstadoJugabilidad.TOUCH) {
+            Gdx.input.setInputProcessor(new GestureDetector(new ProcesadorEntrada()));
+        }
+        crearObjetos();
     }
 
     private void crearObjetos() {
@@ -218,8 +226,6 @@ public class PantallaPrincipal extends Pantalla {
 
             }
         });
-
-        Gdx.input.setInputProcessor(escenaHUD);
         Gdx.input.setCatchBackKey(true);
     }
 
@@ -314,7 +320,7 @@ public class PantallaPrincipal extends Pantalla {
         }
 
         if (kai.esAlcanzado(mapa, camara)) {
-            menu.setScreen(new PantallaMenu(menu));
+            //menu.setScreen(new PantallaMenu(menu));
         }
         kai.dibujar(batch);
         batch.end();
@@ -387,4 +393,77 @@ public class PantallaPrincipal extends Pantalla {
         texturaKaiReposo.dispose();
     }
 
+    private class ProcesadorEntrada implements GestureDetector.GestureListener {
+        @Override
+        public boolean touchDown(float x, float y, int pointer, int button) {
+            return false;
+        }
+
+        @Override
+        public boolean tap(float x, float y, int count, int button) {
+            return false;
+        }
+
+        @Override
+        public boolean longPress(float x, float y) {
+            return false;
+        }
+
+        @Override
+        public boolean fling(float velocityX, float velocityY, int button) {
+            return false;
+        }
+/*
+        if (pad.getKnobPercentX()>0.20) {
+            kai.setEstadoMovimiento(Kai.EstadoMovimiento.MOV_DERECHA);
+        } else if (pad.getKnobPercentX()<-0.20){
+            kai.setEstadoMovimiento(Kai.EstadoMovimiento.MOV_IZQUIERDA);
+        } else if(pad.getKnobPercentY()>0.20) {
+            kai.saltar();
+        } else {
+            kai.setEstadoMovimiento(Kai.EstadoMovimiento.QUIETO);
+        }*/
+
+        @Override
+        public boolean pan(float x, float y, float deltaX, float deltaY) {
+            Vector3 v = new Vector3(x,y,0);
+            camaraHUD.unproject(v); //Transforma de un sistema a otro
+            if(v.x<ANCHO/2){
+                if(deltaX>0)
+                    kai.setEstadoMovimiento(Kai.EstadoMovimiento.MOV_DERECHA);
+                else if (deltaX<0)
+                    kai.setEstadoMovimiento(Kai.EstadoMovimiento.MOV_IZQUIERDA);
+                else
+                    kai.setEstadoMovimiento(Kai.EstadoMovimiento.QUIETO);
+            }
+            else {
+
+                Gdx.app.log("Mitad:", "DER");
+            }
+            //Gdx.app.log("Dragged: ",Float.toString(v.x)+", "+Float.toString(v.y)+" deltaX: "+ Float.toString(deltaX));
+
+            return true;
+        }
+
+        @Override
+        public boolean panStop(float x, float y, int pointer, int button) {
+            kai.setEstadoMovimiento(Kai.EstadoMovimiento.QUIETO);
+            return true;
+        }
+
+        @Override
+        public boolean zoom(float initialDistance, float distance) {
+            return false;
+        }
+
+        @Override
+        public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1, Vector2 pointer2) {
+            return false;
+        }
+
+        @Override
+        public void pinchStop() {
+
+        }
+    }
 }
