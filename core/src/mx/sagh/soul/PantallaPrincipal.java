@@ -6,11 +6,9 @@ package mx.sagh.soul;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
@@ -25,7 +23,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.actions.FloatAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -40,11 +37,11 @@ public class PantallaPrincipal extends Pantalla {
     private final colourlessSoul menu;
 
     public static final float ANCHO_MAPA = 5120;
-    private OrthogonalTiledMapRenderer renderer, renderer2; // Dibuja el mapa
+    private OrthogonalTiledMapRenderer renderer; // Dibuja el mapa
     private TiledMap mapa;
 
     //Sistema de partículas
-    private ParticleEffect sistemaParticulas;
+    private ParticleEffect sistemaParticulasCroqueta, sistemaParticulasPocion;
 
     private SpriteBatch batch;
 
@@ -54,13 +51,22 @@ public class PantallaPrincipal extends Pantalla {
 
     // Música / efectos
     private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("click.mp3"));
-    private Sound efectoCroqueta;
 
     // HUD
     private OrthographicCamera camaraHUD;
     private Viewport vistaHUD;
     private Stage escenaHUD;
     private Touchpad pad;
+    private ImageButton btnPausa;
+    private Image imgPause;
+    private Image imgGamePaused;
+    private Image vida1, vida2, vida3, vida4, vida5, vida6, vida7, vidaFull;
+    private Image spritesVida[];
+    private ImageButton btnResume;
+    private ImageButton btnRestart;
+    private ImageButton btnSettings;
+    private ImageButton btnMainMenu;
+    private ImageButton btnUp;
 
     //texturas
     private Texture texturaPrimerPlano;
@@ -75,12 +81,14 @@ public class PantallaPrincipal extends Pantalla {
     private Texture texturaRestartButton;
     private Texture texturaSettingsButton;
     private Texture texturaMainMenuButton;
+    private Texture texturaBotonUp;
+    private Texture barra1,barra2,barra3,barra4,barra5,barra6,barra7,barraFull;
 
     // Puntos del jugador y computadora
     private int score = 0;
     private Texto texto;
 
-    private boolean flag;
+    private boolean bitedCookie, tookPotion;
     public EstadoNivel estado;
 
 
@@ -92,13 +100,17 @@ public class PantallaPrincipal extends Pantalla {
     public void show() {
         // Cuando cargan la pantalla
         cargarTexturas();
-        sistemaParticulas = new ParticleEffect();
-        flag = false;
-        sistemaParticulas.load(Gdx.files.internal("pezVanish.pe"),Gdx.files.internal(""));
-        if(PantallaAjustes.estadoJugabilidad == PantallaAjustes.EstadoJugabilidad.TOUCH) {
-            Gdx.input.setInputProcessor(new GestureDetector(new ProcesadorEntrada()));
-        }
         crearObjetos();
+        sistemaParticulasCroqueta = new ParticleEffect();
+        sistemaParticulasPocion = new ParticleEffect();
+        bitedCookie = false;
+        tookPotion = false;
+        sistemaParticulasCroqueta.load(Gdx.files.internal("pezVanish.pe"),Gdx.files.internal(""));
+        sistemaParticulasPocion.load(Gdx.files.internal("pocionVanish.pe"),Gdx.files.internal(""));
+        if(PantallaAjustes.estadoJugabilidad == PantallaAjustes.EstadoJugabilidad.TOUCH)
+            Gdx.input.setInputProcessor(new GestureDetector(new ProcesadorEntrada()));
+
+
     }
 
     private void crearObjetos() {
@@ -110,13 +122,8 @@ public class PantallaPrincipal extends Pantalla {
                 new TmxMapLoader(new InternalFileHandleResolver()));
         manager.load("mapaColourless.tmx", TiledMap.class);
 
-        //Cargar audios
-        manager.load("bite1.mp3",Sound.class);
-
         manager.finishLoading();    // Carga los recursos
         mapa = manager.get("mapaColourless.tmx");
-
-        efectoCroqueta = manager.get("bite1.mp3");
 
         batch = new SpriteBatch();
         renderer = new OrthogonalTiledMapRenderer(mapa, batch);
@@ -127,106 +134,138 @@ public class PantallaPrincipal extends Pantalla {
         Gdx.input.setInputProcessor(escenaHUD);
         kai = new Kai(texturaKaiCaminando, texturaKaiReposo,64,128);
 
-
-
-        //Boton
+        //Botones
         TextureRegionDrawable trdBtnPausa = new TextureRegionDrawable(new TextureRegion(texturaBotonPausa));
-        ImageButton btnPausa = new ImageButton(trdBtnPausa);
-        btnPausa.setSize(32,32);
+        btnPausa = new ImageButton(trdBtnPausa);
+        btnPausa.setSize(64,64);
         btnPausa.setPosition(2*ANCHO/3+220,2*ALTO/3-btnPausa.getHeight()+220);
         escenaHUD.addActor(btnPausa);
 
+        TextureRegionDrawable trdBtnUp = new TextureRegionDrawable(new TextureRegion(texturaBotonUp));
+        btnUp = new ImageButton(trdBtnUp);
+        btnUp.setPosition(ANCHO-btnUp.getWidth(),0);
+        escenaHUD.addActor(btnUp);
 
         //Pantalla pausa
-        final Image imgPause = new Image(texturaMenuPausa);
+        imgPause = new Image(texturaMenuPausa);
         imgPause.setPosition(ANCHO/2-imgPause.getWidth()/2,ALTO/2-imgPause.getHeight()/2);
 
-        final Image imgGamePaused = new Image(texturaGamePaused);
+        imgGamePaused = new Image(texturaGamePaused);
         imgGamePaused.setPosition(ANCHO/2-imgGamePaused.getWidth()/2,imgPause.getY()+imgPause.getHeight()-2*imgGamePaused.getHeight()-10);
 
+        vida1 = new Image(barra1);
+        vida2 = new Image(barra2);
+        vida3 = new Image(barra3);
+        vida4 = new Image(barra4);
+        vida5 = new Image(barra5);
+        vida6 = new Image(barra6);
+        vida7 = new Image(barra7);
+        vidaFull = new Image(barraFull);
+
+        spritesVida = new Image[]{vidaFull, vida1, vida2, vida3, vida4, vida5, vida6, vida7};
+        for (Image sprite : spritesVida) {
+            sprite.setPosition(25,btnPausa.getY()+btnPausa.getHeight()-sprite.getHeight());
+        }
+        escenaHUD.addActor(spritesVida[0]);
+
         TextureRegionDrawable trdBtnResume = new TextureRegionDrawable(new TextureRegion(texturaResumeButton));
-        final ImageButton btnResume = new ImageButton(trdBtnResume);
+        btnResume = new ImageButton(trdBtnResume);
         btnResume.setPosition(ANCHO/2-btnResume.getWidth()/2,imgGamePaused.getY()-2*btnResume.getHeight());
 
         TextureRegionDrawable trdBtnRestart = new TextureRegionDrawable(new TextureRegion(texturaRestartButton));
-        final ImageButton btnRestart = new ImageButton(trdBtnRestart);
+        btnRestart = new ImageButton(trdBtnRestart);
         btnRestart.setPosition(ANCHO/2-btnRestart.getWidth()/2,btnResume.getY()-35-btnRestart.getHeight());
 
         TextureRegionDrawable trdBtnSettings = new TextureRegionDrawable(new TextureRegion(texturaSettingsButton));
-        final ImageButton btnSettings = new ImageButton(trdBtnSettings);
+        btnSettings = new ImageButton(trdBtnSettings);
         btnSettings.setPosition(ANCHO/2-btnSettings.getWidth()/2,btnRestart.getY()-35-btnSettings.getHeight());
 
         TextureRegionDrawable trdBtnMainMenu = new TextureRegionDrawable(new TextureRegion(texturaMainMenuButton));
-        final ImageButton btnMainMenu = new ImageButton(trdBtnMainMenu);
+        btnMainMenu = new ImageButton(trdBtnMainMenu);
         btnMainMenu.setPosition(ANCHO/2-btnMainMenu.getWidth()/2,btnSettings.getY()-35-btnMainMenu.getHeight());
-
-
-
 
         // Evento del botón
         btnPausa.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                estado = EstadoNivel.PAUSED;
-                pad.remove();
-                escenaHUD.addActor(imgPause);
-                escenaHUD.addActor(imgGamePaused);
-                escenaHUD.addActor(btnResume);
-                escenaHUD.addActor(btnRestart);
-                escenaHUD.addActor(btnSettings);
-                escenaHUD.addActor(btnMainMenu);
-
-                btnResume.addListener(new ClickListener(){
-                    @Override
-                    public void clicked(InputEvent event, float x, float y) {
-                        estado = EstadoNivel.ACTIVE;
-                        escenaHUD.addActor(pad);
-                        clickSound.play();
-                        while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                        imgPause.remove();
-                        imgGamePaused.remove();
-                        btnResume.remove();
-                        btnRestart.remove();
-                        btnSettings.remove();
-                        btnMainMenu.remove();
-                        clickSound.stop();
-                    }
-                });
-
-                btnSettings.addListener(new ClickListener(){
-                    @Override
-                    public void clicked(InputEvent event, float x, float y) {
-                        clickSound.play();
-                        while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                        PantallaAjustes.estado = EstadoInvocado.PANTALLA_PRINCIPAL;
-                        menu.setScreen(new PantallaAjustes(menu));
-                        clickSound.stop();
-                    }
-                });
-
-                btnRestart.addListener(new ClickListener(){
-                    @Override
-                    public void clicked(InputEvent event, float x, float y) {
-                        clickSound.play();
-                        while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                        menu.setScreen(new PantallaPrincipal(menu));
-                        clickSound.stop();
-                    }
-                });
-
-                btnMainMenu.addListener(new ClickListener(){
-                    @Override
-                    public void clicked(InputEvent event, float x, float y) {
-                        clickSound.play();
-                        while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                        menu.setScreen(new PantallaMenu(menu));
-                        clickSound.stop();
-                    }
-                });
-
+                inPauseEvent();
             }
         });
+
+        btnUp.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                kai.saltar();
+            }
+        });
+
+
         Gdx.input.setCatchBackKey(true);
+    }
+
+    private void inPauseEvent() {
+        Gdx.input.setInputProcessor(escenaHUD);
+        estado = EstadoNivel.PAUSED;
+        pad.remove();
+        btnUp.remove();
+        escenaHUD.addActor(imgPause);
+        escenaHUD.addActor(imgGamePaused);
+        escenaHUD.addActor(btnResume);
+        escenaHUD.addActor(btnRestart);
+        escenaHUD.addActor(btnSettings);
+        escenaHUD.addActor(btnMainMenu);
+
+        btnResume.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                estado = EstadoNivel.ACTIVE;
+                escenaHUD.addActor(pad);
+                escenaHUD.addActor(btnUp);
+                clickSound.play();
+                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
+                imgPause.remove();
+                imgGamePaused.remove();
+                btnResume.remove();
+                btnRestart.remove();
+                btnSettings.remove();
+                btnMainMenu.remove();
+                clickSound.stop();
+                if(PantallaAjustes.estadoJugabilidad == PantallaAjustes.EstadoJugabilidad.TOUCH)
+                    Gdx.input.setInputProcessor(new GestureDetector(new ProcesadorEntrada()));
+            }
+        });
+
+        btnSettings.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                clickSound.play();
+                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
+                PantallaAjustes.estado = EstadoInvocado.PANTALLA_PRINCIPAL;
+                menu.setScreen(new PantallaAjustes(menu));
+                clickSound.stop();
+            }
+        });
+
+        btnRestart.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                clickSound.play();
+                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
+                menu.setScreen(new PantallaPrincipal(menu));
+                clickSound.stop();
+            }
+        });
+
+        btnMainMenu.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                clickSound.play();
+                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
+                menu.setScreen(new PantallaMenu(menu));
+                clickSound.stop();
+            }
+        });
+
     }
 
     private void crearHUD() {
@@ -236,7 +275,6 @@ public class PantallaPrincipal extends Pantalla {
         camaraHUD.update();
 
         vistaHUD = new StretchViewport(ANCHO, ALTO, camaraHUD);
-
         // HUD
         Skin skin = new Skin();
         skin.add("padBack", new Texture("padBack.png"));
@@ -247,7 +285,7 @@ public class PantallaPrincipal extends Pantalla {
         estilo.knob = skin.getDrawable("padKnob");
 
         pad = new Touchpad(20, estilo);
-        pad.setBounds(0, 0, 200, 200);
+        pad.setBounds(0, 0, 120, 120);
         pad.setColor(1,1,1,0.5f);
 
         pad.addListener(new ChangeListener() {
@@ -258,8 +296,6 @@ public class PantallaPrincipal extends Pantalla {
                     kai.setEstadoMovimiento(Kai.EstadoMovimiento.MOV_DERECHA);
                 } else if (pad.getKnobPercentX()<-0.20){
                     kai.setEstadoMovimiento(Kai.EstadoMovimiento.MOV_IZQUIERDA);
-                } else if(pad.getKnobPercentY()>0.20) {
-                    kai.saltar();
                 } else {
                     kai.setEstadoMovimiento(Kai.EstadoMovimiento.QUIETO);
                 }
@@ -285,6 +321,16 @@ public class PantallaPrincipal extends Pantalla {
         texturaMainMenuButton=new Texture("mainMenuButton.png");
         texturaKaiCaminando = new Texture("kaiWalkingSprite.png");
         texturaKaiReposo = new Texture("kaiRestingSprite.png");
+        texturaBotonUp = new Texture("upButton.png");
+        barra1 = new Texture("SpritesBarraVida/vida1.png");
+        barra2 = new Texture("SpritesBarraVida/vida2.png");
+        barra3 = new Texture("SpritesBarraVida/vida3.png");
+        barra4 = new Texture("SpritesBarraVida/vida4.png");
+        barra5 = new Texture("SpritesBarraVida/vida5.png");
+        barra6 = new Texture("SpritesBarraVida/vida6.png");
+        barra7 = new Texture("SpritesBarraVida/vida7.png");
+        barraFull = new Texture("SpritesBarraVida/vidaFull.png");
+
     }
 
     @Override
@@ -302,21 +348,36 @@ public class PantallaPrincipal extends Pantalla {
 
         batch.begin();
 
-        if (flag) {
-            sistemaParticulas.update(delta);
-            sistemaParticulas.draw(batch);
-            if (sistemaParticulas.getEmitters().first().getActiveCount() >= 1)
-                sistemaParticulas.allowCompletion();
+        if (bitedCookie) {
+            sistemaParticulasCroqueta.update(delta);
+            sistemaParticulasCroqueta.draw(batch);
+            if (sistemaParticulasCroqueta.getEmitters().first().getActiveCount() >= 1)
+                sistemaParticulasCroqueta.allowCompletion();
+        }
+        if (tookPotion) {
+            sistemaParticulasPocion.update(delta);
+            sistemaParticulasPocion.draw(batch);
+            if (sistemaParticulasPocion.getEmitters().first().getActiveCount() >= 1)
+                sistemaParticulasPocion.allowCompletion();
         }
         if (kai.recolectarItems(mapa)) {
             int x = (int) (kai.sprite.getX());
             int y = (int) (kai.sprite.getY());
-            sistemaParticulas = new ParticleEffect();
-            sistemaParticulas.load(Gdx.files.internal("pezVanish.pe"), Gdx.files.internal(""));
-            sistemaParticulas.getEmitters().first().setPosition(x + kai.sprite.getWidth(), y + kai.sprite.getHeight());
-            efectoCroqueta.play();
+            sistemaParticulasCroqueta = new ParticleEffect();
+            sistemaParticulasCroqueta.load(Gdx.files.internal("pezVanish.pe"), Gdx.files.internal(""));
+            sistemaParticulasCroqueta.getEmitters().first().setPosition(x + kai.sprite.getWidth(), y + kai.sprite.getHeight());
             score++;
-            flag = true;
+            bitedCookie = true;
+            disminuirVida();
+        }
+        if (kai.tomoPocion(mapa)) {
+            int x = (int) (kai.sprite.getX());
+            int y = (int) (kai.sprite.getY());
+            sistemaParticulasPocion = new ParticleEffect();
+            sistemaParticulasPocion.load(Gdx.files.internal("pocionVanish.pe"), Gdx.files.internal(""));
+            sistemaParticulasPocion.getEmitters().first().setPosition(x + kai.sprite.getWidth(), y + kai.sprite.getHeight());
+            tookPotion = true;
+            aumentarVida();
         }
 
         if (kai.esAlcanzado(mapa, camara)) {
@@ -329,9 +390,11 @@ public class PantallaPrincipal extends Pantalla {
         batch.setProjectionMatrix(camaraHUD.combined);
 
         escenaHUD.draw();
-
-        if(PantallaAjustes.estadoJugabilidad == PantallaAjustes.EstadoJugabilidad.TOUCH)
+        if(PantallaAjustes.estadoJugabilidad == PantallaAjustes.EstadoJugabilidad.TOUCH) {
             pad.remove();
+            btnUp.remove();
+        }
+
         batch.begin();
         texto.mostrarMensaje(batch, Integer.toString(score), ANCHO / 2 - 600, ALTO / 35 + 680);
         batch.end();
@@ -339,6 +402,33 @@ public class PantallaPrincipal extends Pantalla {
             menu.setScreen(new PantallaMenu(menu));
         }
 
+    }
+
+    private void disminuirVida() {
+        for(int i=0; i<8; i++){
+            if(spritesVida[i].getStage()!=null){
+                if(i!=7) {
+                    spritesVida[i].remove();
+                    escenaHUD.addActor(spritesVida[i+1]);
+                    break;
+                }
+                else{
+                    Gdx.app.log("Perdiste","JAJA-JAJA");
+                }
+            }
+        }
+    }
+
+    private void aumentarVida() {
+        for(int i=0; i<8; i++){
+            if(spritesVida[i].getStage()!=null){
+                if(i!=0) {
+                    spritesVida[i].remove();
+                    escenaHUD.addActor(spritesVida[i-1]);
+                    break;
+                }
+            }
+        }
     }
 
 
@@ -358,7 +448,7 @@ public class PantallaPrincipal extends Pantalla {
         }*/
 
 
-        camara.position.set(camara.position.x+15*Gdx.graphics.getDeltaTime(), camara.position.y, 0);
+        camara.position.set((float) (camara.position.x+50*Gdx.graphics.getDeltaTime()), camara.position.y, 0);
 
         camara.update();
     }
@@ -391,6 +481,7 @@ public class PantallaPrincipal extends Pantalla {
         clickSound.dispose();
         texturaKaiCaminando.dispose();
         texturaKaiReposo.dispose();
+        texturaBotonUp.dispose();
     }
 
     private class ProcesadorEntrada implements GestureDetector.GestureListener {
@@ -401,7 +492,13 @@ public class PantallaPrincipal extends Pantalla {
 
         @Override
         public boolean tap(float x, float y, int count, int button) {
-            return false;
+            Vector3 v = new Vector3(x,y,0);
+            camaraHUD.unproject(v);
+            if(v.x>=btnPausa.getX() && v.x<=(btnPausa.getX()+btnPausa.getWidth()))
+                if(v.y>=btnPausa.getY() && v.y<=(btnPausa.getY()+btnPausa.getHeight())){
+                    inPauseEvent();
+                }
+            return true;
         }
 
         @Override
@@ -413,16 +510,6 @@ public class PantallaPrincipal extends Pantalla {
         public boolean fling(float velocityX, float velocityY, int button) {
             return false;
         }
-/*
-        if (pad.getKnobPercentX()>0.20) {
-            kai.setEstadoMovimiento(Kai.EstadoMovimiento.MOV_DERECHA);
-        } else if (pad.getKnobPercentX()<-0.20){
-            kai.setEstadoMovimiento(Kai.EstadoMovimiento.MOV_IZQUIERDA);
-        } else if(pad.getKnobPercentY()>0.20) {
-            kai.saltar();
-        } else {
-            kai.setEstadoMovimiento(Kai.EstadoMovimiento.QUIETO);
-        }*/
 
         @Override
         public boolean pan(float x, float y, float deltaX, float deltaY) {
@@ -436,12 +523,13 @@ public class PantallaPrincipal extends Pantalla {
                 else
                     kai.setEstadoMovimiento(Kai.EstadoMovimiento.QUIETO);
             }
-            else {
-
-                Gdx.app.log("Mitad:", "DER");
+            if (v.x>ANCHO/2) {
+                Gdx.app.log("Touch","Derecha");
+                if(deltaY<0)
+                    kai.saltar();
+                else
+                    kai.setEstadoMovimiento(Kai.EstadoMovimiento.QUIETO);
             }
-            //Gdx.app.log("Dragged: ",Float.toString(v.x)+", "+Float.toString(v.y)+" deltaX: "+ Float.toString(deltaX));
-
             return true;
         }
 

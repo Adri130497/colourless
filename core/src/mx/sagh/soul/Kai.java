@@ -1,6 +1,9 @@
 package mx.sagh.soul;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -10,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 
 /**
  * Created by User on 17/03/2017.
@@ -28,7 +32,19 @@ public class Kai extends Objeto{
     private float alturaSalto;  // altura actual, inicia en cero
     private float yOriginal;
 
+    // Sonidos
+    private Sound efectoCroqueta, efectoPocion;
+
     public Kai(Texture texturaCaminando, Texture texturaReposo, float x, float y) {
+        AssetManager manager = new AssetManager();
+        //Cargar audios
+        manager.load("bite1.mp3",Sound.class);
+        manager.load("potion.mp3",Sound.class);
+        manager.finishLoading();
+        efectoCroqueta = manager.get("bite1.mp3");
+        efectoPocion = manager.get("potion.mp3");
+
+
         TextureRegion texturaCompleta = new TextureRegion(texturaCaminando);
         TextureRegion[][] texturaPersonaje = texturaCompleta.split(120,120);
         spriteAnimado = new Animation(0.15f, texturaPersonaje[0][0], texturaPersonaje[0][1],
@@ -171,7 +187,7 @@ public class Kai extends Objeto{
     }
 
 
-    // Revisa si toca una moneda
+    // Revisa si toca un item (croqueta o pocion de vida)
     public boolean recolectarItems(TiledMap mapa) {
         // Revisar si toca una moneda (pies)
         TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(1); //puedes recuperar una capa del mapa
@@ -181,8 +197,9 @@ public class Kai extends Objeto{
         if (celda!=null ) {
             Object tipo = celda.getTile().getProperties().get("tipo");
             if ( "pez".equals(tipo) ) {
-                capa.setCell(x,y,null);    // Borra la moneda del mapa
-                capa.setCell(x,y,capa.getCell(0,4)); // Cuadro azul en lugar de la moneda
+                capa.setCell(x,y,null);    // Borra la croqueta del mapa
+                capa.setCell(x,y,capa.getCell(0,4)); // Cuadro azul en lugar de la croqueta
+                efectoCroqueta.play();
                 return true;
             }
         }
@@ -194,6 +211,7 @@ public class Kai extends Objeto{
             if ( "pez".equals(tipo)) {
                 capa.setCell(x,y,null);    // Borra la moneda del mapa
                 capa.setCell(x,y,capa.getCell(0,4)); // Cuadro azul en lugar de la moneda
+                efectoCroqueta.play();
                 return true;
             }
         }
@@ -205,6 +223,7 @@ public class Kai extends Objeto{
             if ( "pez".equals(tipo) ) {
                 capa.setCell(x,y,null);    // Borra la moneda del mapa
                 capa.setCell(x,y,capa.getCell(0,4)); // Cuadro azul en lugar de la moneda
+                efectoCroqueta.play();
                 return true;
             }
         }
@@ -216,6 +235,7 @@ public class Kai extends Objeto{
             if ( "pez".equals(tipo) ) {
                 capa.setCell(x,y,null);    // Borra la moneda del mapa
                 capa.setCell(x,y,capa.getCell(0,4)); // Cuadro azul en lugar de la moneda
+                efectoCroqueta.play();
                 return true;
             }
         }
@@ -253,6 +273,60 @@ public class Kai extends Objeto{
 
     public boolean esAlcanzado(TiledMap mapa, OrthographicCamera camara) {
         return (camara.position.x-Pantalla.ANCHO/2+sprite.getWidth()/2) >= (sprite.getX()+sprite.getWidth());
+    }
+
+    public boolean tomoPocion(TiledMap mapa) {
+        // Revisar si toca una moneda (pies)
+        TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(1); //puedes recuperar una capa del mapa
+        int x = (int)(sprite.getX()/32);
+        int y = (int)(sprite.getY()/32);
+        TiledMapTileLayer.Cell celda = capa.getCell(x,y);
+        if (celda!=null ) {
+            Object tipo = celda.getTile().getProperties().get("tipo");
+            if ( "pocion".equals(tipo) ) {
+                capa.setCell(x,y,null);
+                capa.setCell(x,y,capa.getCell(0,4));
+                efectoPocion.play();
+                return true;
+            }
+        }
+        x = (int)(sprite.getX()/32)+3;
+        y = (int)(sprite.getY()/32);
+        celda = capa.getCell(x,y);
+        if (celda!=null ) {
+            Object tipo = celda.getTile().getProperties().get("tipo");
+            if ( "pocion".equals(tipo) ) {
+                capa.setCell(x,y,null);
+                capa.setCell(x,y,capa.getCell(0,4));
+                efectoPocion.play();
+                return true;
+            }
+        }
+        x = (int)(sprite.getX()/32);
+        y = (int)(sprite.getY()/32)+1;
+        celda = capa.getCell(x,y);
+        if (celda!=null ) {
+            Object tipo = celda.getTile().getProperties().get("tipo");
+            if ( "pocion".equals(tipo) ) {
+                capa.setCell(x,y,null);
+                capa.setCell(x,y,capa.getCell(0,4));
+                efectoPocion.play();
+                return true;
+            }
+        }
+        x = (int)(sprite.getX()/32)+1;
+        y = (int)(sprite.getY()/32)+1;
+        celda = capa.getCell(x,y);
+        if (celda!=null ) {
+            Object tipo = celda.getTile().getProperties().get("tipo");
+            if ( "pocion".equals(tipo) ) {
+                capa.setCell(x,y,null);
+                capa.setCell(x,y,capa.getCell(0,4));
+                efectoPocion.play();
+                return true;
+            }
+        }
+        return false;
     }
 
     public enum EstadoMovimiento {
