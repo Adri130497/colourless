@@ -17,6 +17,8 @@ public class Texto extends Actor {
         font = new BitmapFont(Gdx.files.internal("WorldOfWater.fnt"));
     }
 
+
+
     public void mostrarMensaje(SpriteBatch batch, String mensaje, float x, float y){
         GlyphLayout glyp = new GlyphLayout();
         glyp.setText(font, mensaje);
