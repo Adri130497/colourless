@@ -109,6 +109,9 @@ class PantallaCargando extends Pantalla
         manager.load("soundsOff.png", Texture.class);
         manager.load("soundsOn.png", Texture.class);
         manager.load("startButton.png", Texture.class);
+        manager.load("thunder.mp3", Sound.class);
+        manager.load("wind.mp3", Sound.class);
+        manager.load("slimeAnimacion.png", Texture.class);
 
     }
 
@@ -159,6 +162,10 @@ class PantallaCargando extends Pantalla
         manager.load("soundsOff.png", Texture.class);
         manager.load("soundsOn.png", Texture.class);
         manager.load("startButton.png", Texture.class);
+        manager.load("thunder.mp3", Sound.class);
+        manager.load("wind.mp3", Sound.class);
+
+
     }
 
     @Override

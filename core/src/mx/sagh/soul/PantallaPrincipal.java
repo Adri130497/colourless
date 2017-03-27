@@ -134,6 +134,7 @@ public class PantallaPrincipal extends Pantalla {
         Gdx.input.setInputProcessor(escenaHUD);
         kai = new Kai(texturaKaiCaminando, texturaKaiReposo,64,128);
 
+
         //Botones
         TextureRegionDrawable trdBtnPausa = new TextureRegionDrawable(new TextureRegion(texturaBotonPausa));
         btnPausa = new ImageButton(trdBtnPausa);
@@ -368,7 +369,7 @@ public class PantallaPrincipal extends Pantalla {
             sistemaParticulasCroqueta.getEmitters().first().setPosition(x + kai.sprite.getWidth(), y + kai.sprite.getHeight());
             score++;
             bitedCookie = true;
-            disminuirVida();
+
         }
         if (kai.tomoPocion(mapa)) {
             int x = (int) (kai.sprite.getX());
@@ -378,6 +379,11 @@ public class PantallaPrincipal extends Pantalla {
             sistemaParticulasPocion.getEmitters().first().setPosition(x + kai.sprite.getWidth(), y + kai.sprite.getHeight());
             tookPotion = true;
             aumentarVida();
+        }
+        if(kai.tocoSlime(mapa)){
+            int x = (int) (kai.sprite.getX());
+            int y = (int) (kai.sprite.getY());
+            disminuirVida();
         }
 
         if (kai.esAlcanzado(mapa, camara)) {
