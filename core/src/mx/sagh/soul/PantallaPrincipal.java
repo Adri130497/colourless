@@ -18,6 +18,7 @@ import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -48,6 +49,10 @@ public class PantallaPrincipal extends Pantalla {
     // Personaje
     private Kai kai;
     private Texture texturaKaiCaminando, texturaKaiReposo;
+
+    // Enemigo
+    public static Slime slime[];
+    private Texture texturaSlime;
 
     // Música / efectos
     private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("click.mp3"));
@@ -133,7 +138,15 @@ public class PantallaPrincipal extends Pantalla {
         crearHUD();
         Gdx.input.setInputProcessor(escenaHUD);
         kai = new Kai(texturaKaiCaminando, texturaKaiReposo,64,128);
-
+        slime = new Slime[8];
+        slime[0]= new Slime(texturaSlime, 2080, 160);
+        slime[1]= new Slime(texturaSlime, 2496, 128);
+        slime[2]= new Slime(texturaSlime, 3936, 160);
+        slime[3]= new Slime(texturaSlime, 4224, 128);
+        slime[4]= new Slime(texturaSlime, 4224, 160);
+        slime[5]= new Slime(texturaSlime, 4480, 160);
+        slime[6]= new Slime(texturaSlime, 4736, 160);
+        slime[7]= new Slime(texturaSlime, 4736, 128);
 
         //Botones
         TextureRegionDrawable trdBtnPausa = new TextureRegionDrawable(new TextureRegion(texturaBotonPausa));
@@ -187,17 +200,26 @@ public class PantallaPrincipal extends Pantalla {
 
         // Evento del botón
         btnPausa.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
+
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                 inPauseEvent();
+                return true;
             }
+            /*public void clicked(InputEvent event, float x, float y) {
+                inPauseEvent();
+            }*/
+
         });
 
         btnUp.addListener(new ClickListener(){
-            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+                kai.saltar();
+                return true;
+            }
+            /*@Override
             public void clicked(InputEvent event, float x, float y) {
                 kai.saltar();
-            }
+            }*/
         });
 
 
@@ -331,16 +353,24 @@ public class PantallaPrincipal extends Pantalla {
         barra6 = new Texture("SpritesBarraVida/vida6.png");
         barra7 = new Texture("SpritesBarraVida/vida7.png");
         barraFull = new Texture("SpritesBarraVida/vidaFull.png");
-
+        texturaSlime = new Texture("SpritesSlime/slimePiso.png");
     }
 
     @Override
     public void render(float delta) {
         if(estado != EstadoNivel.PAUSED) {
             kai.actualizar(mapa);
+            for(Slime baba: slime) {
+                baba.actualizar(mapa);
+                if((kai.sprite.getX()+400)>=baba.sprite.getX()){
+                    baba.setEstadoMovimiento(Slime.EstadoMovimiento.MOV_IZQUIERDA);
+                }
+                if(kai.tocoSlime(baba, batch)){
+                    disminuirVida();
+                }
+            }
             actualizarCamara();
         }
-
         // 60 x seg
         borrarPantalla();
         batch.setProjectionMatrix(camara.combined);
@@ -371,6 +401,7 @@ public class PantallaPrincipal extends Pantalla {
             bitedCookie = true;
 
         }
+
         if (kai.tomoPocion(mapa)) {
             int x = (int) (kai.sprite.getX());
             int y = (int) (kai.sprite.getY());
@@ -380,16 +411,18 @@ public class PantallaPrincipal extends Pantalla {
             tookPotion = true;
             aumentarVida();
         }
-        if(kai.tocoSlime(mapa)){
-            int x = (int) (kai.sprite.getX());
-            int y = (int) (kai.sprite.getY());
-            disminuirVida();
-        }
+
+
+
+
+
 
         if (kai.esAlcanzado(mapa, camara)) {
             //menu.setScreen(new PantallaMenu(menu));
         }
         kai.dibujar(batch);
+        for(Slime baba: slime)
+            baba.dibujar(batch);
         batch.end();
 
         //OTRA CAMARA
@@ -454,7 +487,7 @@ public class PantallaPrincipal extends Pantalla {
         }*/
 
 
-        camara.position.set((float) (camara.position.x+50*Gdx.graphics.getDeltaTime()), camara.position.y, 0);
+        camara.position.set((float) (camara.position.x+70*Gdx.graphics.getDeltaTime()), camara.position.y, 0);
 
         camara.update();
     }
@@ -488,6 +521,15 @@ public class PantallaPrincipal extends Pantalla {
         texturaKaiCaminando.dispose();
         texturaKaiReposo.dispose();
         texturaBotonUp.dispose();
+        texturaSlime.dispose();
+        barra1.dispose();
+        barra2.dispose();
+        barra3.dispose();
+        barra4.dispose();
+        barra5.dispose();
+        barra6.dispose();
+        barra7.dispose();
+        barraFull.dispose();
     }
 
     private class ProcesadorEntrada implements GestureDetector.GestureListener {
@@ -530,7 +572,6 @@ public class PantallaPrincipal extends Pantalla {
                     kai.setEstadoMovimiento(Kai.EstadoMovimiento.QUIETO);
             }
             if (v.x>ANCHO/2) {
-                Gdx.app.log("Touch","Derecha");
                 if(deltaY<0)
                     kai.saltar();
                 else

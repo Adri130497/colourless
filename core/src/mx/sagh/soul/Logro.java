@@ -40,12 +40,4 @@ public class Logro extends Objeto{
         }
 
     }
-
-    public boolean contiene(Vector3 v) {
-        return sprite.getBoundingRectangle().contains(v.x,v.y); //Para saber si se está tocando al topo
-    }
-
-    public void desplazar(Vector3 v) {
-        sprite.setX(sprite.getX()-(-Pantalla.ANCHO/2+v.x)-sprite.getWidth()/2);
-    }
 }
