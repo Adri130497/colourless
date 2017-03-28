@@ -428,7 +428,7 @@ public class PantallaPrincipal extends Pantalla {
 
 
         if (kai.esAlcanzado(mapa, camara)) {
-            menu.setScreen(new PantallaMenu(menu));
+            menu.setScreen(new PantallaGameOver(menu));
         }
         kai.dibujar(batch);
         for(Slime baba: slime)
@@ -464,7 +464,7 @@ public class PantallaPrincipal extends Pantalla {
                     break;
                 }
                 else{
-                    Gdx.app.log("Perdiste","JAJA-JAJA");
+                    menu.setScreen(new PantallaGameOver(menu));
                 }
             }
         }
