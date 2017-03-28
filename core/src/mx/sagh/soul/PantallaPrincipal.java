@@ -412,6 +412,14 @@ public class PantallaPrincipal extends Pantalla {
             aumentarVida();
         }
 
+        if(kai.recogeGema(mapa)){
+            int x = (int) (kai.sprite.getX());
+            int y = (int) (kai.sprite.getY());
+
+            estado=EstadoNivel.PAUSED;
+            menu.setScreen(new PantallaMenu(menu));
+
+        }
 
 
 

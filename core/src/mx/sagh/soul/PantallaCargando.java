@@ -164,6 +164,7 @@ class PantallaCargando extends Pantalla
         manager.load("startButton.png", Texture.class);
         manager.load("thunder.mp3", Sound.class);
         manager.load("wind.mp3", Sound.class);
+        manager.load("star.png",Texture.class);
 
 
     }

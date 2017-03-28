@@ -346,6 +346,7 @@ public class Kai extends Objeto{
             return true;
         }
 
+
         /*TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(1); //puedes recuperar una capa del mapa
         int x = (int)(sprite.getX()/32);
         int y = (int)(sprite.getY()/32);
@@ -399,6 +400,59 @@ public class Kai extends Objeto{
 
     }
 
+    public boolean recogeGema(TiledMap mapa){
+        TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(1); //puedes recuperar una capa del mapa
+        int x = (int)(sprite.getX()/32);
+        int y = (int)(sprite.getY()/32);
+        TiledMapTileLayer.Cell celda = capa.getCell(x,y);
+        if (celda!=null ) {
+            Object tipo = celda.getTile().getProperties().get("tipo");
+            if ( "gema".equals(tipo) ) {
+                capa.setCell(x,y,null);
+                capa.setCell(x,y,capa.getCell(0,4));
+                efectoPocion.play();
+                return true;
+            }
+        }
+        x = (int)(sprite.getX()/32)+3;
+        y = (int)(sprite.getY()/32);
+        celda = capa.getCell(x,y);
+        if (celda!=null ) {
+            Object tipo = celda.getTile().getProperties().get("tipo");
+            if ( "gema".equals(tipo) ) {
+                capa.setCell(x,y,null);
+                capa.setCell(x,y,capa.getCell(0,4));
+                efectoPocion.play();
+                return true;
+            }
+        }
+        x = (int)(sprite.getX()/32);
+        y = (int)(sprite.getY()/32)+1;
+        celda = capa.getCell(x,y);
+        if (celda!=null ) {
+            Object tipo = celda.getTile().getProperties().get("tipo");
+            if ( "gema".equals(tipo) ) {
+                capa.setCell(x,y,null);
+                capa.setCell(x,y,capa.getCell(0,4));
+                efectoPocion.play();
+                return true;
+            }
+        }
+        x = (int)(sprite.getX()/32)+1;
+        y = (int)(sprite.getY()/32)+1;
+        celda = capa.getCell(x,y);
+        if (celda!=null ) {
+            Object tipo = celda.getTile().getProperties().get("tipo");
+            if ( "gema".equals(tipo) ) {
+                capa.setCell(x,y,null);
+                capa.setCell(x,y,capa.getCell(0,4));
+                efectoPocion.play();
+                return true;
+            }
+        }
+        return false;
+
+    }
     public enum EstadoMovimiento {
         INICIANDO,
         QUIETO,

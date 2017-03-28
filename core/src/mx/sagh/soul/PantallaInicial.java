@@ -19,6 +19,7 @@ class PantallaInicial extends Pantalla
     private Texture texturaLogo;
     private Sprite spriteLogo;
 
+
     // Constructor, guarda la referencia al juego
     public PantallaInicial(colourlessSoul demo) {
         this.juego = demo;
