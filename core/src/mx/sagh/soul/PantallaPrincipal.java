@@ -426,7 +426,7 @@ public class PantallaPrincipal extends Pantalla {
 
 
         if (kai.esAlcanzado(mapa, camara)) {
-            //menu.setScreen(new PantallaMenu(menu));
+            menu.setScreen(new PantallaMenu(menu));
         }
         kai.dibujar(batch);
         for(Slime baba: slime)
@@ -487,10 +487,10 @@ public class PantallaPrincipal extends Pantalla {
         /*if (posX>=ANCHO/2 && posX<=ANCHO_MAPA-ANCHO/2) {
             // El personaje define el centro de la cámara
             camara.position.set((int)posX, camara.position.y, 0);
-        } else if (posX>ANCHO_MAPA-ANCHO/2) {    // Si está en la última mitad
+        } */if (posX>ANCHO_MAPA-ANCHO/2) {    // Si está en la última mitad
             // La cámara se queda a media pantalla antes del fin del mundo  :)
-            camara.position.set(ANCHO_MAPA-ANCHO/2, camara.position.y, 0);
-        } else if ( posX<ANCHO/2 ) { // La primera mitad
+            camara.position.set(ANCHO_MAPA-ANCHO/2, camara.position.y, 0);}
+        /*} if ( posX<ANCHO/2 ) { // La primera mitad
             camara.position.set(ANCHO/2, ALTO/2,0);
         }*/
 
