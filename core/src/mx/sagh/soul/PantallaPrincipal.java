@@ -91,6 +91,7 @@ public class PantallaPrincipal extends Pantalla {
 
     // Puntos del jugador y computadora
     private int score = 0;
+    private int slimeTocados=0;
     private Texto texto;
 
     private boolean bitedCookie, tookPotion;
@@ -366,6 +367,7 @@ public class PantallaPrincipal extends Pantalla {
                     baba.setEstadoMovimiento(Slime.EstadoMovimiento.MOV_IZQUIERDA);
                 }
                 if(kai.tocoSlime(baba, batch)){
+                    slimeTocados++;
                     disminuirVida();
                 }
             }
@@ -444,6 +446,8 @@ public class PantallaPrincipal extends Pantalla {
 
         batch.begin();
         texto.mostrarMensaje(batch, Integer.toString(score), ANCHO / 2 - 600, ALTO / 35 + 680);
+        texto.mostrarMensaje(batch, "Slime: "+Integer.toString(slimeTocados), ANCHO / 2 - 550, ALTO / 35 + 640);
+
         batch.end();
         if (Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
             menu.setScreen(new PantallaMenu(menu));
