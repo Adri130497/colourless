@@ -114,9 +114,11 @@ public class PantallaExtras extends Pantalla {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.log("clicked","Hiciste click en How To Play");
-                //clickSound.play();
-                //while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                //menu.setScreen(new PantallaLogros(menu));
+                if(!clickSound.isPlaying())
+                    clickSound.play();
+                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
+                menu.setScreen(new PantallaTutorial(menu));
+                clickSound.stop();
             }
         });
 

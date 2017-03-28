@@ -1,13 +1,16 @@
 package mx.sagh.soul;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 
 /**
@@ -17,8 +20,9 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 class PantallaCargando extends Pantalla
 {
     // Animación cargando
-    private static final float TIEMPO_ENTRE_FRAMES = 0.05f;
+    private static final float TIEMPO_ENTRE_FRAMES = 0.2f;
     private Sprite spriteCargando;
+    private Animation<TextureRegion> spriteAnimado;
     private float timerAnimacion = TIEMPO_ENTRE_FRAMES;
 
     // AssetManager
@@ -38,8 +42,12 @@ class PantallaCargando extends Pantalla
 
     @Override
     public void show() {
-        texturaCargando = new Texture(Gdx.files.internal("cargando/loading.png"));
-        spriteCargando = new Sprite(texturaCargando);
+        texturaCargando = new Texture(Gdx.files.internal("cargando/loadingSprite.png"));
+        TextureRegion texturaCompleta = new TextureRegion(texturaCargando);
+        TextureRegion[][] texturaPersonaje = texturaCompleta.split(1280,800);
+        spriteAnimado = new Animation(TIEMPO_ENTRE_FRAMES, texturaPersonaje[0][0], texturaPersonaje[0][1], texturaPersonaje[0][2], texturaPersonaje[0][3]);
+        spriteAnimado.setPlayMode(Animation.PlayMode.LOOP);
+        spriteCargando = new Sprite(texturaPersonaje[0][0]);
         spriteCargando.setPosition(ANCHO/2-spriteCargando.getWidth()/2,ALTO/2-spriteCargando.getHeight()/2);
         cargarRecursosSigPantalla();
         texto = new Texto();
@@ -59,8 +67,6 @@ class PantallaCargando extends Pantalla
 
         }
     }
-
-
 
     private void cargarRecursosNivel1() {
         manager.load("FondosPantalla/fondoGris1.jpg", Texture.class);
@@ -171,18 +177,19 @@ class PantallaCargando extends Pantalla
 
     @Override
     public void render(float delta) {
+        TextureRegion region;
         borrarPantalla(0.5f, 0.5f, 0.5f);
         batch.setProjectionMatrix(camara.combined);
         batch.begin();
         spriteCargando.draw(batch);
         texto.mostrarMensaje(batch,avance+" %",ANCHO/2,ALTO/2);
-        batch.end();
+
         // Actualizar
-        timerAnimacion -= delta;
-        if (timerAnimacion<=0) {
-            timerAnimacion = TIEMPO_ENTRE_FRAMES;
-            spriteCargando.rotate(20);
-        }
+
+        timerAnimacion += Gdx.graphics.getDeltaTime();
+        region = spriteAnimado.getKeyFrame(timerAnimacion);
+        batch.draw(region,spriteCargando.getX(),spriteCargando.getY());
+        batch.end();
         // Actualizar carga
         actualizarCargaRecursos();
     }

@@ -333,10 +333,10 @@ public class Kai extends Objeto{
 
 
     public boolean tocoSlime(Slime slime, SpriteBatch batch){
-        int x = (int)sprite.getX()-20;
-        int y = (int)sprite.getY()-20;
-        int width = (int)sprite.getWidth()-20;
-        int height = (int)sprite.getHeight()-20;
+        int x = (int)sprite.getX()-30;
+        int y = (int)sprite.getY()+30;
+        int width = (int)sprite.getWidth()-30;
+        int height = (int)sprite.getHeight()-30;
 
         Rectangle r = slime.sprite.getBoundingRectangle();
         if(x < r.x + r.width && x + width > r.x && y < r.y + r.height && y + height > r.y){

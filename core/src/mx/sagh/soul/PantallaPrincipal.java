@@ -138,7 +138,7 @@ public class PantallaPrincipal extends Pantalla {
 
         crearHUD();
         Gdx.input.setInputProcessor(escenaHUD);
-        kai = new Kai(texturaKaiCaminando, texturaKaiReposo,64,128);
+        kai = new Kai(texturaKaiCaminando, texturaKaiReposo,128,128);
         slime = new Slime[8];
         slime[0]= new Slime(texturaSlime, 2080, 160);
         slime[1]= new Slime(texturaSlime, 2496, 128);
@@ -487,20 +487,14 @@ public class PantallaPrincipal extends Pantalla {
     // excepto cuando está en la primera y última parte del mundo
     private void actualizarCamara() {
         float posX = kai.sprite.getX(); //siempre es el sprite quien me da la x o la y del personaje
-        // Si está en la parte 'media'
-        /*if (posX>=ANCHO/2 && posX<=ANCHO_MAPA-ANCHO/2) {
-            // El personaje define el centro de la cámara
-            camara.position.set((int)posX, camara.position.y, 0);
-        } */if (posX>ANCHO_MAPA-ANCHO/2) {    // Si está en la última mitad
-            // La cámara se queda a media pantalla antes del fin del mundo  :)
-            camara.position.set(ANCHO_MAPA-ANCHO/2, camara.position.y, 0);}
-        /*} if ( posX<ANCHO/2 ) { // La primera mitad
-            camara.position.set(ANCHO/2, ALTO/2,0);
-        }*/
-
-
-        camara.position.set((float) (camara.position.x+70*Gdx.graphics.getDeltaTime()), camara.position.y, 0);
-
+        if(camara.position.x<4480){
+            camara.position.set((float) (camara.position.x+70*Gdx.graphics.getDeltaTime()), camara.position.y, 0);
+        }
+        /*if (posX>ANCHO_MAPA-ANCHO/2) {    // Si está en la última mitad
+            camara.position.set(ANCHO_MAPA - ANCHO / 2, camara.position.y, 0);
+            Gdx.app.log("Pos",Float.toString(camara.position.x));
+        }
+        else*/
         camara.update();
     }
 
