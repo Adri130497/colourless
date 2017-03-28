@@ -2,6 +2,7 @@ package mx.sagh.soul;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -40,6 +41,7 @@ public class PantallaGameOver extends Pantalla{
         // Cuando cargan la pantalla
         cargarTexturas();
         crearObjetos();
+
     }
 
     private void crearObjetos() {
@@ -51,13 +53,11 @@ public class PantallaGameOver extends Pantalla{
         //Botones
         TextureRegionDrawable trdBtnRestart = new TextureRegionDrawable(new TextureRegion(texturaBotonRestart));
         ImageButton btnRestart = new ImageButton(trdBtnRestart);
-        btnRestart.setSize(200,125);
         btnRestart.setPosition(ANCHO/3-150,ALTO/4);
         escena.addActor(btnRestart);
 
         TextureRegionDrawable trdBtnMain = new TextureRegionDrawable(new TextureRegion(texturaBotonMenu));
         ImageButton btnMenu = new ImageButton(trdBtnMain);
-        btnMenu.setSize(200,125);
         btnMenu.setPosition(ANCHO/2+150,ALTO/4);
         escena.addActor(btnMenu);
 
@@ -84,6 +84,9 @@ public class PantallaGameOver extends Pantalla{
             }
         });
 
+        Gdx.input.setInputProcessor(escena);
+        Gdx.input.setCatchBackKey(false);
+
 
 
     }
@@ -101,9 +104,7 @@ public class PantallaGameOver extends Pantalla{
         // 60 x seg
         borrarPantalla();
         escena.draw();
-        if (Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
-            menu.setScreen(new PantallaMenu(menu));
-        }
+
 
     }
 
@@ -127,4 +128,5 @@ public class PantallaGameOver extends Pantalla{
         clickSound.stop();
 
     }
+
 }
