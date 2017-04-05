@@ -3,25 +3,18 @@ package mx.sagh.soul;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.actions.AlphaAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 /**
  * Created by User on 17/02/2017.
  */
 
 public class PantallaCreditos extends Pantalla {
-    private final colourlessSoul menu;
+    private final ColourlessSoul menu;
 
     //sonidos
     Music windMusic = Gdx.audio.newMusic(Gdx.files.internal("wind.mp3"));
@@ -36,7 +29,7 @@ public class PantallaCreditos extends Pantalla {
     private Stage escena;
     private SpriteBatch batch;
 
-    public PantallaCreditos(colourlessSoul menu) {
+    public PantallaCreditos(ColourlessSoul menu) {
         this.menu = menu;
     }
 

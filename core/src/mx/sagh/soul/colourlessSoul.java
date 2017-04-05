@@ -6,11 +6,11 @@ import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 
-public class colourlessSoul extends Game {
+public class ColourlessSoul extends Game {
 
 	private final AssetManager assetManager;
 
-	public colourlessSoul(){
+	public ColourlessSoul(){
 		assetManager=new AssetManager();
 	}
 

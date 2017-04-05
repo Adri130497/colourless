@@ -1,14 +1,11 @@
 package mx.sagh.soul;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
-import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -28,26 +25,30 @@ class PantallaCargando extends Pantalla
     // AssetManager
     private AssetManager manager;
 
-    private colourlessSoul juego;
+    private ColourlessSoul juego;
     private Pantallas siguientePantalla;
     private int avance; // % de carga
     private Texto texto;
 
-    private Texture texturaCargando;
+    private Texture texturaCargando1;
+    private Texture texturaCargando2;
 
-    public PantallaCargando(colourlessSoul juego, Pantallas siguientePantalla) {
+    public PantallaCargando(ColourlessSoul juego, Pantallas siguientePantalla) {
         this.juego = juego;
         this.siguientePantalla = siguientePantalla;
     }
 
     @Override
     public void show() {
-        texturaCargando = new Texture(Gdx.files.internal("cargando/loadingSprite.png"));
-        TextureRegion texturaCompleta = new TextureRegion(texturaCargando);
-        TextureRegion[][] texturaPersonaje = texturaCompleta.split(1280,800);
-        spriteAnimado = new Animation(TIEMPO_ENTRE_FRAMES, texturaPersonaje[0][0], texturaPersonaje[0][1], texturaPersonaje[0][2], texturaPersonaje[0][3]);
+        texturaCargando1 = new Texture(Gdx.files.internal("cargando/loadingSprite1.png"));
+        texturaCargando2 = new Texture(Gdx.files.internal("cargando/loadingSprite2.png"));
+        TextureRegion texturaCompleta1 = new TextureRegion(texturaCargando1);
+        TextureRegion[][] texturaPersonaje1 = texturaCompleta1.split(1280,800);
+        TextureRegion texturaCompleta2 = new TextureRegion(texturaCargando2);
+        TextureRegion[][] texturaPersonaje2 = texturaCompleta2.split(1280,800);
+        spriteAnimado = new Animation(TIEMPO_ENTRE_FRAMES, texturaPersonaje1[0][0], texturaPersonaje1[0][1], texturaPersonaje2[0][0], texturaPersonaje2[0][1]);
         spriteAnimado.setPlayMode(Animation.PlayMode.LOOP);
-        spriteCargando = new Sprite(texturaPersonaje[0][0]);
+        spriteCargando = new Sprite(texturaPersonaje1[0][0]);
         spriteCargando.setPosition(ANCHO/2-spriteCargando.getWidth()/2,ALTO/2-spriteCargando.getHeight()/2);
         cargarRecursosSigPantalla();
         texto = new Texto();
@@ -183,7 +184,6 @@ class PantallaCargando extends Pantalla
         batch.begin();
         spriteCargando.draw(batch);
         texto.mostrarMensaje(batch,avance+" %",ANCHO/2,ALTO/2);
-
         // Actualizar
 
         timerAnimacion += Gdx.graphics.getDeltaTime();
@@ -220,6 +220,7 @@ class PantallaCargando extends Pantalla
 
     @Override
     public void dispose() {
-        texturaCargando.dispose();
+        texturaCargando1.dispose();
+        texturaCargando2.dispose();
     }
 }

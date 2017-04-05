@@ -2,7 +2,6 @@ package mx.sagh.soul;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -19,7 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
  */
 
 public class PantallaExtras extends Pantalla {
-    private final colourlessSoul menu;
+    private final ColourlessSoul menu;
 
     //sonidos
     private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("click.mp3"));
@@ -35,7 +34,7 @@ public class PantallaExtras extends Pantalla {
     private Stage escena;
     private SpriteBatch batch;
 
-    public PantallaExtras(colourlessSoul menu) {
+    public PantallaExtras(ColourlessSoul menu) {
         this.menu = menu;
     }
 

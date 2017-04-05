@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -22,6 +23,16 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
  */
 
 public class Kai extends Objeto{
+    // Variables para el salto
+    private final float G = 98.1f;  // Gravedad
+    private final float velocidadInicial = 198;  // Velocidad de salida (hacia arriba)
+    private float ymax;     // Altura máxima
+    private float tiempoVuelo;  // Tiempo de vuelo TOTAL
+
+    private float alturaVolando;  // La posición actual cuando está saltando
+    private float tiempoVolando;    // El tiempo que ha transcurrido desde que inició el salto
+    private float yInicial;     // Posición donde inicia el salto
+
     private final float VELOCIDAD_X = 4;      // Velocidad horizontal
 
     private Animation<TextureRegion> spriteAnimado, spriteReposo;           // Animación caminando, en reposo y parándose
@@ -48,7 +59,6 @@ public class Kai extends Objeto{
         efectoPocion = manager.get("potion.mp3");;
         efectoPowerDown = manager.get("powerDown.mp3");
 
-
         TextureRegion texturaCompleta = new TextureRegion(texturaCaminando);
         TextureRegion[][] texturaPersonaje = texturaCompleta.split(120,120);
         spriteAnimado = new Animation(0.15f, texturaPersonaje[0][0], texturaPersonaje[0][1],
@@ -56,6 +66,8 @@ public class Kai extends Objeto{
                 texturaPersonaje[0][5], texturaPersonaje[0][6], texturaPersonaje[0][7],
                 texturaPersonaje[0][8], texturaPersonaje[0][9], texturaPersonaje[0][10]);
         spriteAnimado.setPlayMode(Animation.PlayMode.LOOP);
+
+
 
         texturaCompleta =  new TextureRegion(texturaReposo);
         texturaPersonaje = texturaCompleta.split(120,120);
@@ -103,24 +115,32 @@ public class Kai extends Objeto{
     }
 
     // Actualiza el sprite, de acuerdo al estadoMovimiento y estadoSalto
-    public void actualizar(TiledMap mapa) {
+    public void actualizar(float delta, TiledMap mapa) {
         switch (estadoMovimiento) {
             case MOV_DERECHA:
             case MOV_IZQUIERDA:
-                moverHorizontal(mapa);
+                moverHorizontal(delta, mapa);
                 break;
         }
-        switch (estadoSalto) {
-            case SUBIENDO:
-            case BAJANDO:
-                moverVertical(mapa);
-                break;
+
+        // Calcula la nueva posición (por ahora cuando está saltando)
+        if ( estadoSalto == EstadoSalto.SALTANDO ) {
+            tiempoVolando += delta * 5;   // El factor DES/ACELERA
+            alturaVolando = velocidadInicial * tiempoVolando - 0.5f * G * tiempoVolando * tiempoVolando;
+            if (tiempoVolando < tiempoVuelo) {
+                //Sigue en el aire
+                sprite.setY(yInicial + alturaVolando);
+            } else {
+                // Termina el salto
+                sprite.setY(yInicial);
+                estadoSalto = EstadoSalto.EN_PISO;
+            }
         }
     }
 
     // Realiza el salto
-    private void moverVertical(TiledMap mapa) {
-        float delta = Gdx.graphics.getDeltaTime()*200;
+    private void moverVertical(float delta, TiledMap mapa) {
+       delta = Gdx.graphics.getDeltaTime()*200;
         switch (estadoSalto) {
             case SUBIENDO:
                 sprite.setY(sprite.getY()+delta);
@@ -139,10 +159,26 @@ public class Kai extends Objeto{
                 }
                 break;
         }
+
+        /*
+        // Calcula la nueva posición (por ahora cuando está saltando)
+        if ( estadoSalto == EstadoSalto.SALTANDO ) {
+            tiempoVolando += delta*5;   // El factor DES/ACELERA
+            alturaVolando = velocidadInicial*tiempoVolando-0.5f*G*tiempoVolando*tiempoVolando;
+            if (tiempoVolando<tiempoVuelo) {
+                //Sigue en el aire
+                sprite.setY(yInicial+alturaVolando);
+            } else {
+                // Termina el salto
+                Gdx.app.log("Salto","termino");
+                sprite.setY(yInicial);
+                estadoSalto = EstadoSalto.EN_PISO;
+            }
+        }*/
     }
 
     // Mueve el personaje a la derecha/izquierda, prueba choques con paredes
-    private void moverHorizontal(TiledMap mapa) {
+    private void moverHorizontal(float delta, TiledMap mapa) {
         // Obtiene la primer capa del mapa (en este caso es la única)
         TiledMapTileLayer capa = (TiledMapTileLayer) mapa.getLayers().get(0);
         // Ejecutar movimiento horizontal
@@ -257,6 +293,7 @@ public class Kai extends Objeto{
     public EstadoMovimiento getEstadoMovimiento() {
         return estadoMovimiento;
     }
+    public EstadoSalto getEstadoSalto() { return estadoSalto; }
 
     // Modificador de estadoMovimiento
     public void setEstadoMovimiento(EstadoMovimiento estadoMovimiento) {
@@ -265,12 +302,22 @@ public class Kai extends Objeto{
 
     // Inicia el salto
     public void saltar() {
-
         if (estadoSalto!=EstadoSalto.SUBIENDO && estadoSalto!=EstadoSalto.BAJANDO) {
             // inicia
-            estadoSalto = EstadoSalto.SUBIENDO;
+            /*estadoSalto = EstadoSalto.SUBIENDO;
             yOriginal = sprite.getY();
             alturaSalto = 0;
+            Gdx.app.log("Salto","True");
+            */
+            // Iniciar el salto
+            //estadoSalto = EstadoSalto.SUBIENDO;
+            ymax = (velocidadInicial * velocidadInicial) / (2 * G);
+            tiempoVuelo = (2 * velocidadInicial) / G;
+            alturaVolando = 0;    // Inicia en el piso
+            tiempoVolando = 0;
+            yInicial = sprite.getY();
+            estadoSalto = EstadoSalto.SALTANDO;
+            //Gdx.app.log("saltar", "ymax=" + ymax + ", tiempoV=" + tiempoVuelo + ", y0=" + yInicial);
         }
     }
 
@@ -345,59 +392,7 @@ public class Kai extends Objeto{
             slime.setEstadoMovimiento(Slime.EstadoMovimiento.QUIETO);
             return true;
         }
-
-
-        /*TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(1); //puedes recuperar una capa del mapa
-        int x = (int)(sprite.getX()/32);
-        int y = (int)(sprite.getY()/32);
-        TiledMapTileLayer.Cell celda = capa.getCell(x,y);
-        if (celda!=null ) {
-            Object tipo = celda.getTile().getProperties().get("tipo");
-            if ( "slime".equals(tipo) ) {
-                capa.setCell(x,y,null);
-                capa.setCell(x,y,capa.getCell(0,4));
-                efectoPowerDown.play();
-                return true;
-            }
-        }
-        x = (int)(sprite.getX()/32)+3;
-        y = (int)(sprite.getY()/32);
-        celda = capa.getCell(x,y);
-        if (celda!=null ) {
-            Object tipo = celda.getTile().getProperties().get("tipo");
-            if ( "slime".equals(tipo)) {
-                capa.setCell(x,y,null);    // Borra la moneda del mapa
-                capa.setCell(x,y,capa.getCell(0,4)); // Cuadro azul en lugar de la moneda
-                efectoPowerDown.play();
-                return true;
-            }
-        }
-        x = (int)(sprite.getX()/32);
-        y = (int)(sprite.getY()/32)+1;
-        celda = capa.getCell(x,y);
-        if (celda!=null ) {
-            Object tipo = celda.getTile().getProperties().get("tipo");
-            if ( "slime".equals(tipo) ) {
-                capa.setCell(x,y,null);
-                capa.setCell(x,y,capa.getCell(0,4));
-                efectoPowerDown.play();
-                return true;
-            }
-        }
-        x = (int)(sprite.getX()/32)+1;
-        y = (int)(sprite.getY()/32)+1;
-        celda = capa.getCell(x,y);
-        if (celda!=null ) {
-            Object tipo = celda.getTile().getProperties().get("tipo");
-            if ( "slime".equals(tipo) ) {
-                capa.setCell(x,y,null);
-                capa.setCell(x,y,capa.getCell(0,4));
-                efectoPowerDown.play();
-                return true;
-            }
-        }*/
         return false;
-
     }
 
     public boolean recogeGema(TiledMap mapa){
@@ -463,6 +458,7 @@ public class Kai extends Objeto{
     public enum EstadoSalto {
         SUBIENDO,
         BAJANDO,
-        estadoSalto, EN_PISO
+        SALTANDO,
+        EN_PISO
     }
 }

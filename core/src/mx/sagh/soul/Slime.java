@@ -16,7 +16,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 public class Slime extends Objeto{
     public EstadoLogro estado;
     // Movimiento
-    private final float VELOCIDAD_X = 7;
+    private final float VELOCIDAD_X = 10;
     private float xOriginal;
 
     private Animation<TextureRegion> spriteAnimado;         // Animación caminando, en reposo y parándose

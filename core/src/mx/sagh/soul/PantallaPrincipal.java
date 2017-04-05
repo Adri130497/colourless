@@ -6,6 +6,7 @@ package mx.sagh.soul;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Music;
@@ -14,12 +15,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -35,11 +33,24 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class PantallaPrincipal extends Pantalla {
-    private final colourlessSoul menu;
+    private final ColourlessSoul menu;
 
     public static final float ANCHO_MAPA = 5120;
     private OrthogonalTiledMapRenderer renderer; // Dibuja el mapa
     private TiledMap mapa;
+
+    private final float DELTA_X = 10;    // Desplazamiento del personaje
+    private final float DELTA_Y = 10;
+    private final float UMBRAL = 50; // Para asegurar que hay movimiento
+
+    // Punteros (dedo para pan horizontal, vertical)
+    private final int INACTIVO = -1;
+    private int punteroHorizontal = INACTIVO;
+    private int punteroVertical = INACTIVO;
+
+    // Coordenadas
+    private float xHorizontal = 0;
+    private float yVertical = 0;
 
     //Sistema de partículas
     private ParticleEffect sistemaParticulasCroqueta, sistemaParticulasPocion;
@@ -48,6 +59,8 @@ public class PantallaPrincipal extends Pantalla {
 
     // Personaje
     private Kai kai;
+    private float dx = 0;
+    private float dy = 0;
     private Texture texturaKaiCaminando, texturaKaiReposo;
 
     // Enemigo
@@ -98,7 +111,7 @@ public class PantallaPrincipal extends Pantalla {
     public EstadoNivel estado;
 
 
-    public PantallaPrincipal(colourlessSoul menu) {
+    public PantallaPrincipal(ColourlessSoul menu) {
         this.menu = menu;
     }
 
@@ -114,8 +127,7 @@ public class PantallaPrincipal extends Pantalla {
         sistemaParticulasCroqueta.load(Gdx.files.internal("pezVanish.pe"),Gdx.files.internal(""));
         sistemaParticulasPocion.load(Gdx.files.internal("pocionVanish.pe"),Gdx.files.internal(""));
         if(PantallaAjustes.estadoJugabilidad == PantallaAjustes.EstadoJugabilidad.TOUCH)
-            Gdx.input.setInputProcessor(new GestureDetector(new ProcesadorEntrada()));
-
+            Gdx.input.setInputProcessor(new ProcesadorEntrada());
 
     }
 
@@ -217,10 +229,6 @@ public class PantallaPrincipal extends Pantalla {
                 kai.saltar();
                 return true;
             }
-            /*@Override
-            public void clicked(InputEvent event, float x, float y) {
-                kai.saltar();
-            }*/
         });
 
 
@@ -255,7 +263,7 @@ public class PantallaPrincipal extends Pantalla {
                 btnMainMenu.remove();
                 clickSound.stop();
                 if(PantallaAjustes.estadoJugabilidad == PantallaAjustes.EstadoJugabilidad.TOUCH)
-                    Gdx.input.setInputProcessor(new GestureDetector(new ProcesadorEntrada()));
+                    Gdx.input.setInputProcessor(new ProcesadorEntrada());
             }
         });
 
@@ -359,8 +367,10 @@ public class PantallaPrincipal extends Pantalla {
 
     @Override
     public void render(float delta) {
+        //Gdx.app.log("EstadoPuntero:", Integer.toString(punteroHorizontal));
+
         if(estado != EstadoNivel.PAUSED) {
-            kai.actualizar(mapa);
+            kai.actualizar(delta, mapa);
             for(Slime baba: slime) {
                 baba.actualizar(mapa);
                 if((kai.sprite.getX()+400)>=baba.sprite.getX()){
@@ -420,12 +430,7 @@ public class PantallaPrincipal extends Pantalla {
 
             estado=EstadoNivel.PAUSED;
             menu.setScreen(new PantallaMenu(menu));
-
         }
-
-
-
-
 
         if (kai.esAlcanzado(mapa, camara)) {
             menu.setScreen(new PantallaGameOver(menu));
@@ -538,73 +543,92 @@ public class PantallaPrincipal extends Pantalla {
         barraFull.dispose();
     }
 
-    private class ProcesadorEntrada implements GestureDetector.GestureListener {
+    private class ProcesadorEntrada implements InputProcessor {
+        private Vector3 v = new Vector3();
         @Override
-        public boolean touchDown(float x, float y, int pointer, int button) {
+        public boolean keyDown(int keycode) {
             return false;
         }
 
         @Override
-        public boolean tap(float x, float y, int count, int button) {
-            Vector3 v = new Vector3(x,y,0);
+        public boolean keyUp(int keycode) {
+            return false;
+        }
+
+        @Override
+        public boolean keyTyped(char character) {
+            return false;
+        }
+
+
+        @Override
+        public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+            v.set(screenX, screenY, 0);
             camaraHUD.unproject(v);
+
             if(v.x>=btnPausa.getX() && v.x<=(btnPausa.getX()+btnPausa.getWidth()))
                 if(v.y>=btnPausa.getY() && v.y<=(btnPausa.getY()+btnPausa.getHeight())){
                     inPauseEvent();
                 }
+            if (v.x < Pantalla.ANCHO/2 && punteroHorizontal == -1) {
+                // Horizontal
+                punteroHorizontal = pointer;
+                xHorizontal = v.x;
+            } else if (v.x >= Pantalla.ANCHO/2 && punteroVertical == INACTIVO ) {
+                // Vertical
+                punteroVertical = pointer;
+                yVertical = v.y;
+            }
             return true;
         }
 
         @Override
-        public boolean longPress(float x, float y) {
-            return false;
+        public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+            if (pointer == punteroHorizontal) {
+                punteroHorizontal = INACTIVO;
+                kai.setEstadoMovimiento(Kai.EstadoMovimiento.QUIETO);
+                //dx = 0; // Deja de moverse en x
+            } else if (pointer == punteroVertical) {
+                punteroVertical = INACTIVO;
+                dy = 0; // Deja de moverse en y
+            }
+            return true;
         }
 
         @Override
-        public boolean fling(float velocityX, float velocityY, int button) {
-            return false;
-        }
-
-        @Override
-        public boolean pan(float x, float y, float deltaX, float deltaY) {
-            Vector3 v = new Vector3(x,y,0);
-            camaraHUD.unproject(v); //Transforma de un sistema a otro
-            if(v.x<ANCHO/2){
-                if(deltaX>0)
+        public boolean touchDragged(int screenX, int screenY, int pointer) {
+            v.set(screenX, screenY, 0);
+            camaraHUD.unproject(v);
+            if ( pointer == punteroHorizontal && Math.abs(v.x-xHorizontal)>UMBRAL ) {
+                if (v.x > xHorizontal) {
                     kai.setEstadoMovimiento(Kai.EstadoMovimiento.MOV_DERECHA);
-                else if (deltaX<0)
+                    dx = DELTA_X;   // Derecha
+                } else {
                     kai.setEstadoMovimiento(Kai.EstadoMovimiento.MOV_IZQUIERDA);
-                else
-                    kai.setEstadoMovimiento(Kai.EstadoMovimiento.QUIETO);
-            }
-            if (v.x>ANCHO/2) {
-                if(deltaY<0)
+                    dx = -DELTA_X;  // Izquierda
+                }
+                xHorizontal = v.x;
+            } else if ( pointer == punteroVertical && Math.abs(v.y-yVertical)>UMBRAL ) {
+
+                if (v.y > yVertical && kai.getEstadoSalto() != Kai.EstadoSalto.SALTANDO) {
                     kai.saltar();
-                else
-                    kai.setEstadoMovimiento(Kai.EstadoMovimiento.QUIETO);
+                    dy = DELTA_Y;   // Arriba
+                } else {
+                    dy = -DELTA_Y;  // Abajo
+                }
+                yVertical = v.y;
             }
             return true;
         }
 
         @Override
-        public boolean panStop(float x, float y, int pointer, int button) {
-            kai.setEstadoMovimiento(Kai.EstadoMovimiento.QUIETO);
-            return true;
-        }
-
-        @Override
-        public boolean zoom(float initialDistance, float distance) {
+        public boolean mouseMoved(int screenX, int screenY) {
             return false;
         }
 
         @Override
-        public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1, Vector2 pointer2) {
+        public boolean scrolled(int amount) {
             return false;
-        }
-
-        @Override
-        public void pinchStop() {
-
         }
     }
 }

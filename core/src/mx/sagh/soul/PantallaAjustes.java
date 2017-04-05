@@ -16,7 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
  * Created by Aldo on 18/02/2017.
  */
 public class PantallaAjustes extends Pantalla {
-    private final colourlessSoul menu;
+    private final ColourlessSoul menu;
     public static EstadoInvocado estado;
     public static  EstadoJugabilidad estadoJugabilidad;
 
@@ -41,7 +41,7 @@ public class PantallaAjustes extends Pantalla {
     private Texture texturaBotonL;
 
 
-    public PantallaAjustes(colourlessSoul menu) {
+    public PantallaAjustes(ColourlessSoul menu) {
         this.menu = menu;
     }
 

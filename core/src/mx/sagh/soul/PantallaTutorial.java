@@ -3,29 +3,22 @@ package mx.sagh.soul;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 /**
  * Created by User on 28/03/2017.
  */
 
 public class PantallaTutorial extends Pantalla {
-    private final colourlessSoul menu;
+    private final ColourlessSoul menu;
 
     //sonidos
     private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("click.mp3"));
@@ -38,7 +31,8 @@ public class PantallaTutorial extends Pantalla {
 
     //texturas
     private Texture texturaTutorial1;
-    private Texture texturaTutorialSprites;
+    private Texture texturaTutorialSprites1;
+    private Texture texturaTutorialSprites2;
     private Image imgTutorial1;
 
     //Escena
@@ -46,7 +40,7 @@ public class PantallaTutorial extends Pantalla {
     private SpriteBatch batch;
     private TextureRegion region;
 
-    public PantallaTutorial(colourlessSoul menu) {
+    public PantallaTutorial(ColourlessSoul menu) {
         this.menu = menu;
     }
 
@@ -63,9 +57,11 @@ public class PantallaTutorial extends Pantalla {
         escena = new Stage(vista, batch);
         escena.addActor(imgTutorial1);
 
-        TextureRegion texturaCompleta = new TextureRegion(texturaTutorialSprites);
-        TextureRegion[][] texturaAnimada = texturaCompleta.split(1280,800);
-        spriteAnimado = new Animation(0.1f, texturaAnimada[0][0], texturaAnimada[0][1], texturaAnimada[0][2], texturaAnimada[0][3], texturaAnimada[0][4]);
+        TextureRegion texturaCompleta1 = new TextureRegion(texturaTutorialSprites1);
+        TextureRegion[][] texturaAnimada1 = texturaCompleta1.split(1280,800);
+        TextureRegion texturaCompleta2 = new TextureRegion(texturaTutorialSprites2);
+        TextureRegion[][] texturaAnimada2 = texturaCompleta2.split(1280,800);
+        spriteAnimado = new Animation(0.1f, texturaAnimada1[0][0], texturaAnimada1[0][1], texturaAnimada1[0][2], texturaAnimada2[0][0], texturaAnimada2[0][1]);
 
         AssetManager manager = new AssetManager();
         //Cargar audios
@@ -80,7 +76,8 @@ public class PantallaTutorial extends Pantalla {
 
     private void cargarTexturas() {
         texturaTutorial1 = new Texture("FondosTutorial/howTo1.png");
-        texturaTutorialSprites = new Texture("FondosTutorial/howToSprites.png");
+        texturaTutorialSprites1 = new Texture("FondosTutorial/howToSprites1.png");
+        texturaTutorialSprites2 = new Texture("FondosTutorial/howToSprites2.png");
         imgTutorial1 = new Image(texturaTutorial1);
     }
 
@@ -117,7 +114,8 @@ public class PantallaTutorial extends Pantalla {
     public void dispose() {
         escena.dispose();
         texturaTutorial1.dispose();
-        texturaTutorialSprites.dispose();
+        texturaTutorialSprites1.dispose();
+        texturaTutorialSprites2.dispose();
         clickSound.dispose();
         clickSound.stop();
     }

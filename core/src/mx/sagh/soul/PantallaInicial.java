@@ -13,7 +13,7 @@ class PantallaInicial extends Pantalla
     private float tiempoVisible = 1.2f;
 
     // Es la referencia a la aplicación (la única que puede cambiar pantallas)
-    private colourlessSoul juego;
+    private ColourlessSoul juego;
 
     // Logo del tec
     private Texture texturaLogo;
@@ -21,7 +21,7 @@ class PantallaInicial extends Pantalla
 
 
     // Constructor, guarda la referencia al juego
-    public PantallaInicial(colourlessSoul demo) {
+    public PantallaInicial(ColourlessSoul demo) {
         this.juego = demo;
     }
 

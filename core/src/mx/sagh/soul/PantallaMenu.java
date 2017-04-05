@@ -16,7 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
  * Created by Adrian on 11/02/2017.
  */
 public class PantallaMenu extends Pantalla {
-    private final colourlessSoul menu;
+    private final ColourlessSoul menu;
 
     //sonidos
     private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("click.mp3"));
@@ -33,7 +33,7 @@ public class PantallaMenu extends Pantalla {
     private SpriteBatch batch;
 
 
-    public PantallaMenu(colourlessSoul menu) {
+    public PantallaMenu(ColourlessSoul menu) {
         this.menu = menu;
     }
 

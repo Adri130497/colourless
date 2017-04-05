@@ -13,16 +13,14 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 
 public class PantallaLogros extends Pantalla {
-    private final colourlessSoul menu;
+    private final ColourlessSoul menu;
 
     //sonidos
     private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("click.mp3"));
@@ -45,7 +43,7 @@ public class PantallaLogros extends Pantalla {
     private Stage escena;
     private SpriteBatch batch;
 
-    public PantallaLogros(colourlessSoul menu) {
+    public PantallaLogros(ColourlessSoul menu) {
         this.menu = menu;
     }
 
