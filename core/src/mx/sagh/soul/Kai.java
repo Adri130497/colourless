@@ -35,8 +35,8 @@ public class Kai extends Objeto{
 
     private final float VELOCIDAD_X = 4;      // Velocidad horizontal
 
-    private Animation<TextureRegion> spriteAnimado, spriteReposo;           // Animación caminando, en reposo y parándose
-    private float timerAnimacion, timerAnimacion2;                                           // Tiempo para cambiar frames de la animación
+    private Animation<TextureRegion> spriteAnimado, spriteReposo, spriteBrincando, spriteCayendo, spriteAsustado;           // Animación caminando, en reposo y parándose
+    private float timerAnimacion, timerAnimacion2, timerAnimacion3, timerAnimacion4, timerAnimacion5;                                           // Tiempo para cambiar frames de la animación
 
     private EstadoMovimiento estadoMovimiento = EstadoMovimiento.QUIETO;
 
@@ -48,7 +48,7 @@ public class Kai extends Objeto{
     // Sonidos
     private Sound efectoCroqueta, efectoPocion, efectoPowerDown;
 
-    public Kai(Texture texturaCaminando, Texture texturaReposo, float x, float y) {
+    public Kai(Texture texturaCaminando, Texture texturaReposo, Texture texturaBrincando, Texture texturaCayendo, Texture texturaAsustado, float x, float y) {
         AssetManager manager = new AssetManager();
         //Cargar audios
         manager.load("bite1.mp3",Sound.class);
@@ -67,16 +67,34 @@ public class Kai extends Objeto{
                 texturaPersonaje[0][8], texturaPersonaje[0][9], texturaPersonaje[0][10]);
         spriteAnimado.setPlayMode(Animation.PlayMode.LOOP);
 
-
-
         texturaCompleta =  new TextureRegion(texturaReposo);
         texturaPersonaje = texturaCompleta.split(120,120);
         spriteReposo = new Animation(0.25f, texturaPersonaje[0][0], texturaPersonaje[0][1], texturaPersonaje[0][2],texturaPersonaje[0][1]);
         spriteReposo.setPlayMode(Animation.PlayMode.LOOP);
 
+
+        texturaCompleta =  new TextureRegion(texturaBrincando);
+        texturaPersonaje = texturaCompleta.split(120,120);
+        spriteBrincando = new Animation(0.25f, texturaPersonaje[0][0], texturaPersonaje[0][1],
+                texturaPersonaje[0][2], texturaPersonaje[0][3], texturaPersonaje[0][4],
+                texturaPersonaje[0][5]);
+        spriteBrincando.setPlayMode(Animation.PlayMode.LOOP);
+
+        texturaCompleta =  new TextureRegion(texturaCayendo);
+        texturaPersonaje = texturaCompleta.split(120,120);
+        spriteCayendo = new Animation(0.25f, texturaPersonaje[0][0], texturaPersonaje[0][1], texturaPersonaje[0][2]);
+        spriteCayendo.setPlayMode(Animation.PlayMode.LOOP);
+
+        texturaCompleta =  new TextureRegion(texturaAsustado);
+        texturaPersonaje = texturaCompleta.split(120,120);
+        spriteAsustado = new Animation(0.25f, texturaPersonaje[0][0]);
+
         // Inicia el timer que contará tiempo para saber qué frame se dibuja
         timerAnimacion = 0;
         timerAnimacion2 = 0;
+        timerAnimacion3 = 0;
+        timerAnimacion4 = 0;
+        timerAnimacion5 = 0;
         // Crea el sprite con el personaje quieto (idle)
         sprite = new Sprite(texturaPersonaje[0][0]);    // QUIETO
         sprite.setPosition(x,y);    // Posición inicial
@@ -88,27 +106,45 @@ public class Kai extends Objeto{
     public void dibujar(SpriteBatch batch) {
         // Dibuja el personaje dependiendo del estadoMovimiento
         TextureRegion region;
-        switch (estadoMovimiento) {
-            case MOV_DERECHA:
-            case MOV_IZQUIERDA:
-                timerAnimacion += Gdx.graphics.getDeltaTime();
-                // Frame que se dibujará
-                region = spriteAnimado.getKeyFrame(timerAnimacion);
-                if (estadoMovimiento==EstadoMovimiento.MOV_IZQUIERDA) {
-                    if (!region.isFlipX()) {
-                        region.flip(true,false);
+        if(estadoSalto!=EstadoSalto.SUBIENDO && estadoSalto!=EstadoSalto.BAJANDO)
+            switch (estadoMovimiento) {
+                case MOV_DERECHA:
+                case MOV_IZQUIERDA:
+                    timerAnimacion += Gdx.graphics.getDeltaTime();
+                    // Frame que se dibujará
+                    region = spriteAnimado.getKeyFrame(timerAnimacion);
+                    if (estadoMovimiento==EstadoMovimiento.MOV_IZQUIERDA) {
+                        if (!region.isFlipX()) {
+                            region.flip(true,false);
+                        }
+                    } else {
+                        if (region.isFlipX()) {
+                            region.flip(true,false);
+                        }
                     }
-                } else {
-                    if (region.isFlipX()) {
-                        region.flip(true,false);
-                    }
-                }
+                    batch.draw(region,sprite.getX(),sprite.getY());
+                    break;
+                case QUIETO:
+                case INICIANDO:
+                    timerAnimacion2 += Gdx.graphics.getDeltaTime();
+                    region = spriteReposo.getKeyFrame(timerAnimacion2);
+                    batch.draw(region,sprite.getX(),sprite.getY());
+                    break;
+                case ASUSTADO:
+                    timerAnimacion5 += Gdx.graphics.getDeltaTime();
+                    region = spriteAsustado.getKeyFrame(timerAnimacion5);
+                    batch.draw(region,sprite.getX(),sprite.getY());
+                    break;
+            }
+        switch (estadoSalto){
+            case SUBIENDO:
+                timerAnimacion3 += Gdx.graphics.getDeltaTime();
+                region = spriteBrincando.getKeyFrame(timerAnimacion3);
                 batch.draw(region,sprite.getX(),sprite.getY());
                 break;
-            case QUIETO:
-            case INICIANDO:
-                timerAnimacion2 += Gdx.graphics.getDeltaTime();
-                region = spriteReposo.getKeyFrame(timerAnimacion2);
+            case BAJANDO:
+                timerAnimacion4 += Gdx.graphics.getDeltaTime();
+                region = spriteCayendo.getKeyFrame(timerAnimacion4);
                 batch.draw(region,sprite.getX(),sprite.getY());
                 break;
         }
@@ -124,9 +160,14 @@ public class Kai extends Objeto{
         }
 
         // Calcula la nueva posición (por ahora cuando está saltando)
-        if ( estadoSalto == EstadoSalto.SALTANDO ) {
+        if ( estadoSalto == EstadoSalto.SUBIENDO || estadoSalto ==EstadoSalto.BAJANDO) {
             tiempoVolando += delta * 5;   // El factor DES/ACELERA
             alturaVolando = velocidadInicial * tiempoVolando - 0.5f * G * tiempoVolando * tiempoVolando;
+            if(tiempoVolando < tiempoVuelo/2)
+                estadoSalto = EstadoSalto.SUBIENDO;
+            else
+                estadoSalto = EstadoSalto.BAJANDO;
+
             if (tiempoVolando < tiempoVuelo) {
                 //Sigue en el aire
                 sprite.setY(yInicial + alturaVolando);
@@ -230,6 +271,7 @@ public class Kai extends Objeto{
     // Revisa si toca un item (croqueta o pocion de vida)
     public boolean recolectarItems(TiledMap mapa) {
         TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(1); //puedes recuperar una capa del mapa
+
         int x = (int)(sprite.getX()/32);
         int y = (int)(sprite.getY()/32);
         TiledMapTileLayer.Cell celda = capa.getCell(x,y);
@@ -242,7 +284,7 @@ public class Kai extends Objeto{
                 return true;
             }
         }
-        x = (int)(sprite.getX()/32)+3;
+        x = (int)(sprite.getX()/32)+(int)sprite.getWidth()/2;
         y = (int)(sprite.getY()/32);
         celda = capa.getCell(x,y);
         if (celda!=null ) {
@@ -255,7 +297,7 @@ public class Kai extends Objeto{
             }
         }
         x = (int)(sprite.getX()/32);
-        y = (int)(sprite.getY()/32)+1;
+        y = (int)(sprite.getY()/32)+(int)sprite.getHeight()/2;
         celda = capa.getCell(x,y);
         if (celda!=null ) {
             Object tipo = celda.getTile().getProperties().get("tipo");
@@ -266,8 +308,8 @@ public class Kai extends Objeto{
                 return true;
             }
         }
-        x = (int)(sprite.getX()/32)+1;
-        y = (int)(sprite.getY()/32)+1;
+        x = (int)(sprite.getX()/32)+(int)sprite.getWidth()/2;
+        y = (int)(sprite.getY()/32)+(int)sprite.getHeight()/2;
         celda = capa.getCell(x,y);
         if (celda!=null ) {
             Object tipo = celda.getTile().getProperties().get("tipo");
@@ -316,7 +358,7 @@ public class Kai extends Objeto{
             alturaVolando = 0;    // Inicia en el piso
             tiempoVolando = 0;
             yInicial = sprite.getY();
-            estadoSalto = EstadoSalto.SALTANDO;
+            estadoSalto = EstadoSalto.SUBIENDO;
             //Gdx.app.log("saltar", "ymax=" + ymax + ", tiempoV=" + tiempoVuelo + ", y0=" + yInicial);
         }
     }
@@ -379,7 +421,7 @@ public class Kai extends Objeto{
     }
 
 
-    public boolean tocoSlime(Slime slime, SpriteBatch batch){
+    public boolean tocoSlime(Slime slime, SpriteBatch batch, float delta){
         int x = (int)sprite.getX()-30;
         int y = (int)sprite.getY()+30;
         int width = (int)sprite.getWidth()-30;
@@ -448,11 +490,13 @@ public class Kai extends Objeto{
         return false;
 
     }
+
     public enum EstadoMovimiento {
         INICIANDO,
         QUIETO,
         MOV_IZQUIERDA,
-        MOV_DERECHA
+        MOV_DERECHA,
+        ASUSTADO
     }
 
     public enum EstadoSalto {

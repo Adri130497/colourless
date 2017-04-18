@@ -45,7 +45,7 @@ class PantallaInicial extends Pantalla
     public void render(float delta) {
 
         // Dibujar
-        borrarPantalla(1,0.55f,0);
+        borrarPantalla(0,0.05490f,0.12549f);
 
         batch.setProjectionMatrix(camara.combined);
         batch.begin();

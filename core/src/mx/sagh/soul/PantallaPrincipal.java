@@ -42,7 +42,7 @@ public class PantallaPrincipal extends Pantalla {
     private final float DELTA_X = 10;    // Desplazamiento del personaje
     private final float DELTA_Y = 10;
     private final float UMBRAL = 50; // Para asegurar que hay movimiento
-
+    private float tiempoAsustado = 0.8f;
     // Punteros (dedo para pan horizontal, vertical)
     private final int INACTIVO = -1;
     private int punteroHorizontal = INACTIVO;
@@ -61,7 +61,7 @@ public class PantallaPrincipal extends Pantalla {
     private Kai kai;
     private float dx = 0;
     private float dy = 0;
-    private Texture texturaKaiCaminando, texturaKaiReposo;
+    private Texture texturaKaiCaminando, texturaKaiReposo, texturaKaiBrincando, texturaKaiCayendo, texturaKaiAsustado;
 
     // Enemigo
     public static Slime slime[];
@@ -150,7 +150,7 @@ public class PantallaPrincipal extends Pantalla {
 
         crearHUD();
         Gdx.input.setInputProcessor(escenaHUD);
-        kai = new Kai(texturaKaiCaminando, texturaKaiReposo,128,128);
+        kai = new Kai(texturaKaiCaminando, texturaKaiReposo, texturaKaiBrincando, texturaKaiCayendo, texturaKaiAsustado, 128,128);
         slime = new Slime[8];
         slime[0]= new Slime(texturaSlime, 2080, 160);
         slime[1]= new Slime(texturaSlime, 2496, 128);
@@ -226,7 +226,8 @@ public class PantallaPrincipal extends Pantalla {
 
         btnUp.addListener(new ClickListener(){
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-                kai.saltar();
+                if (kai.getEstadoSalto() != Kai.EstadoSalto.SUBIENDO)
+                    kai.saltar();
                 return true;
             }
         });
@@ -351,8 +352,11 @@ public class PantallaPrincipal extends Pantalla {
         texturaRestartButton=new Texture("restartButton.png");
         texturaSettingsButton=new Texture("settingsButton.png");
         texturaMainMenuButton=new Texture("mainMenuButton.png");
-        texturaKaiCaminando = new Texture("kaiWalkingSprite.png");
-        texturaKaiReposo = new Texture("kaiRestingSprite.png");
+        texturaKaiCaminando = new Texture("KaiSprites/kaiWalkingSprite.png");
+        texturaKaiReposo = new Texture("KaiSprites/kaiRestingSprite.png");
+        texturaKaiBrincando = new Texture("KaiSprites/kaiJumpingSprite.png");
+        texturaKaiCayendo = new Texture("KaiSprites/kaiFallingSprite.png");
+        texturaKaiAsustado = new Texture("KaiSprites/kaiGotHitSprite.png");
         texturaBotonUp = new Texture("upButton.png");
         barra1 = new Texture("SpritesBarraVida/vida1.png");
         barra2 = new Texture("SpritesBarraVida/vida2.png");
@@ -376,12 +380,22 @@ public class PantallaPrincipal extends Pantalla {
                 if((kai.sprite.getX()+400)>=baba.sprite.getX()){
                     baba.setEstadoMovimiento(Slime.EstadoMovimiento.MOV_IZQUIERDA);
                 }
-                if(kai.tocoSlime(baba, batch)){
+                if(kai.tocoSlime(baba, batch, delta)){
                     slimeTocados++;
+                    kai.setEstadoMovimiento(Kai.EstadoMovimiento.ASUSTADO);
                     disminuirVida();
                 }
             }
             actualizarCamara();
+        }
+
+        if(kai.getEstadoMovimiento()==Kai.EstadoMovimiento.ASUSTADO){
+            Gdx.app.log("EstadoM","Asustado");
+            tiempoAsustado -= delta;
+            if (tiempoAsustado<=0) {
+                kai.setEstadoMovimiento(Kai.EstadoMovimiento.QUIETO);
+                tiempoAsustado = 0.8f;
+            }
         }
         // 60 x seg
         borrarPantalla();
@@ -531,6 +545,9 @@ public class PantallaPrincipal extends Pantalla {
         clickSound.dispose();
         texturaKaiCaminando.dispose();
         texturaKaiReposo.dispose();
+        texturaKaiBrincando.dispose();
+        texturaKaiCayendo.dispose();
+        texturaKaiAsustado.dispose();
         texturaBotonUp.dispose();
         texturaSlime.dispose();
         barra1.dispose();
@@ -610,7 +627,7 @@ public class PantallaPrincipal extends Pantalla {
                 xHorizontal = v.x;
             } else if ( pointer == punteroVertical && Math.abs(v.y-yVertical)>UMBRAL ) {
 
-                if (v.y > yVertical && kai.getEstadoSalto() != Kai.EstadoSalto.SALTANDO) {
+                if (v.y > yVertical && kai.getEstadoSalto() != Kai.EstadoSalto.SUBIENDO) {
                     kai.saltar();
                     dy = DELTA_Y;   // Arriba
                 } else {

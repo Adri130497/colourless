@@ -93,8 +93,9 @@ class PantallaCargando extends Pantalla
         manager.load("fondoMadera.png", Texture.class);
         manager.load("fondoMenu.png", Texture.class);
         manager.load("fondoRojo_01.png", Texture.class);
-        manager.load("kaiRestingSprite.png", Texture.class);
-        manager.load("kaiWalkingSprite.png", Texture.class);
+        manager.load("KaiSprites/kaiRestingSprite.png", Texture.class);
+        manager.load("KaiSprites/kaiWalkingSprite.png", Texture.class);
+        manager.load("KaiSprites/kaiJumpingSprite.png", Texture.class);
         manager.load("drop.png", Texture.class);
         manager.load("lluvia2.pe", ParticleEffect.class);
         manager.load("loadButton.png", Texture.class);
@@ -146,8 +147,8 @@ class PantallaCargando extends Pantalla
         manager.load("fondoMadera.png", Texture.class);
         manager.load("fondoMenu.png", Texture.class);
         manager.load("fondoRojo_01.png", Texture.class);
-        manager.load("kaiRestingSprite.png", Texture.class);
-        manager.load("kaiWalkingSprite.png", Texture.class);
+        //manager.load("kaiRestingSprite.png", Texture.class);
+        //manager.load("kaiWalkingSprite.png", Texture.class);
         manager.load("drop.png", Texture.class);
         manager.load("lluvia2.pe", ParticleEffect.class);
         manager.load("loadButton.png", Texture.class);
