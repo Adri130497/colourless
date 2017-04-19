@@ -79,7 +79,7 @@ public class PantallaMenu extends Pantalla {
                 Gdx.app.log("clicked","Hiciste click en Start");
                 clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                menu.setScreen(new PantallaPrincipal(menu));
+                menu.setScreen(new PantallaCargando(menu, Pantallas.NIVEL_1));
                 clickSound.stop();
             }
         });
@@ -90,7 +90,7 @@ public class PantallaMenu extends Pantalla {
                 Gdx.app.log("clicked","Hiciste click en Load");
                 clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                menu.setScreen(new PantallaPrincipal(menu));
+                menu.setScreen(new PantallaCargando(menu, Pantallas.NIVEL_1));
                 clickSound.stop();
             }
         });
@@ -102,7 +102,7 @@ public class PantallaMenu extends Pantalla {
                 PantallaAjustes.estado = EstadoInvocado.PANTALLA_MENU;
                 clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                menu.setScreen(new PantallaAjustes(menu));
+                menu.setScreen(new PantallaCargando(menu, Pantallas.AJUSTES));
                 clickSound.stop();
             }
         });
@@ -113,7 +113,7 @@ public class PantallaMenu extends Pantalla {
                 Gdx.app.log("clicked","Hiciste click en Extras");
                 clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                menu.setScreen(new PantallaExtras(menu));
+                menu.setScreen(new PantallaCargando(menu, Pantallas.EXTRAS));
                 clickSound.stop();
             }
         });

@@ -202,7 +202,7 @@ public class PantallaLogros extends Pantalla {
                 Gdx.app.log("clicked", "Me hicieron click");
                 clickSound.play();
                 while (clickSound.isPlaying()) if (clickSound.getPosition() > 0.5f) break;
-                menu.setScreen(new PantallaExtras(menu));
+                menu.setScreen(new PantallaCargando(menu, Pantallas.EXTRAS));
             }
             return true;
         }

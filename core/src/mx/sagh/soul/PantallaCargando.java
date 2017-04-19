@@ -27,7 +27,6 @@ class PantallaCargando extends Pantalla
 
     private ColourlessSoul juego;
     private Pantallas siguientePantalla;
-    private int avance; // % de carga
     private Texto texto;
 
     private Texture texturaCargando1;
@@ -57,7 +56,7 @@ class PantallaCargando extends Pantalla
     // Carga los recursos de la siguiente pantalla
     private void cargarRecursosSigPantalla() {
         manager = juego.getAssetManager();
-        avance = 0;
+
         switch (siguientePantalla) {
             case MENU:
                 cargarRecursosMenu();
@@ -65,8 +64,90 @@ class PantallaCargando extends Pantalla
             case NIVEL_1:
                 cargarRecursosNivel1();
                 break;
+            case AJUSTES:
+                cargarRecursosAjustes();
+                break;
+            case EXTRAS:
+                cargarRecursosExtra();
+                break;
+            case CREDITOS:
+                cargarRecursosCredits();
+                break;
+            case LOGROS:
+                cargarRecursosLogro();
+                break;
+            case GAMEOVER:
+                cargarRecursosGameOver();
+                break;
+            case GANASTE:
+                cargarRecursosGanaste();
+                break;
+            case TUTORIAL:
+                cargarRecursosTutorial();
+                break;
+
 
         }
+    }
+
+    private void cargarRecursosTutorial() {
+        manager.load("FondosTutorial/howTo1.png", Texture.class);
+        manager.load("FondosTutorial/howTo6.png", Texture.class);
+        manager.load("FondosTutorial/howToSprites.png", Texture.class);
+        manager.load("FondosTutorial/howToSprites2.png", Texture.class);
+        manager.load("FondosTutorial/turnPage.mp3", Sound.class);
+    }
+
+    private void cargarRecursosGanaste() {
+        manager.load("fondoMadera.png", Texture.class);
+        manager.load("Next.png", Texture.class);
+        manager.load("mainMenuButton.png", Texture.class);
+    }
+
+    private void cargarRecursosGameOver() {
+        manager.load("GameOverGris.png", Texture.class);
+        manager.load("restartButton.png", Texture.class);
+        manager.load("mainMenuButton.png", Texture.class);
+        manager.load("click.mp3", Sound.class);
+    }
+
+    private void cargarRecursosLogro() {
+        manager.load("fondoMenu.png", Texture.class);
+        manager.load("click.mp3", Sound.class);
+        manager.load("thunder.mp3", Sound.class);
+        manager.load("replayButton.png", Texture.class);
+        manager.load("achievsScreen1.png", Texture.class);
+    }
+
+    private void cargarRecursosCredits() {
+        manager.load("fondoMenu.png", Texture.class);
+        manager.load("wind.mp3", Sound.class);
+        manager.load("creditos.png", Texture.class);
+
+    }
+
+    private void cargarRecursosExtra() {
+        manager.load("fondoMenu.png", Texture.class);
+        manager.load("backButton.png", Texture.class);
+        manager.load("click.mp3", Sound.class);
+        manager.load("creditsButton.png", Texture.class);
+        manager.load("howToButton.png", Texture.class);
+        manager.load("achievementsButton.png", Texture.class);
+    }
+
+    private void cargarRecursosAjustes() {
+        manager.load("controlsButton.png", Texture.class);
+        manager.load("controlsChange.png", Texture.class);
+        manager.load("backButton.png", Texture.class);
+        manager.load("changeButtonL.png", Texture.class);
+        manager.load("controlsButton.png", Texture.class);
+        manager.load("controlsChange.png", Texture.class);
+        manager.load("controlsTouch.png", Texture.class);
+        manager.load("backButton.png", Texture.class);
+        manager.load("thunder.mp3", Sound.class);
+        manager.load("wind.mp3", Sound.class);
+        manager.load("click.mp3", Sound.class);
+        manager.load("fondoMenu.png", Texture.class);
     }
 
     private void cargarRecursosNivel1() {
@@ -77,104 +158,46 @@ class PantallaCargando extends Pantalla
         manager.load("PezGiro/pezVanish.png",Texture.class);
         manager.load("SpritesPocion/pocionBNSprites.png", Texture.class);
         manager.load("SpritesPocion/pocionOroSprites.png", Texture.class);
-        manager.load("Baba3.png", Texture.class);
         manager.load("backButton.png", Texture.class);
         manager.load("bite1.mp3", Sound.class);
         manager.load("pauseButton.png", Texture.class);
-        manager.load("Boton sonido.png", Texture.class);
-        manager.load("changeButtonL.png", Texture.class);
-        manager.load("changeButtonR.png", Texture.class);
         manager.load("click.mp3", Sound.class);
-        manager.load("controlsButton.png", Texture.class);
-        manager.load("controlsChange.png", Texture.class);
-        manager.load("controlsTouch.png", Texture.class);
-        manager.load("extrasButton.png", Texture.class);
-        manager.load("Fondo opciones.jpg", Texture.class);
-        manager.load("fondoMadera.png", Texture.class);
-        manager.load("fondoMenu.png", Texture.class);
-        manager.load("fondoRojo_01.png", Texture.class);
         manager.load("KaiSprites/kaiRestingSprite.png", Texture.class);
         manager.load("KaiSprites/kaiWalkingSprite.png", Texture.class);
         manager.load("KaiSprites/kaiJumpingSprite.png", Texture.class);
+        manager.load("KaiSprites/kaiGotHitSprite.png", Texture.class);
+        manager.load("KaiSprites/kaiFallingSprite.png", Texture.class);
+        manager.load("SpritesBarraVida/vida1.png", Texture.class);
+        manager.load("SpritesBarraVida/vida2.png", Texture.class);
+        manager.load("SpritesBarraVida/vida3.png", Texture.class);
+        manager.load("SpritesBarraVida/vida4.png", Texture.class);
+        manager.load("SpritesBarraVida/vida5.png", Texture.class);
+        manager.load("SpritesBarraVida/vida6.png", Texture.class);
+        manager.load("SpritesBarraVida/vida7.png", Texture.class);
+        manager.load("SpritesBarraVida/vidaFull.png", Texture.class);
         manager.load("drop.png", Texture.class);
         manager.load("lluvia2.pe", ParticleEffect.class);
-        manager.load("loadButton.png", Texture.class);
-        manager.load("mainMenuButton.png", Texture.class);
-        manager.load("musicOff.png", Texture.class);
-        manager.load("musicOn.png", Texture.class);
-        manager.load("musicSounds.png", Texture.class);
-        manager.load("negro.jpg", Texture.class);
-        manager.load("Next.png", Texture.class);
-        manager.load("NewGame.png", Texture.class);
-        manager.load("nextButton.png", Texture.class);
         manager.load("padBack.png", Texture.class);
         manager.load("padKnob.png", Texture.class);
-        manager.load("primerPlano_01.png", Texture.class);
-        manager.load("restartButton.png", Texture.class);
-        manager.load("resumeButton.png", Texture.class);
-        manager.load("settingsButton.png", Texture.class);
-        manager.load("settingsButton1.png", Texture.class);
-        manager.load("soundsOff.png", Texture.class);
-        manager.load("soundsOn.png", Texture.class);
-        manager.load("startButton.png", Texture.class);
         manager.load("thunder.mp3", Sound.class);
         manager.load("wind.mp3", Sound.class);
-        manager.load("slimeAnimacion.png", Texture.class);
-
+        manager.load("SpritesSlime/slimePiso.png",Texture.class);
+        manager.load("powerDown.mp3", Sound.class);
+        manager.load("potion.mp3", Sound.class);
+        manager.load("upButton.png", Texture.class);
+        manager.load("vidaKai.png", Texture.class);
     }
 
     private void cargarRecursosMenu() {
-        manager.load("FondosPantalla/fondoGris1.jpg", Texture.class);
-        manager.load("FondosPantalla/fondoGris2.jpg", Texture.class);
-        manager.load("mapaColourless.tmx",TiledMap.class );
-        manager.load("PezGiro/pezGiro.png",Texture.class);
-        manager.load("PezGiro/pezVanish.png",Texture.class);
-        manager.load("SpritesPocion/pocionBNSprites.png", Texture.class);
-        manager.load("SpritesPocion/pocionOroSprites.png", Texture.class);
-        manager.load("Baba3.png", Texture.class);
-        manager.load("backButton.png", Texture.class);
-        manager.load("bite1.mp3", Sound.class);
-        manager.load("pauseButton.png", Texture.class);
-        manager.load("Boton sonido.png", Texture.class);
-        manager.load("changeButtonL.png", Texture.class);
-        manager.load("changeButtonR.png", Texture.class);
-        manager.load("click.mp3", Sound.class);
-        manager.load("controlsButton.png", Texture.class);
-        manager.load("controlsChange.png", Texture.class);
-        manager.load("controlsTouch.png", Texture.class);
         manager.load("extrasButton.png", Texture.class);
-        manager.load("Fondo opciones.jpg", Texture.class);
-        manager.load("fondoMadera.png", Texture.class);
         manager.load("fondoMenu.png", Texture.class);
-        manager.load("fondoRojo_01.png", Texture.class);
-        //manager.load("kaiRestingSprite.png", Texture.class);
-        //manager.load("kaiWalkingSprite.png", Texture.class);
-        manager.load("drop.png", Texture.class);
-        manager.load("lluvia2.pe", ParticleEffect.class);
         manager.load("loadButton.png", Texture.class);
-        manager.load("mainMenuButton.png", Texture.class);
-        manager.load("musicOff.png", Texture.class);
-        manager.load("musicOn.png", Texture.class);
-        manager.load("musicSounds.png", Texture.class);
-        manager.load("negro.jpg", Texture.class);
-        manager.load("Next.png", Texture.class);
         manager.load("NewGame.png", Texture.class);
-        manager.load("nextButton.png", Texture.class);
-        manager.load("padBack.png", Texture.class);
-        manager.load("padKnob.png", Texture.class);
-        manager.load("primerPlano_01.png", Texture.class);
-        manager.load("restartButton.png", Texture.class);
-        manager.load("resumeButton.png", Texture.class);
-        manager.load("settingsButton.png", Texture.class);
         manager.load("settingsButton1.png", Texture.class);
-        manager.load("soundsOff.png", Texture.class);
-        manager.load("soundsOn.png", Texture.class);
         manager.load("startButton.png", Texture.class);
         manager.load("thunder.mp3", Sound.class);
         manager.load("wind.mp3", Sound.class);
-        manager.load("star.png",Texture.class);
-
-
+        manager.load("click.mp3", Sound.class);
     }
 
     @Override
@@ -184,7 +207,6 @@ class PantallaCargando extends Pantalla
         batch.setProjectionMatrix(camara.combined);
         batch.begin();
         spriteCargando.draw(batch);
-        texto.mostrarMensaje(batch,avance+" %",ANCHO/2,ALTO/2);
         // Actualizar
 
         timerAnimacion += Gdx.graphics.getDeltaTime();
@@ -204,9 +226,31 @@ class PantallaCargando extends Pantalla
                 case NIVEL_1:
                     juego.setScreen(new PantallaPrincipal(juego));   // 100% de carga
                     break;
+                case AJUSTES:
+                    juego.setScreen(new PantallaAjustes(juego));   // 100% de carga
+                    break;
+                case EXTRAS:
+                    juego.setScreen(new PantallaExtras(juego));   // 100% de carga
+                    break;
+                case CREDITOS:
+                    juego.setScreen(new PantallaCreditos(juego));   // 100% de carga
+                    break;
+                case LOGROS:
+                    juego.setScreen(new PantallaLogros(juego));   // 100% de carga
+                    break;
+                case GAMEOVER:
+                    juego.setScreen(new PantallaGameOver(juego));   // 100% de carga
+                    break;
+                case GANASTE:
+                    juego.setScreen(new PantallaGanaNivel(juego));   // 100% de carga
+                    break;
+                case TUTORIAL:
+                    juego.setScreen(new PantallaTutorial(juego));   // 100% de carga
+                    break;
+
+
             }
         }
-        avance = (int)(manager.getProgress()*100);
     }
 
     @Override

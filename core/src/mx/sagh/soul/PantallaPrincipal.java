@@ -90,9 +90,6 @@ public class PantallaPrincipal extends Pantalla {
     private Texture texturaPrimerPlano;
     private Texture texturaBotonPausa;
     private Texture texturaPez;
-    private Texture texturaPocion;
-    private Texture texturaBaba;
-    private Texture texturaScore;
     private Texture texturaMenuPausa;
     private Texture texturaGamePaused;
     private Texture texturaResumeButton;
@@ -274,7 +271,7 @@ public class PantallaPrincipal extends Pantalla {
                 clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 PantallaAjustes.estado = EstadoInvocado.PANTALLA_PRINCIPAL;
-                menu.setScreen(new PantallaAjustes(menu));
+                menu.setScreen(new PantallaCargando(menu, Pantallas.AJUSTES));
                 clickSound.stop();
             }
         });
@@ -284,7 +281,7 @@ public class PantallaPrincipal extends Pantalla {
             public void clicked(InputEvent event, float x, float y) {
                 clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                menu.setScreen(new PantallaPrincipal(menu));
+                menu.setScreen(new PantallaCargando(menu, Pantallas.NIVEL_1));
                 clickSound.stop();
             }
         });
@@ -294,7 +291,7 @@ public class PantallaPrincipal extends Pantalla {
             public void clicked(InputEvent event, float x, float y) {
                 clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                menu.setScreen(new PantallaMenu(menu));
+                menu.setScreen(new PantallaCargando(menu, Pantallas.MENU));
                 clickSound.stop();
             }
         });
@@ -342,10 +339,7 @@ public class PantallaPrincipal extends Pantalla {
     private void cargarTexturas() {
         texturaPrimerPlano = new Texture("primerPlano_01.png");
         texturaBotonPausa = new Texture("pauseButton.png");
-        texturaBaba=new Texture("Baba3.png");
         texturaPez=new Texture("pez.png");
-        texturaPocion=new Texture("pocion.png");
-        texturaScore=new Texture("ingamescore.png");
         texturaMenuPausa=new Texture("fondoMadera.png");
         texturaGamePaused=new Texture("gamePaused.png");
         texturaResumeButton=new Texture("resumeButton.png");
@@ -443,11 +437,11 @@ public class PantallaPrincipal extends Pantalla {
             int y = (int) (kai.sprite.getY());
 
             estado=EstadoNivel.PAUSED;
-            menu.setScreen(new PantallaMenu(menu));
+            menu.setScreen(new PantallaCargando(menu, Pantallas.GANASTE));
         }
 
         if (kai.esAlcanzado(mapa, camara)) {
-            menu.setScreen(new PantallaGameOver(menu));
+            menu.setScreen(new PantallaCargando(menu, Pantallas.GAMEOVER));
         }
         kai.dibujar(batch);
         for(Slime baba: slime)
@@ -469,7 +463,7 @@ public class PantallaPrincipal extends Pantalla {
 
         batch.end();
         if (Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
-            menu.setScreen(new PantallaMenu(menu));
+            menu.setScreen(new PantallaCargando(menu, Pantallas.MENU));
         }
 
     }
@@ -483,7 +477,7 @@ public class PantallaPrincipal extends Pantalla {
                     break;
                 }
                 else{
-                    menu.setScreen(new PantallaGameOver(menu));
+                     menu.setScreen(new PantallaCargando(menu, Pantallas.GAMEOVER));
                 }
             }
         }
@@ -532,15 +526,11 @@ public class PantallaPrincipal extends Pantalla {
         escenaHUD.dispose();
         texturaPrimerPlano.dispose();
         texturaBotonPausa.dispose();
-        texturaBaba.dispose();
         texturaPez.dispose();
-        texturaPocion.dispose();
-        texturaScore.dispose();
         texturaMenuPausa.dispose();
         texturaGamePaused.dispose();
         texturaResumeButton.dispose();
         texturaRestartButton.dispose();
-        texturaSettingsButton.dispose();
         texturaMainMenuButton.dispose();
         clickSound.dispose();
         texturaKaiCaminando.dispose();

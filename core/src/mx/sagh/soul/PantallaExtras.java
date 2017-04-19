@@ -81,7 +81,7 @@ public class PantallaExtras extends Pantalla {
                 Gdx.app.log("clicked","Me hicieron click");
                 clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                menu.setScreen(new PantallaMenu(menu));
+                menu.setScreen(new PantallaCargando(menu, Pantallas.MENU));
                 clickSound.stop();
             }
         });
@@ -92,7 +92,7 @@ public class PantallaExtras extends Pantalla {
                 Gdx.app.log("clicked", "Hiciste click en Achievements");
                 clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                menu.setScreen(new PantallaLogros(menu));
+                menu.setScreen(new PantallaCargando(menu, Pantallas.LOGROS));
                 clickSound.stop();
             }
         });
@@ -104,7 +104,7 @@ public class PantallaExtras extends Pantalla {
                 if(!clickSound.isPlaying())
                     clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                menu.setScreen(new PantallaCreditos(menu));
+                menu.setScreen(new PantallaCargando(menu, Pantallas.CREDITOS));
                 clickSound.stop();
             }
         });
@@ -116,7 +116,7 @@ public class PantallaExtras extends Pantalla {
                 if(!clickSound.isPlaying())
                     clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                menu.setScreen(new PantallaTutorial(menu));
+                menu.setScreen(new PantallaCargando(menu, Pantallas.TUTORIAL));
                 clickSound.stop();
             }
         });
