@@ -91,12 +91,7 @@ public class PantallaPrincipal extends Pantalla {
     private ImageButton btnNextLevel;
 
     //texturas
-    private Texture texturaPrimerPlano;
     private Texture texturaBotonPausa;
-    private Texture texturaPez;
-    private Texture texturaPocion;
-    private Texture texturaBaba;
-    private Texture texturaScore;
     private Texture texturaMenuPausa;
     private Texture texturaFinNivel;
     private Texture texturaGamePaused;
@@ -115,12 +110,15 @@ public class PantallaPrincipal extends Pantalla {
     private int slimeTocados=0;
     private Texto texto;
 
+    private final AssetManager manager;
+
     private boolean bitedCookie, tookPotion;
     public EstadoNivel estado;
 
 
     public PantallaPrincipal(ColourlessSoul menu) {
         this.menu = menu;
+        manager=menu.getAssetManager();
     }
 
     @Override
@@ -143,7 +141,6 @@ public class PantallaPrincipal extends Pantalla {
         texto = new Texto();
         estado = EstadoNivel.ACTIVE;
 
-        AssetManager manager = new AssetManager();
         manager.setLoader(TiledMap.class,
                 new TmxMapLoader(new InternalFileHandleResolver()));
         manager.load("mapaColourless.tmx", TiledMap.class);
@@ -403,8 +400,8 @@ public class PantallaPrincipal extends Pantalla {
         vistaHUD = new StretchViewport(ANCHO, ALTO, camaraHUD);
         // HUD
         Skin skin = new Skin();
-        skin.add("padBack", new Texture("padBack.png"));
-        skin.add("padKnob", new Texture("padKnob.png"));
+        skin.add("padBack", manager.get("padBack.png"));
+        skin.add("padKnob", manager.get("padKnob.png"));
 
         Touchpad.TouchpadStyle estilo = new Touchpad.TouchpadStyle();
         estilo.background = skin.getDrawable("padBack");
@@ -433,37 +430,32 @@ public class PantallaPrincipal extends Pantalla {
     }
 
     private void cargarTexturas() {
-        texturaPrimerPlano = new Texture("primerPlano_01.png");
-        texturaBotonPausa = new Texture("pauseButton.png");
-        //texturaBaba=new Texture("Baba3.png");
-        //texturaPez=new Texture("pez.png");
-        //texturaPocion=new Texture("pocion.png");
-        //texturaScore=new Texture("ingamescore.png");
-        texturaMenuPausa=new Texture("fondoMadera.png");
-        texturaFinNivel = new Texture("fondoFinNivel.png");
-        texturaGamePaused=new Texture("gamePaused.png");
-        texturaResumeButton=new Texture("resumeButton.png");
-        texturaRestartButton=new Texture("restartButton.png");
-        texturaSettingsButton=new Texture("settingsButton.png");
-        texturaMainMenuButton=new Texture("mainMenuButton.png");
-        texturaKaiCaminando = new Texture("KaiSprites/kaiWalkingSprite.png");
-        texturaKaiReposo = new Texture("KaiSprites/kaiRestingSprite.png");
-        texturaKaiBrincando = new Texture("KaiSprites/kaiJumpingSprite.png");
-        texturaKaiCayendo = new Texture("KaiSprites/kaiFallingSprite.png");
-        texturaKaiAsustado = new Texture("KaiSprites/kaiGotHitSprite.png");
-        texturaBotonUp = new Texture("upButton.png");
-        texturaBotonReplay = new Texture("replayButton.png");
-        texturaBotonMenu = new Texture("menuButton.png");
-        texturaBotonNextLevel = new Texture("nextLevel.png");
-        barra1 = new Texture("SpritesBarraVida/vida1.png");
-        barra2 = new Texture("SpritesBarraVida/vida2.png");
-        barra3 = new Texture("SpritesBarraVida/vida3.png");
-        barra4 = new Texture("SpritesBarraVida/vida4.png");
-        barra5 = new Texture("SpritesBarraVida/vida5.png");
-        barra6 = new Texture("SpritesBarraVida/vida6.png");
-        barra7 = new Texture("SpritesBarraVida/vida7.png");
-        barraFull = new Texture("SpritesBarraVida/vidaFull.png");
-        texturaSlime = new Texture("SpritesSlime/slimePiso.png");
+        texturaBotonPausa = manager.get("pauseButton.png");
+        texturaMenuPausa=manager.get("fondoMadera.png");
+        texturaFinNivel = manager.get("fondoFinNivel.png");
+        texturaGamePaused=manager.get("gamePaused.png");
+        texturaResumeButton=manager.get("resumeButton.png");
+        texturaRestartButton=manager.get("restartButton.png");
+        texturaSettingsButton= manager.get("settingsButton.png");
+        texturaMainMenuButton=manager.get("mainMenuButton.png");
+        texturaKaiCaminando = manager.get("KaiSprites/kaiWalkingSprite.png");
+        texturaKaiReposo = manager.get("KaiSprites/kaiRestingSprite.png");
+        texturaKaiBrincando =manager.get("KaiSprites/kaiJumpingSprite.png");
+        texturaKaiCayendo =manager.get("KaiSprites/kaiFallingSprite.png");
+        texturaKaiAsustado =manager.get("KaiSprites/kaiGotHitSprite.png");
+        texturaBotonUp =manager.get("upButton.png");
+        texturaBotonReplay =manager.get("replayButton.png");
+        texturaBotonMenu = manager.get("menuButton.png");
+        texturaBotonNextLevel = manager.get("nextLevel.png");
+        barra1 = manager.get("SpritesBarraVida/vida1.png");
+        barra2 = manager.get("SpritesBarraVida/vida2.png");
+        barra3 = manager.get("SpritesBarraVida/vida3.png");
+        barra4 = manager.get("SpritesBarraVida/vida4.png");
+        barra5 =manager.get("SpritesBarraVida/vida5.png");
+        barra6 = manager.get("SpritesBarraVida/vida6.png");
+        barra7 = manager.get("SpritesBarraVida/vida7.png");
+        barraFull = manager.get("SpritesBarraVida/vidaFull.png");
+        texturaSlime = manager.get("SpritesSlime/slimePiso.png");
     }
 
     @Override
@@ -633,12 +625,7 @@ public class PantallaPrincipal extends Pantalla {
     @Override
     public void dispose() {
         escenaHUD.dispose();
-        texturaPrimerPlano.dispose();
         texturaBotonPausa.dispose();
-        //texturaBaba.dispose();
-        //texturaPez.dispose();
-        //texturaPocion.dispose();
-        //texturaScore.dispose();
         texturaMenuPausa.dispose();
         texturaFinNivel.dispose();
         texturaGamePaused.dispose();

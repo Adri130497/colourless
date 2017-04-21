@@ -184,8 +184,18 @@ class PantallaCargando extends Pantalla
         manager.load("SpritesSlime/slimePiso.png",Texture.class);
         manager.load("powerDown.mp3", Sound.class);
         manager.load("potion.mp3", Sound.class);
-        manager.load("upButton.png", Texture.class);
-        manager.load("vidaKai.png", Texture.class);
+        manager.load("upButton.png",Texture.class);
+        manager.load("fondoFinNivel.png", Texture.class);
+        manager.load("gamePaused.png", Texture.class);
+        manager.load("resumeButton.png", Texture.class);
+        manager.load("restartButton.png", Texture.class);
+        manager.load("settingsButton.png", Texture.class);
+        manager.load("mainMenuButton.png", Texture.class);
+        manager.load("fondoMadera.png", Texture.class);
+        manager.load("replayButton.png", Texture.class);
+        manager.load("menuButton.png", Texture.class);
+        manager.load("nextLevel.png",Texture.class);
+
     }
 
     private void cargarRecursosMenu() {

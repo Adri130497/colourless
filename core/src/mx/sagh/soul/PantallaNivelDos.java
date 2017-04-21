@@ -91,7 +91,6 @@ public class PantallaNivelDos extends Pantalla {
     private Texture texturaBotonPausa;
     private Texture texturaPez;
     private Texture texturaPocion;
-    private Texture texturaBaba;
     private Texture texturaScore;
     private Texture texturaMenuPausa;
     private Texture texturaGamePaused;
@@ -342,7 +341,6 @@ public class PantallaNivelDos extends Pantalla {
     private void cargarTexturas() {
         texturaPrimerPlano = new Texture("primerPlano_01.png");
         texturaBotonPausa = new Texture("pauseButton.png");
-        texturaBaba=new Texture("Baba3.png");
         texturaPez=new Texture("pez.png");
         texturaPocion=new Texture("pocion.png");
         texturaScore=new Texture("ingamescore.png");
@@ -532,7 +530,6 @@ public class PantallaNivelDos extends Pantalla {
         escenaHUD.dispose();
         texturaPrimerPlano.dispose();
         texturaBotonPausa.dispose();
-        texturaBaba.dispose();
         texturaPez.dispose();
         texturaPocion.dispose();
         texturaScore.dispose();
