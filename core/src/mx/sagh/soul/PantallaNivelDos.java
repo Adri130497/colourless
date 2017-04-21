@@ -47,7 +47,7 @@ public class PantallaNivelDos extends Pantalla {
     private final int INACTIVO = -1;
     private int punteroHorizontal = INACTIVO;
     private int punteroVertical = INACTIVO;
-
+///
     // Coordenadas
     private float xHorizontal = 0;
     private float yVertical = 0;
