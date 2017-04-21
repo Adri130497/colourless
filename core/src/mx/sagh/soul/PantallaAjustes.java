@@ -127,9 +127,9 @@ public class PantallaAjustes extends Pantalla {
                 clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 if(estado == EstadoInvocado.PANTALLA_MENU)
-                    menu.setScreen(new PantallaMenu(menu));
+                    menu.setScreen(new PantallaCargando(menu, Pantallas.MENU));
                 else if(estado ==EstadoInvocado.PANTALLA_PRINCIPAL)
-                    menu.setScreen(new PantallaPrincipal(menu));
+                    menu.setScreen(new PantallaCargando(menu, Pantallas.NIVEL_1));
                 clickSound.stop();
             }
         });

@@ -8,4 +8,11 @@ public enum Pantallas
 {
     MENU,
     NIVEL_1,
+    AJUSTES,
+    EXTRAS,
+    CREDITOS,
+    LOGROS,
+    GAMEOVER,
+    GANASTE,
+    TUTORIAL
     }
