@@ -77,6 +77,7 @@ public class PantallaPrincipal extends Pantalla {
     private Touchpad pad;
     private ImageButton btnPausa;
     private Image imgPause;
+    private Image imgEndLevel;
     private Image imgGamePaused;
     private Image vida1, vida2, vida3, vida4, vida5, vida6, vida7, vidaFull;
     private Image spritesVida[];
@@ -85,6 +86,8 @@ public class PantallaPrincipal extends Pantalla {
     private ImageButton btnSettings;
     private ImageButton btnMainMenu;
     private ImageButton btnUp;
+    private ImageButton btnReplay;
+    private ImageButton btnMenu;
 
     //texturas
     private Texture texturaPrimerPlano;
@@ -94,12 +97,15 @@ public class PantallaPrincipal extends Pantalla {
     private Texture texturaBaba;
     private Texture texturaScore;
     private Texture texturaMenuPausa;
+    private Texture texturaFinNivel;
     private Texture texturaGamePaused;
     private Texture texturaResumeButton;
     private Texture texturaRestartButton;
     private Texture texturaSettingsButton;
     private Texture texturaMainMenuButton;
     private Texture texturaBotonUp;
+    private Texture texturaBotonMenu;
+    private Texture texturaBotonReplay;
     private Texture barra1,barra2,barra3,barra4,barra5,barra6,barra7,barraFull;
 
     // Puntos del jugador y computadora
@@ -179,6 +185,20 @@ public class PantallaPrincipal extends Pantalla {
 
         imgGamePaused = new Image(texturaGamePaused);
         imgGamePaused.setPosition(ANCHO/2-imgGamePaused.getWidth()/2,imgPause.getY()+imgPause.getHeight()-2*imgGamePaused.getHeight()-10);
+
+        //Pantalla fin de nivel
+        imgEndLevel = new Image(texturaFinNivel);
+        imgEndLevel.setPosition(ANCHO/2-imgEndLevel.getWidth()/2,ALTO/2-imgEndLevel.getHeight()/2);
+
+        TextureRegionDrawable trdBtnReplay = new TextureRegionDrawable(new TextureRegion(texturaBotonReplay));
+        btnReplay = new ImageButton(trdBtnReplay);
+        btnReplay.setSize(120,120);
+        btnReplay.setPosition(imgEndLevel.getX()+50,imgEndLevel.getY()+50);
+
+        TextureRegionDrawable trdBtnMenu = new TextureRegionDrawable(new TextureRegion(texturaBotonMenu));
+        btnMenu = new ImageButton(trdBtnMenu);
+        btnMenu.setSize(120,120);
+        btnMenu.setPosition(imgEndLevel.getX()+imgEndLevel.getWidth()-btnMenu.getWidth()-50,imgEndLevel.getY()+50);
 
         vida1 = new Image(barra1);
         vida2 = new Image(barra2);
@@ -301,6 +321,62 @@ public class PantallaPrincipal extends Pantalla {
 
     }
 
+    private void atFinishEvent() {
+        Gdx.input.setInputProcessor(escenaHUD);
+        kai.setEstadoMovimiento(Kai.EstadoMovimiento.QUIETO);
+        estado = EstadoNivel.FINISHED;
+        pad.remove();
+        btnUp.remove();
+        btnPausa.remove();
+        escenaHUD.addActor(imgEndLevel);
+        escenaHUD.addActor(btnReplay);
+        escenaHUD.addActor(btnMenu);
+        //escenaHUD.addActor(btnRestart);
+        //escenaHUD.addActor(btnMainMenu);
+
+        btnResume.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                estado = EstadoNivel.ACTIVE;
+                escenaHUD.addActor(pad);
+                escenaHUD.addActor(btnUp);
+                clickSound.play();
+                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
+                imgPause.remove();
+                imgGamePaused.remove();
+                btnResume.remove();
+                btnRestart.remove();
+                btnSettings.remove();
+                btnMainMenu.remove();
+                clickSound.stop();
+                if(PantallaAjustes.estadoJugabilidad == PantallaAjustes.EstadoJugabilidad.TOUCH)
+                    Gdx.input.setInputProcessor(new ProcesadorEntrada());
+            }
+        });
+
+
+        btnReplay.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                clickSound.play();
+                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
+                menu.setScreen(new PantallaPrincipal(menu));
+                clickSound.stop();
+            }
+        });
+
+        btnMenu.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                clickSound.play();
+                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
+                menu.setScreen(new PantallaMenu(menu));
+                clickSound.stop();
+            }
+        });
+
+    }
+
     private void crearHUD() {
         // Cámara HUD
         camaraHUD = new OrthographicCamera(ANCHO,ALTO);
@@ -347,6 +423,7 @@ public class PantallaPrincipal extends Pantalla {
         texturaPocion=new Texture("pocion.png");
         texturaScore=new Texture("ingamescore.png");
         texturaMenuPausa=new Texture("fondoMadera.png");
+        texturaFinNivel = new Texture("fondoFinNivel.png");
         texturaGamePaused=new Texture("gamePaused.png");
         texturaResumeButton=new Texture("resumeButton.png");
         texturaRestartButton=new Texture("restartButton.png");
@@ -358,6 +435,8 @@ public class PantallaPrincipal extends Pantalla {
         texturaKaiCayendo = new Texture("KaiSprites/kaiFallingSprite.png");
         texturaKaiAsustado = new Texture("KaiSprites/kaiGotHitSprite.png");
         texturaBotonUp = new Texture("upButton.png");
+        texturaBotonReplay = new Texture("replayButton.png");
+        texturaBotonMenu = new Texture("menuButton.png");
         barra1 = new Texture("SpritesBarraVida/vida1.png");
         barra2 = new Texture("SpritesBarraVida/vida2.png");
         barra3 = new Texture("SpritesBarraVida/vida3.png");
@@ -373,7 +452,7 @@ public class PantallaPrincipal extends Pantalla {
     public void render(float delta) {
         //Gdx.app.log("EstadoPuntero:", Integer.toString(punteroHorizontal));
 
-        if(estado != EstadoNivel.PAUSED) {
+        if(estado != EstadoNivel.PAUSED && estado!= EstadoNivel.FINISHED) {
             kai.actualizar(delta, mapa);
             for(Slime baba: slime) {
                 baba.actualizar(mapa);
@@ -442,8 +521,8 @@ public class PantallaPrincipal extends Pantalla {
             int x = (int) (kai.sprite.getX());
             int y = (int) (kai.sprite.getY());
 
-            estado=EstadoNivel.PAUSED;
-            menu.setScreen(new PantallaMenu(menu));
+            atFinishEvent();
+            //menu.setScreen(new PantallaMenu(menu));
         }
 
         if (kai.esAlcanzado(mapa, camara)) {
@@ -466,6 +545,12 @@ public class PantallaPrincipal extends Pantalla {
         batch.begin();
         texto.mostrarMensaje(batch, Integer.toString(score), ANCHO / 2 - 600, ALTO / 35 + 680);
         texto.mostrarMensaje(batch, "Slime: "+Integer.toString(slimeTocados), ANCHO / 2 - 550, ALTO / 35 + 640);
+
+        //Score final del nivel
+        if(estado==EstadoNivel.FINISHED) {
+            texto.mostrarMensaje(batch, Integer.toString(score) + "/18", ANCHO / 2 - 110, ALTO / 2 + 120);
+            texto.mostrarMensaje(batch, Integer.toString(slimeTocados)+" fatalities", ANCHO / 2 - 55, ALTO / 2 - 15);
+        }
 
         batch.end();
         if (Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
@@ -537,6 +622,7 @@ public class PantallaPrincipal extends Pantalla {
         texturaPocion.dispose();
         texturaScore.dispose();
         texturaMenuPausa.dispose();
+        texturaFinNivel.dispose();
         texturaGamePaused.dispose();
         texturaResumeButton.dispose();
         texturaRestartButton.dispose();
@@ -549,6 +635,8 @@ public class PantallaPrincipal extends Pantalla {
         texturaKaiCayendo.dispose();
         texturaKaiAsustado.dispose();
         texturaBotonUp.dispose();
+        texturaBotonMenu.dispose();
+        texturaBotonReplay.dispose();
         texturaSlime.dispose();
         barra1.dispose();
         barra2.dispose();

@@ -272,19 +272,23 @@ public class Kai extends Objeto{
     public boolean recolectarItems(TiledMap mapa) {
         TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(1); //puedes recuperar una capa del mapa
 
-        int x = (int)(sprite.getX()/32);
-        int y = (int)(sprite.getY()/32);
-        TiledMapTileLayer.Cell celda = capa.getCell(x,y);
-        if (celda!=null ) {
-            Object tipo = celda.getTile().getProperties().get("tipo");
-            if ( "pez".equals(tipo) ) {
-                capa.setCell(x,y,null);    // Borra la croqueta del mapa
-                capa.setCell(x,y,capa.getCell(0,4)); // Cuadro azul en lugar de la croqueta
-                efectoCroqueta.play();
-                return true;
+        int i, j;
+        for(i=0; i<4; i++)
+            for(j=0; j<3; j++) {
+                int x = (int) (sprite.getX() / 32) + i;
+                int y = (int) (sprite.getY() / 32) + j;
+                TiledMapTileLayer.Cell celda = capa.getCell(x, y);
+                if (celda != null) {
+                    Object tipo = celda.getTile().getProperties().get("tipo");
+                    if ("pez".equals(tipo)) {
+                        capa.setCell(x, y, null);    // Borra la croqueta del mapa
+                        capa.setCell(x, y, capa.getCell(0, 4)); // Cuadro azul en lugar de la croqueta
+                        efectoCroqueta.play();
+                        return true;
+                    }
+                }
             }
-        }
-        x = (int)(sprite.getX()/32)+(int)sprite.getWidth()/2;
+        /*x = (int)(sprite.getX()/32)+(int)sprite.getWidth()/2;
         y = (int)(sprite.getY()/32);
         celda = capa.getCell(x,y);
         if (celda!=null ) {
@@ -319,7 +323,7 @@ public class Kai extends Objeto{
                 efectoCroqueta.play();
                 return true;
             }
-        }
+        }*/
         return false;
     }
 
