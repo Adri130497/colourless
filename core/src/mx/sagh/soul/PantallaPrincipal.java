@@ -88,6 +88,7 @@ public class PantallaPrincipal extends Pantalla {
     private ImageButton btnUp;
     private ImageButton btnReplay;
     private ImageButton btnMenu;
+    private ImageButton btnNextLevel;
 
     //texturas
     private Texture texturaPrimerPlano;
@@ -106,6 +107,7 @@ public class PantallaPrincipal extends Pantalla {
     private Texture texturaBotonUp;
     private Texture texturaBotonMenu;
     private Texture texturaBotonReplay;
+    private Texture texturaBotonNextLevel;
     private Texture barra1,barra2,barra3,barra4,barra5,barra6,barra7,barraFull;
 
     // Puntos del jugador y computadora
@@ -194,6 +196,10 @@ public class PantallaPrincipal extends Pantalla {
         btnReplay = new ImageButton(trdBtnReplay);
         btnReplay.setSize(120,120);
         btnReplay.setPosition(imgEndLevel.getX()+50,imgEndLevel.getY()+50);
+
+        TextureRegionDrawable trdBtnNextLevel = new TextureRegionDrawable(new TextureRegion(texturaBotonNextLevel));
+        btnNextLevel = new ImageButton(trdBtnNextLevel);
+        btnNextLevel.setPosition(ANCHO/2,ALTO/2-250);
 
         TextureRegionDrawable trdBtnMenu = new TextureRegionDrawable(new TextureRegion(texturaBotonMenu));
         btnMenu = new ImageButton(trdBtnMenu);
@@ -330,6 +336,7 @@ public class PantallaPrincipal extends Pantalla {
         btnPausa.remove();
         escenaHUD.addActor(imgEndLevel);
         escenaHUD.addActor(btnReplay);
+        escenaHUD.addActor(btnNextLevel);
         escenaHUD.addActor(btnMenu);
         //escenaHUD.addActor(btnRestart);
         //escenaHUD.addActor(btnMainMenu);
@@ -361,6 +368,16 @@ public class PantallaPrincipal extends Pantalla {
                 clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaPrincipal(menu));
+                clickSound.stop();
+            }
+        });
+
+        btnNextLevel.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                clickSound.play();
+                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
+                menu.setScreen(new PantallaNivelDos(menu));
                 clickSound.stop();
             }
         });
@@ -418,10 +435,10 @@ public class PantallaPrincipal extends Pantalla {
     private void cargarTexturas() {
         texturaPrimerPlano = new Texture("primerPlano_01.png");
         texturaBotonPausa = new Texture("pauseButton.png");
-        texturaBaba=new Texture("Baba3.png");
-        texturaPez=new Texture("pez.png");
-        texturaPocion=new Texture("pocion.png");
-        texturaScore=new Texture("ingamescore.png");
+        //texturaBaba=new Texture("Baba3.png");
+        //texturaPez=new Texture("pez.png");
+        //texturaPocion=new Texture("pocion.png");
+        //texturaScore=new Texture("ingamescore.png");
         texturaMenuPausa=new Texture("fondoMadera.png");
         texturaFinNivel = new Texture("fondoFinNivel.png");
         texturaGamePaused=new Texture("gamePaused.png");
@@ -437,6 +454,7 @@ public class PantallaPrincipal extends Pantalla {
         texturaBotonUp = new Texture("upButton.png");
         texturaBotonReplay = new Texture("replayButton.png");
         texturaBotonMenu = new Texture("menuButton.png");
+        texturaBotonNextLevel = new Texture("nextLevel.png");
         barra1 = new Texture("SpritesBarraVida/vida1.png");
         barra2 = new Texture("SpritesBarraVida/vida2.png");
         barra3 = new Texture("SpritesBarraVida/vida3.png");
@@ -617,10 +635,10 @@ public class PantallaPrincipal extends Pantalla {
         escenaHUD.dispose();
         texturaPrimerPlano.dispose();
         texturaBotonPausa.dispose();
-        texturaBaba.dispose();
-        texturaPez.dispose();
-        texturaPocion.dispose();
-        texturaScore.dispose();
+        //texturaBaba.dispose();
+        //texturaPez.dispose();
+        //texturaPocion.dispose();
+        //texturaScore.dispose();
         texturaMenuPausa.dispose();
         texturaFinNivel.dispose();
         texturaGamePaused.dispose();
@@ -637,6 +655,7 @@ public class PantallaPrincipal extends Pantalla {
         texturaBotonUp.dispose();
         texturaBotonMenu.dispose();
         texturaBotonReplay.dispose();
+        texturaBotonNextLevel.dispose();
         texturaSlime.dispose();
         barra1.dispose();
         barra2.dispose();
