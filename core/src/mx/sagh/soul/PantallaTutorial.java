@@ -19,7 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 public class PantallaTutorial extends Pantalla {
     private final ColourlessSoul menu;
-
+    private final AssetManager manager;
     //sonidos
     private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("click.mp3"));
     private Sound efectoHoja;
@@ -42,6 +42,7 @@ public class PantallaTutorial extends Pantalla {
 
     public PantallaTutorial(ColourlessSoul menu) {
         this.menu = menu;
+        manager=menu.getAssetManager();
     }
 
     @Override
@@ -63,7 +64,6 @@ public class PantallaTutorial extends Pantalla {
         TextureRegion[][] texturaAnimada2 = texturaCompleta2.split(1280,800);
         spriteAnimado = new Animation(0.1f, texturaAnimada1[0][0], texturaAnimada1[0][1], texturaAnimada1[0][2], texturaAnimada2[0][0], texturaAnimada2[0][1]);
 
-        AssetManager manager = new AssetManager();
         //Cargar audios
         manager.load("FondosTutorial/turnPage.mp3",Sound.class);
         manager.finishLoading();
@@ -75,9 +75,9 @@ public class PantallaTutorial extends Pantalla {
     }
 
     private void cargarTexturas() {
-        texturaTutorial1 = new Texture("FondosTutorial/howTo1.png");
-        texturaTutorialSprites1 = new Texture("FondosTutorial/howToSprites1.png");
-        texturaTutorialSprites2 = new Texture("FondosTutorial/howToSprites2.png");
+        texturaTutorial1 = manager.get("FondosTutorial/howTo1.png");
+        texturaTutorialSprites1 = manager.get("FondosTutorial/howToSprites1.png");
+        texturaTutorialSprites2 = manager.get("FondosTutorial/howToSprites2.png");
         imgTutorial1 = new Image(texturaTutorial1);
     }
 
@@ -114,9 +114,11 @@ public class PantallaTutorial extends Pantalla {
     @Override
     public void dispose() {
         escena.dispose();
-        texturaTutorial1.dispose();
-        texturaTutorialSprites1.dispose();
-        texturaTutorialSprites2.dispose();
+        manager.unload("FondosTutorial/howToSprites1.png");
+        manager.unload("FondosTutorial/howToSprites2.png");
+        manager.unload("FondosTutorial/howTo1.png");
+
+
         clickSound.dispose();
         clickSound.stop();
     }

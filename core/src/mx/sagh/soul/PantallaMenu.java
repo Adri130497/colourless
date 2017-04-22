@@ -1,6 +1,7 @@
 package mx.sagh.soul;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -17,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
  */
 public class PantallaMenu extends Pantalla {
     private final ColourlessSoul menu;
+    private final AssetManager manager;
 
     //sonidos
     private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("click.mp3"));
@@ -35,6 +37,7 @@ public class PantallaMenu extends Pantalla {
 
     public PantallaMenu(ColourlessSoul menu) {
         this.menu = menu;
+        manager=menu.getAssetManager();
     }
 
     @Override
@@ -123,11 +126,11 @@ public class PantallaMenu extends Pantalla {
     }
 
     private void cargarTexturas() {
-        texturaFondoMenu = new Texture("fondoMenu.png");
-        texturaBotonInicio = new Texture("startButton.png");
-        texturaBotonCargar = new Texture("loadButton.png");
-        texturaBotonAjustes = new Texture("settingsButton1.png");
-        texturaBotonExtras = new Texture("extrasButton.png");
+        texturaFondoMenu = manager.get("fondoMenu.png");
+        texturaBotonInicio = manager.get("startButton.png");
+        texturaBotonCargar = manager.get("loadButton.png");
+        texturaBotonAjustes = manager.get("settingsButton1.png");
+        texturaBotonExtras = manager.get("extrasButton.png");
     }
 
 
@@ -152,11 +155,13 @@ public class PantallaMenu extends Pantalla {
     @Override
     public void dispose() {
         escena.dispose();
-        texturaFondoMenu.dispose();
-        texturaBotonInicio.dispose();
-        texturaBotonCargar.dispose();
-        texturaBotonAjustes.dispose();
-        texturaBotonExtras.dispose();
+        manager.unload("fondoMenu.png");
+        manager.unload("startButton.png");
+        manager.unload("loadButton.png");
+        manager.unload("settingsButton1.png");
+        manager.unload("extrasButton.png");
+
+
         clickSound.dispose();
     }
 }

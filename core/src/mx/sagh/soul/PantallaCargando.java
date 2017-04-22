@@ -92,10 +92,8 @@ class PantallaCargando extends Pantalla
 
     private void cargarRecursosTutorial() {
         manager.load("FondosTutorial/howTo1.png", Texture.class);
-        manager.load("FondosTutorial/howTo6.png", Texture.class);
-        manager.load("FondosTutorial/howToSprites.png", Texture.class);
+        manager.load("FondosTutorial/howToSprites1.png", Texture.class);
         manager.load("FondosTutorial/howToSprites2.png", Texture.class);
-        manager.load("FondosTutorial/turnPage.mp3", Sound.class);
     }
 
     private void cargarRecursosGanaste() {
@@ -105,31 +103,29 @@ class PantallaCargando extends Pantalla
     }
 
     private void cargarRecursosGameOver() {
-        manager.load("GameOverGris.png", Texture.class);
+        manager.load("GameOverGris.jpg", Texture.class);
         manager.load("restartButton.png", Texture.class);
         manager.load("mainMenuButton.png", Texture.class);
-        manager.load("click.mp3", Sound.class);
+
+
     }
 
     private void cargarRecursosLogro() {
-        manager.load("fondoMenu.png", Texture.class);
-        manager.load("click.mp3", Sound.class);
-        manager.load("thunder.mp3", Sound.class);
-        manager.load("replayButton.png", Texture.class);
         manager.load("achievsScreen1.png", Texture.class);
+        manager.load("backButton.png", Texture.class);
+        manager.load("replayButton.png", Texture.class);
+        manager.load("nextButton.png", Texture.class);
+
     }
 
     private void cargarRecursosCredits() {
-        manager.load("fondoMenu.png", Texture.class);
-        manager.load("wind.mp3", Sound.class);
+        manager.load("fondoPrincipal.jpg", Texture.class);
         manager.load("creditos.png", Texture.class);
-
     }
 
     private void cargarRecursosExtra() {
-        manager.load("fondoMenu.png", Texture.class);
+        manager.load("fondoPrincipal.jpg", Texture.class);
         manager.load("backButton.png", Texture.class);
-        manager.load("click.mp3", Sound.class);
         manager.load("creditsButton.png", Texture.class);
         manager.load("howToButton.png", Texture.class);
         manager.load("achievementsButton.png", Texture.class);
@@ -148,6 +144,17 @@ class PantallaCargando extends Pantalla
         manager.load("wind.mp3", Sound.class);
         manager.load("click.mp3", Sound.class);
         manager.load("fondoMenu.png", Texture.class);
+        manager.load("fondoPrincipal.jpg", Texture.class);
+        manager.load("fondoMadera.png", Texture.class);
+        manager.load("musicOn.png", Texture.class);
+        manager.load("musicOff.png", Texture.class);
+        manager.load("musicSounds.png", Texture.class);
+        manager.load("soundsOn.png", Texture.class);
+        manager.load("soundsOff.png", Texture.class);
+
+
+
+
     }
 
     private void cargarRecursosNivel1() {
@@ -199,15 +206,11 @@ class PantallaCargando extends Pantalla
     }
 
     private void cargarRecursosMenu() {
-        manager.load("extrasButton.png", Texture.class);
         manager.load("fondoMenu.png", Texture.class);
-        manager.load("loadButton.png", Texture.class);
-        manager.load("NewGame.png", Texture.class);
-        manager.load("settingsButton1.png", Texture.class);
         manager.load("startButton.png", Texture.class);
-        manager.load("thunder.mp3", Sound.class);
-        manager.load("wind.mp3", Sound.class);
-        manager.load("click.mp3", Sound.class);
+        manager.load("loadButton.png", Texture.class);
+        manager.load("extrasButton.png", Texture.class);
+        manager.load("settingsButton1.png", Texture.class);
     }
 
     @Override

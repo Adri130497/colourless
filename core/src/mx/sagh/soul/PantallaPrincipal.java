@@ -297,7 +297,7 @@ public class PantallaPrincipal extends Pantalla {
                 clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 PantallaAjustes.estado = EstadoInvocado.PANTALLA_PRINCIPAL;
-                menu.setScreen(new PantallaAjustes(menu));
+                menu.setScreen(new PantallaCargando(menu,Pantallas.AJUSTES));
                 clickSound.stop();
             }
         });
@@ -307,7 +307,7 @@ public class PantallaPrincipal extends Pantalla {
             public void clicked(InputEvent event, float x, float y) {
                 clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                menu.setScreen(new PantallaPrincipal(menu));
+                menu.setScreen(new PantallaCargando(menu,Pantallas.NIVEL_1));
                 clickSound.stop();
             }
         });
@@ -317,7 +317,7 @@ public class PantallaPrincipal extends Pantalla {
             public void clicked(InputEvent event, float x, float y) {
                 clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                menu.setScreen(new PantallaMenu(menu));
+                menu.setScreen(new PantallaCargando(menu,Pantallas.MENU));
                 clickSound.stop();
             }
         });
@@ -335,8 +335,7 @@ public class PantallaPrincipal extends Pantalla {
         escenaHUD.addActor(btnReplay);
         escenaHUD.addActor(btnNextLevel);
         escenaHUD.addActor(btnMenu);
-        //escenaHUD.addActor(btnRestart);
-        //escenaHUD.addActor(btnMainMenu);
+
 
         btnResume.addListener(new ClickListener(){
             @Override
@@ -364,7 +363,7 @@ public class PantallaPrincipal extends Pantalla {
             public void clicked(InputEvent event, float x, float y) {
                 clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                menu.setScreen(new PantallaPrincipal(menu));
+                menu.setScreen(new PantallaCargando(menu,Pantallas.NIVEL_1));
                 clickSound.stop();
             }
         });
@@ -384,7 +383,7 @@ public class PantallaPrincipal extends Pantalla {
             public void clicked(InputEvent event, float x, float y) {
                 clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                menu.setScreen(new PantallaMenu(menu));
+                menu.setScreen(new PantallaCargando(menu,Pantallas.MENU));
                 clickSound.stop();
             }
         });
@@ -536,7 +535,7 @@ public class PantallaPrincipal extends Pantalla {
         }
 
         if (kai.esAlcanzado(mapa, camara)) {
-            menu.setScreen(new PantallaGameOver(menu));
+            menu.setScreen(new PantallaCargando(menu,Pantallas.GAMEOVER));
         }
         kai.dibujar(batch);
         for(Slime baba: slime)
@@ -564,7 +563,7 @@ public class PantallaPrincipal extends Pantalla {
 
         batch.end();
         if (Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
-            menu.setScreen(new PantallaMenu(menu));
+            menu.setScreen(new PantallaCargando(menu,Pantallas.MENU));
         }
 
     }
@@ -578,7 +577,7 @@ public class PantallaPrincipal extends Pantalla {
                     break;
                 }
                 else{
-                    menu.setScreen(new PantallaGameOver(menu));
+                    menu.setScreen(new PantallaCargando(menu,Pantallas.GAMEOVER));
                 }
             }
         }
@@ -624,34 +623,33 @@ public class PantallaPrincipal extends Pantalla {
 
     @Override
     public void dispose() {
-        escenaHUD.dispose();
-        texturaBotonPausa.dispose();
-        texturaMenuPausa.dispose();
-        texturaFinNivel.dispose();
-        texturaGamePaused.dispose();
-        texturaResumeButton.dispose();
-        texturaRestartButton.dispose();
-        texturaSettingsButton.dispose();
-        texturaMainMenuButton.dispose();
-        clickSound.dispose();
-        texturaKaiCaminando.dispose();
-        texturaKaiReposo.dispose();
-        texturaKaiBrincando.dispose();
-        texturaKaiCayendo.dispose();
-        texturaKaiAsustado.dispose();
-        texturaBotonUp.dispose();
-        texturaBotonMenu.dispose();
-        texturaBotonReplay.dispose();
-        texturaBotonNextLevel.dispose();
-        texturaSlime.dispose();
-        barra1.dispose();
-        barra2.dispose();
-        barra3.dispose();
-        barra4.dispose();
-        barra5.dispose();
-        barra6.dispose();
-        barra7.dispose();
-        barraFull.dispose();
+        manager.unload("pauseButton.png");
+        manager.unload("fondoMadera.png");
+        manager.unload("fondoFinNivel.png");
+        manager.unload("gamePaused.png");
+        manager.unload("resumeButton.png");
+        manager.unload("restartButton.png");
+        manager.unload("settingsButton.png");
+        manager.unload("mainMenuButton.png");
+        manager.unload("KaiSprites/kaiWalkingSprite.png");
+        manager.unload("KaiSprites/kaiRestingSprite.png");
+        manager.unload("KaiSprites/kaiJumpingSprite.png");
+        manager.unload("KaiSprites/kaiFallingSprite.png");
+        manager.unload("KaiSprites/kaiGotHitSprite.png");
+        manager.unload("upButton.png");
+        manager.unload("replayButton.png");
+        manager.unload("menuButton.png");
+        manager.unload("nextLevel.png");
+        manager.unload("SpritesBarraVida/vida1.png");
+        manager.unload("SpritesBarraVida/vida2.png");
+        manager.unload("SpritesBarraVida/vida3.png");
+        manager.unload("SpritesBarraVida/vida4.png");
+        manager.unload("SpritesBarraVida/vida5.png");
+        manager.unload("SpritesBarraVida/vida6.png");
+        manager.unload("SpritesBarraVida/vida7.png");
+        manager.unload("SpritesBarraVida/vidaFull.png");
+        manager.unload("SpritesSlime/slimePiso.png");
+
     }
 
     private class ProcesadorEntrada implements InputProcessor {

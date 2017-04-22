@@ -195,17 +195,17 @@ public class PantallaAjustes extends Pantalla {
 
     private void cargarTexturas() {
         texturaFondo = manager.get("fondoPrincipal.jpg");
-        texturaSettings = new Texture("fondoMadera.png");
-        texturaMusicaOn = new Texture("musicOn.png");
-        texturaMusicaOff = new Texture("musicOff.png");
-        texturaSonidosOn = new Texture("soundsOn.png");
-        texturaSonidosOff = new Texture("soundsOff.png");
-        texturaMusicSounds = new Texture("musicSounds.png");
-        texturaControlsChange = new Texture("controlsChange.png");
-        texturaControlTouch = new Texture("controlsTouch.png");
-        texturaControlButton = new Texture("controlsButton.png");
-        texturaBotonL = new Texture("changeButtonL.png");
-        texturaBotonRegreso = new Texture("backButton.png");
+        texturaSettings = manager.get("fondoMadera.png");
+        texturaMusicaOn = manager.get("musicOn.png");
+        texturaMusicaOff = manager.get("musicOff.png");
+        texturaSonidosOn = manager.get("soundsOn.png");
+        texturaSonidosOff = manager.get("soundsOff.png");
+        texturaMusicSounds = manager.get("musicSounds.png");
+        texturaControlsChange = manager.get("controlsChange.png");
+        texturaControlTouch = manager.get("controlsTouch.png");
+        texturaControlButton = manager.get("controlsButton.png");
+        texturaBotonL = manager.get("changeButtonL.png");
+        texturaBotonRegreso = manager.get("backButton.png");
     }
     @Override
     public void render(float delta) {
@@ -226,16 +226,18 @@ public class PantallaAjustes extends Pantalla {
     @Override
     public void dispose() {
         escena.dispose();
-        texturaFondo.dispose();
-        texturaSettings.dispose();
-        texturaMusicaOn.dispose();
-        texturaMusicaOff.dispose();
-        texturaSonidosOn.dispose();
-        texturaSonidosOff.dispose();
-        texturaMusicSounds.dispose();
-        texturaControlsChange.dispose();
-        texturaBotonL.dispose();
-        texturaBotonRegreso.dispose();
+        manager.unload("fondoPrincipal.jpg");
+        manager.unload("fondoMadera.png");
+        manager.unload("musicOn.png");
+        manager.unload("musicOff.png");
+        manager.unload("soundsOn.png");
+        manager.unload("soundsOff.png");
+        manager.unload("musicSounds.png");
+        manager.unload("controlsChange.png");
+        manager.unload("controlsTouch.png");
+        manager.unload("controlsButton.png");
+        manager.unload("changeButtonL.png");
+        manager.unload("backButton.png");
         clickSound.dispose();
     }
 

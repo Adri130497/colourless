@@ -2,6 +2,7 @@ package mx.sagh.soul;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -18,7 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
  */
 public class PantallaGanaNivel extends Pantalla {
     private final ColourlessSoul menu;
-
+    private final AssetManager manager;
     //sonidos
     private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("click.mp3"));
     //texturas
@@ -33,6 +34,7 @@ public class PantallaGanaNivel extends Pantalla {
 
     public PantallaGanaNivel(ColourlessSoul menu) {
         this.menu = menu;
+        manager=menu.getAssetManager();
     }
 
     @Override
@@ -71,7 +73,7 @@ public class PantallaGanaNivel extends Pantalla {
                 Gdx.app.log("clicked","Me hicieron click");
                 clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                menu.setScreen(new PantallaCargando(menu, Pantallas.MENU));
+                menu.setScreen(new PantallaCargando(menu, Pantallas.NIVEL_1));
                 clickSound.stop();
                 imgPasar.remove();
             }
@@ -93,11 +95,9 @@ public class PantallaGanaNivel extends Pantalla {
     }
 
     private void cargarTexturas() {
-        texturaSigNiv = new Texture("fondoMadera.png");
-        texturaBotonSigNiv = new Texture("Next.png");
-        texturaBotonMenu = new Texture("mainMenuButton.png");
-
-
+        texturaSigNiv = manager.get("fondoMadera.png");
+        texturaBotonSigNiv = manager.get("Next.png");
+        texturaBotonMenu = manager.get("mainMenuButton.png");
     }
 
     @Override
@@ -121,9 +121,10 @@ public class PantallaGanaNivel extends Pantalla {
     @Override
     public void dispose() {
         escena.dispose();
-        texturaSigNiv.dispose();
-        texturaBotonMenu.dispose();
-        texturaBotonSigNiv.dispose();
+        manager.unload("fondoMadera.png");
+        manager.unload("Next.png");
+        manager.unload("mainMenuButton.png");
+
         clickSound.dispose();
         clickSound.stop();
 

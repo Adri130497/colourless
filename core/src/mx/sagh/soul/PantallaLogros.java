@@ -6,6 +6,7 @@ package mx.sagh.soul;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -13,14 +14,17 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 
 public class PantallaLogros extends Pantalla {
     private final ColourlessSoul menu;
+    private final AssetManager manager;
 
     //sonidos
     private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("click.mp3"));
@@ -28,8 +32,6 @@ public class PantallaLogros extends Pantalla {
     //texturas
     private Texture texturaFondo;
     private Texture texturaBotonRetorno;
-    private Texture texturaBotonAnterior;
-    private Texture texturaBotonSiguiente;
     private Texture texturaLogro;
 
     //botones
@@ -45,6 +47,7 @@ public class PantallaLogros extends Pantalla {
 
     public PantallaLogros(ColourlessSoul menu) {
         this.menu = menu;
+        manager = menu.getAssetManager();
     }
 
     @Override
@@ -87,15 +90,16 @@ public class PantallaLogros extends Pantalla {
         btnBack.setPosition(ANCHO/2-texturaBotonRetorno.getWidth()/2,5);
 
         // Evento del boton
-        /*btnBack.addListener(new ClickListener(){
+        btnBack.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.log("clicked","Me hicieron click");
                 clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                menu.setScreen(new PantallaExtras(menu));
+                menu.setScreen(new PantallaCargando(menu,Pantallas.EXTRAS));
             }
         });
+        /*
 
         btnNext.addListener(new ClickListener(){
             @Override
@@ -126,10 +130,8 @@ public class PantallaLogros extends Pantalla {
 
     private void cargarTexturas() {
         texturaFondo = new Texture("fondoPrincipal.jpg");
-        texturaBotonRetorno = new Texture("replayButton.png");
-        texturaBotonAnterior = new Texture("backButton.png");
-        texturaBotonSiguiente = new Texture("nextButton.png");
-        texturaLogro = new Texture("achievsScreen1.png");
+        texturaBotonRetorno = manager.get("replayButton.png");
+        texturaLogro = manager.get("achievsScreen1.png");
     }
 
 
@@ -142,7 +144,7 @@ public class PantallaLogros extends Pantalla {
         borrarPantalla();
         escena.draw();
         if(Gdx.input.isKeyJustPressed(Input.Keys.BACK)){
-            menu.setScreen(new PantallaMenu(menu));
+            menu.setScreen(new PantallaCargando(menu,Pantallas.MENU));
         }
 
         batch.setProjectionMatrix(camara.combined); // Para ajustar la escala con la cámara
@@ -179,10 +181,10 @@ public class PantallaLogros extends Pantalla {
     public void dispose() {
         escena.dispose();
         texturaFondo.dispose();
-        texturaBotonRetorno.dispose();
-        texturaBotonAnterior.dispose();
-        texturaBotonSiguiente.dispose();
-        texturaLogro.dispose();
+        manager.unload("replayButton.png");
+        manager.unload("backButton.png");
+        manager.unload("nextButton.png");
+        manager.unload("achievsScreen1.png");
         clickSound.dispose();
     }
 

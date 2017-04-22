@@ -2,6 +2,7 @@ package mx.sagh.soul;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -19,7 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 public class PantallaExtras extends Pantalla {
     private final ColourlessSoul menu;
-
+    private final AssetManager manager;
     //sonidos
     private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("click.mp3"));
 
@@ -36,6 +37,7 @@ public class PantallaExtras extends Pantalla {
 
     public PantallaExtras(ColourlessSoul menu) {
         this.menu = menu;
+        manager=menu.getAssetManager();
     }
 
     @Override
@@ -126,11 +128,11 @@ public class PantallaExtras extends Pantalla {
     }
 
     private void cargarTexturas() {
-        texturaFondo = new Texture("fondoPrincipal.jpg");
-        texturaBotonLogros = new Texture("achievementsButton.png");
-        texturaBotonAcercaDe = new Texture("creditsButton.png");
-        texturaBotonHowToPlay = new Texture("howToButton.png");
-        texturaBotonRetorno = new Texture("backButton.png");
+        texturaFondo =manager.get("fondoPrincipal.jpg");
+        texturaBotonLogros = manager.get("achievementsButton.png");
+        texturaBotonAcercaDe = manager.get("creditsButton.png");
+        texturaBotonHowToPlay = manager.get("howToButton.png");
+        texturaBotonRetorno = manager.get("backButton.png");
     }
 
 
@@ -158,11 +160,11 @@ public class PantallaExtras extends Pantalla {
     @Override
     public void dispose() {
         escena.dispose();
-        texturaFondo.dispose();
-        texturaBotonLogros.dispose();
-        texturaBotonAcercaDe.dispose();
-        texturaBotonHowToPlay.dispose();
-        texturaBotonRetorno.dispose();
+        manager.unload("fondoPrincipal.jpg");
+        manager.unload("achievementsButton.png");
+        manager.unload("creditsButton.png");
+        manager.unload("howToButton.png");
+        manager.unload("backButton.png");
         clickSound.dispose();
         clickSound.stop();
     }

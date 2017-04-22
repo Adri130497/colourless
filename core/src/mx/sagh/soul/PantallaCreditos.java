@@ -3,6 +3,7 @@ package mx.sagh.soul;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -15,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 public class PantallaCreditos extends Pantalla {
     private final ColourlessSoul menu;
+    private final AssetManager manager;
 
     //sonidos
     Music windMusic = Gdx.audio.newMusic(Gdx.files.internal("wind.mp3"));
@@ -31,6 +33,7 @@ public class PantallaCreditos extends Pantalla {
 
     public PantallaCreditos(ColourlessSoul menu) {
         this.menu = menu;
+        manager=menu.getAssetManager();
     }
 
     @Override
@@ -58,8 +61,8 @@ public class PantallaCreditos extends Pantalla {
     }
 
     private void cargarTexturas() {
-        texturaFondo = new Texture("fondoPrincipal.jpg");
-        texturaCreditos = new Texture("creditos.png");
+        texturaFondo = manager.get("fondoPrincipal.jpg");
+        texturaCreditos = manager.get("creditos.png");
     }
 
 
@@ -102,8 +105,9 @@ public class PantallaCreditos extends Pantalla {
     @Override
     public void dispose() {
         escena.dispose();
-        texturaFondo.dispose();
-        texturaCreditos.dispose();
+        manager.unload("fondoPrincipal.jpg");
+        manager.unload("creditos.png");
+
         windMusic.dispose();
     }
 
