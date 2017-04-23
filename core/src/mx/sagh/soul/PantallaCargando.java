@@ -151,15 +151,10 @@ class PantallaCargando extends Pantalla
         manager.load("musicSounds.png", Texture.class);
         manager.load("soundsOn.png", Texture.class);
         manager.load("soundsOff.png", Texture.class);
-
-
-
-
     }
 
     private void cargarRecursosNivel1() {
-        manager.load("FondosPantalla/fondoGris1.jpg", Texture.class);
-        manager.load("FondosPantalla/fondoGris2.jpg", Texture.class);
+        manager.load("FondosPantalla/fondoGris.png", Texture.class);
         manager.load("mapaColourless.tmx",TiledMap.class );
         manager.load("PezGiro/pezGiro.png",Texture.class);
         manager.load("PezGiro/pezVanish.png",Texture.class);

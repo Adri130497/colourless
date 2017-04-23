@@ -26,7 +26,6 @@ public class Kai extends Objeto{
     // Variables para el salto
     private final float G = 98.1f;  // Gravedad
     private final float velocidadInicial = 198;  // Velocidad de salida (hacia arriba)
-    private float ymax;     // Altura máxima
     private float tiempoVuelo;  // Tiempo de vuelo TOTAL
 
     private float alturaVolando;  // La posición actual cuando está saltando
@@ -42,8 +41,6 @@ public class Kai extends Objeto{
 
     // Salto
     private EstadoSalto estadoSalto = EstadoSalto.EN_PISO;
-    private float alturaSalto;  // altura actual, inicia en cero
-    private float yOriginal;
 
     // Sonidos
     private Sound efectoCroqueta, efectoPocion, efectoPowerDown;
@@ -98,8 +95,6 @@ public class Kai extends Objeto{
         // Crea el sprite con el personaje quieto (idle)
         sprite = new Sprite(texturaPersonaje[0][0]);    // QUIETO
         sprite.setPosition(x,y);    // Posición inicial
-        // Salto
-        alturaSalto = 0;
     }
 
     // Dibuja el personaje
@@ -151,14 +146,13 @@ public class Kai extends Objeto{
     }
 
     // Actualiza el sprite, de acuerdo al estadoMovimiento y estadoSalto
-    public void actualizar(float delta, TiledMap mapa) {
+    public void actualizar(float delta, TiledMap mapa, OrthographicCamera camara) {
         switch (estadoMovimiento) {
             case MOV_DERECHA:
             case MOV_IZQUIERDA:
-                moverHorizontal(delta, mapa);
+                moverHorizontal(delta, mapa, camara);
                 break;
         }
-
         // Calcula la nueva posición (por ahora cuando está saltando)
         if ( estadoSalto == EstadoSalto.SUBIENDO || estadoSalto ==EstadoSalto.BAJANDO) {
             tiempoVolando += delta * 5;   // El factor DES/ACELERA
@@ -179,47 +173,8 @@ public class Kai extends Objeto{
         }
     }
 
-    // Realiza el salto
-    private void moverVertical(float delta, TiledMap mapa) {
-       delta = Gdx.graphics.getDeltaTime()*200;
-        switch (estadoSalto) {
-            case SUBIENDO:
-                sprite.setY(sprite.getY()+delta);
-                alturaSalto += delta;
-                if (alturaSalto>=2*sprite.getHeight()) {
-                    estadoSalto = EstadoSalto.BAJANDO;
-                }
-                break;
-            case BAJANDO:
-                sprite.setY(sprite.getY()-delta);
-                alturaSalto -= delta;
-                if (alturaSalto<=0) {
-                    estadoSalto = EstadoSalto.EN_PISO;
-                    alturaSalto = 0;
-                    sprite.setY(yOriginal);
-                }
-                break;
-        }
-
-        /*
-        // Calcula la nueva posición (por ahora cuando está saltando)
-        if ( estadoSalto == EstadoSalto.SALTANDO ) {
-            tiempoVolando += delta*5;   // El factor DES/ACELERA
-            alturaVolando = velocidadInicial*tiempoVolando-0.5f*G*tiempoVolando*tiempoVolando;
-            if (tiempoVolando<tiempoVuelo) {
-                //Sigue en el aire
-                sprite.setY(yInicial+alturaVolando);
-            } else {
-                // Termina el salto
-                Gdx.app.log("Salto","termino");
-                sprite.setY(yInicial);
-                estadoSalto = EstadoSalto.EN_PISO;
-            }
-        }*/
-    }
-
     // Mueve el personaje a la derecha/izquierda, prueba choques con paredes
-    private void moverHorizontal(float delta, TiledMap mapa) {
+    private void moverHorizontal(float delta, TiledMap mapa, OrthographicCamera camara) {
         // Obtiene la primer capa del mapa (en este caso es la única)
         TiledMapTileLayer capa = (TiledMapTileLayer) mapa.getLayers().get(0);
         // Ejecutar movimiento horizontal
@@ -240,9 +195,8 @@ public class Kai extends Objeto{
                 // Ejecutar movimiento horizontal
                 nuevaX += VELOCIDAD_X;
                 // Prueba que no salga del mundo por la derecha
-                if (nuevaX <= PantallaPrincipal.ANCHO_MAPA - sprite.getWidth()) {
+                if((camara.position.x+Pantalla.ANCHO/2) > (sprite.getX()+sprite.getWidth()))
                     sprite.setX(nuevaX);
-                }
             }
         }
         // ¿Quiere ir a la izquierda?
@@ -267,75 +221,20 @@ public class Kai extends Objeto{
         }
     }
 
-
-    // Revisa si toca un item (croqueta o pocion de vida)
-    public boolean recolectarItems(TiledMap mapa) {
-        TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(1); //puedes recuperar una capa del mapa
-
-        int i, j;
-        for(i=0; i<4; i++)
-            for(j=0; j<3; j++) {
-                int x = (int) (sprite.getX() / 32) + i;
-                int y = (int) (sprite.getY() / 32) + j;
-                TiledMapTileLayer.Cell celda = capa.getCell(x, y);
-                if (celda != null) {
-                    Object tipo = celda.getTile().getProperties().get("tipo");
-                    if ("pez".equals(tipo)) {
-                        capa.setCell(x, y, null);    // Borra la croqueta del mapa
-                        capa.setCell(x, y, capa.getCell(0, 4)); // Cuadro azul en lugar de la croqueta
-                        efectoCroqueta.play();
-                        return true;
-                    }
-                }
-            }
-        /*x = (int)(sprite.getX()/32)+(int)sprite.getWidth()/2;
-        y = (int)(sprite.getY()/32);
-        celda = capa.getCell(x,y);
-        if (celda!=null ) {
-            Object tipo = celda.getTile().getProperties().get("tipo");
-            if ( "pez".equals(tipo)) {
-                capa.setCell(x,y,null);    // Borra la moneda del mapa
-                capa.setCell(x,y,capa.getCell(0,4)); // Cuadro azul en lugar de la moneda
-                efectoCroqueta.play();
-                return true;
-            }
+    // Inicia el salto
+    public void saltar() {
+        if (estadoSalto!=EstadoSalto.SUBIENDO && estadoSalto!=EstadoSalto.BAJANDO) {
+            //ymax = (velocidadInicial * velocidadInicial) / (2 * G);
+            tiempoVuelo = (2 * velocidadInicial) / G;
+            alturaVolando = 0;    // Inicia en el piso
+            tiempoVolando = 0;
+            yInicial = sprite.getY();
+            estadoSalto = EstadoSalto.SUBIENDO;
+            //Gdx.app.log("saltar", "ymax=" + ymax + ", tiempoV=" + tiempoVuelo + ", y0=" + yInicial);
         }
-        x = (int)(sprite.getX()/32);
-        y = (int)(sprite.getY()/32)+(int)sprite.getHeight()/2;
-        celda = capa.getCell(x,y);
-        if (celda!=null ) {
-            Object tipo = celda.getTile().getProperties().get("tipo");
-            if ( "pez".equals(tipo) ) {
-                capa.setCell(x,y,null);    // Borra la moneda del mapa
-                capa.setCell(x,y,capa.getCell(0,4)); // Cuadro azul en lugar de la moneda
-                efectoCroqueta.play();
-                return true;
-            }
-        }
-        x = (int)(sprite.getX()/32)+(int)sprite.getWidth()/2;
-        y = (int)(sprite.getY()/32)+(int)sprite.getHeight()/2;
-        celda = capa.getCell(x,y);
-        if (celda!=null ) {
-            Object tipo = celda.getTile().getProperties().get("tipo");
-            if ( "pez".equals(tipo) ) {
-                capa.setCell(x,y,null);    // Borra la moneda del mapa
-                capa.setCell(x,y,capa.getCell(0,4)); // Cuadro azul en lugar de la moneda
-                efectoCroqueta.play();
-                return true;
-            }
-        }*/
-        return false;
     }
 
-    private void actualizarItems(float delta, TiledMapTileLayer capa, int x, int y, TiledMapTileLayer.Cell celda) {
-
-        //imgCredits.setColor(1,1,1,imgCredits.getColor().a-0.01f);
-
-        capa.setCell(x,y,celda);
-
-    }
-
-    // Accesor de estadoMovimiento
+    // Accesor de estadoMovimiento y estadoSalto
     public EstadoMovimiento getEstadoMovimiento() {
         return estadoMovimiento;
     }
@@ -346,86 +245,52 @@ public class Kai extends Objeto{
         this.estadoMovimiento = estadoMovimiento;
     }
 
-    // Inicia el salto
-    public void saltar() {
-        if (estadoSalto!=EstadoSalto.SUBIENDO && estadoSalto!=EstadoSalto.BAJANDO) {
-            // inicia
-            /*estadoSalto = EstadoSalto.SUBIENDO;
-            yOriginal = sprite.getY();
-            alturaSalto = 0;
-            Gdx.app.log("Salto","True");
-            */
-            // Iniciar el salto
-            //estadoSalto = EstadoSalto.SUBIENDO;
-            ymax = (velocidadInicial * velocidadInicial) / (2 * G);
-            tiempoVuelo = (2 * velocidadInicial) / G;
-            alturaVolando = 0;    // Inicia en el piso
-            tiempoVolando = 0;
-            yInicial = sprite.getY();
-            estadoSalto = EstadoSalto.SUBIENDO;
-            //Gdx.app.log("saltar", "ymax=" + ymax + ", tiempoV=" + tiempoVuelo + ", y0=" + yInicial);
-        }
-    }
-
-    public boolean esAlcanzado(TiledMap mapa, OrthographicCamera camara) {
+    public boolean esAlcanzado(OrthographicCamera camara) {
         return (camara.position.x-Pantalla.ANCHO/2+sprite.getWidth()/2) >= (sprite.getX()+sprite.getWidth());
     }
 
-    public boolean tomoPocion(TiledMap mapa) {
-        TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(1); //puedes recuperar una capa del mapa
-        int x = (int)(sprite.getX()/32);
-        int y = (int)(sprite.getY()/32);
-        TiledMapTileLayer.Cell celda = capa.getCell(x,y);
-        if (celda!=null ) {
-            Object tipo = celda.getTile().getProperties().get("tipo");
-            if ( "pocion".equals(tipo) ) {
-                capa.setCell(x,y,null);
-                capa.setCell(x,y,capa.getCell(0,4));
-                efectoPocion.play();
-                return true;
+    // Revisa si toca un item (croqueta o pocion de vida)
+    public boolean recolectarItems(TiledMap mapa) {
+        TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(2); //puedes recuperar una capa del mapa
+        int i, j;
+        for(i=0; i<4; i++)
+            for(j=0; j<3; j++) {
+                int x = (int) (sprite.getX() / 32) + i;
+                int y = (int) (sprite.getY() / 32) + j;
+                TiledMapTileLayer.Cell celda = capa.getCell(x, y);
+                if (celda != null) {
+                    Object tipo = celda.getTile().getProperties().get("tipo");
+                    if ("pez".equals(tipo)) {
+                        capa.setCell(x, y, null);    // Borra la croqueta del mapa
+                        efectoCroqueta.play();
+                        return true;
+                    }
+                }
             }
-        }
-        x = (int)(sprite.getX()/32)+3;
-        y = (int)(sprite.getY()/32);
-        celda = capa.getCell(x,y);
-        if (celda!=null ) {
-            Object tipo = celda.getTile().getProperties().get("tipo");
-            if ( "pocion".equals(tipo) ) {
-                capa.setCell(x,y,null);
-                capa.setCell(x,y,capa.getCell(0,4));
-                efectoPocion.play();
-                return true;
-            }
-        }
-        x = (int)(sprite.getX()/32);
-        y = (int)(sprite.getY()/32)+1;
-        celda = capa.getCell(x,y);
-        if (celda!=null ) {
-            Object tipo = celda.getTile().getProperties().get("tipo");
-            if ( "pocion".equals(tipo) ) {
-                capa.setCell(x,y,null);
-                capa.setCell(x,y,capa.getCell(0,4));
-                efectoPocion.play();
-                return true;
-            }
-        }
-        x = (int)(sprite.getX()/32)+1;
-        y = (int)(sprite.getY()/32)+1;
-        celda = capa.getCell(x,y);
-        if (celda!=null ) {
-            Object tipo = celda.getTile().getProperties().get("tipo");
-            if ( "pocion".equals(tipo) ) {
-                capa.setCell(x,y,null);
-                capa.setCell(x,y,capa.getCell(0,4));
-                efectoPocion.play();
-                return true;
-            }
-        }
         return false;
     }
 
+    public boolean tomoPocion(TiledMap mapa) {
+        TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(2); //puedes recuperar una capa del mapa
+        int i, j;
+        for(i=0; i<4; i++)
+            for(j=0; j<3; j++) {
+                int x = (int) (sprite.getX() / 32) + i;
+                int y = (int) (sprite.getY() / 32) + j;
+                TiledMapTileLayer.Cell celda = capa.getCell(x, y);
+                if (celda != null) {
+                    Object tipo = celda.getTile().getProperties().get("tipo");
+                    if ("pocion".equals(tipo)) {
+                        capa.setCell(x, y, null);    // Borra la poción del mapa
+                        efectoPocion.play();
+                        return true;
+                    }
+                }
+            }
+        return false;
+    }
 
-    public boolean tocoSlime(Slime slime, SpriteBatch batch, float delta){
+    public boolean tocoSlime(Slime slime){
         int x = (int)sprite.getX()-30;
         int y = (int)sprite.getY()+30;
         int width = (int)sprite.getWidth()-30;
@@ -442,57 +307,23 @@ public class Kai extends Objeto{
     }
 
     public boolean recogeGema(TiledMap mapa){
-        TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(1); //puedes recuperar una capa del mapa
-        int x = (int)(sprite.getX()/32);
-        int y = (int)(sprite.getY()/32);
-        TiledMapTileLayer.Cell celda = capa.getCell(x,y);
-        if (celda!=null ) {
-            Object tipo = celda.getTile().getProperties().get("tipo");
-            if ( "gema".equals(tipo) ) {
-                capa.setCell(x,y,null);
-                capa.setCell(x,y,capa.getCell(0,4));
-                efectoPocion.play();
-                return true;
+        TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(2); //puedes recuperar una capa del mapa
+        int i, j;
+        for(i=0; i<4; i++)
+            for(j=0; j<3; j++) {
+                int x = (int) (sprite.getX() / 32) + i;
+                int y = (int) (sprite.getY() / 32) + j;
+                TiledMapTileLayer.Cell celda = capa.getCell(x, y);
+                if (celda != null) {
+                    Object tipo = celda.getTile().getProperties().get("tipo");
+                    if ("gema".equals(tipo)) {
+                        capa.setCell(x, y, null);    // Borra la gema del mapa
+                        efectoPocion.play();
+                        return true;
+                    }
+                }
             }
-        }
-        x = (int)(sprite.getX()/32)+3;
-        y = (int)(sprite.getY()/32);
-        celda = capa.getCell(x,y);
-        if (celda!=null ) {
-            Object tipo = celda.getTile().getProperties().get("tipo");
-            if ( "gema".equals(tipo) ) {
-                capa.setCell(x,y,null);
-                capa.setCell(x,y,capa.getCell(0,4));
-                efectoPocion.play();
-                return true;
-            }
-        }
-        x = (int)(sprite.getX()/32);
-        y = (int)(sprite.getY()/32)+1;
-        celda = capa.getCell(x,y);
-        if (celda!=null ) {
-            Object tipo = celda.getTile().getProperties().get("tipo");
-            if ( "gema".equals(tipo) ) {
-                capa.setCell(x,y,null);
-                capa.setCell(x,y,capa.getCell(0,4));
-                efectoPocion.play();
-                return true;
-            }
-        }
-        x = (int)(sprite.getX()/32)+1;
-        y = (int)(sprite.getY()/32)+1;
-        celda = capa.getCell(x,y);
-        if (celda!=null ) {
-            Object tipo = celda.getTile().getProperties().get("tipo");
-            if ( "gema".equals(tipo) ) {
-                capa.setCell(x,y,null);
-                capa.setCell(x,y,capa.getCell(0,4));
-                efectoPocion.play();
-                return true;
-            }
-        }
         return false;
-
     }
 
     public enum EstadoMovimiento {

@@ -16,8 +16,10 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -43,6 +45,7 @@ public class PantallaPrincipal extends Pantalla {
     private final float DELTA_Y = 10;
     private final float UMBRAL = 50; // Para asegurar que hay movimiento
     private float tiempoAsustado = 0.8f;
+
     // Punteros (dedo para pan horizontal, vertical)
     private final int INACTIVO = -1;
     private int punteroHorizontal = INACTIVO;
@@ -109,6 +112,8 @@ public class PantallaPrincipal extends Pantalla {
     private int score = 0;
     private int slimeTocados=0;
     private Texto texto;
+    private int maxScore = 0;
+
 
     private final AssetManager manager;
 
@@ -126,6 +131,7 @@ public class PantallaPrincipal extends Pantalla {
         // Cuando cargan la pantalla
         cargarTexturas();
         crearObjetos();
+        crearMapaAleatorio();
         sistemaParticulasCroqueta = new ParticleEffect();
         sistemaParticulasPocion = new ParticleEffect();
         bitedCookie = false;
@@ -134,7 +140,21 @@ public class PantallaPrincipal extends Pantalla {
         sistemaParticulasPocion.load(Gdx.files.internal("pocionVanish.pe"),Gdx.files.internal(""));
         if(PantallaAjustes.estadoJugabilidad == PantallaAjustes.EstadoJugabilidad.TOUCH)
             Gdx.input.setInputProcessor(new ProcesadorEntrada());
+    }
 
+    private void crearMapaAleatorio() {
+        TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(2); //puedes recuperar una capa del mapa
+        int arrY[] = {4,6,8,10};
+        int arrX[] = {10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92, 94, 96, 98, 100, 102, 104, 106, 108, 110, 112, 114, 116, 118, 120, 122, 124, 126, 128, 130, 132, 134, 136, 138, 140, 142, 144, 146, 148, 150, 152};
+        for (int b: arrY)   for(int a: arrX)    capa.setCell(a,b,null);
+        int x, y;
+        for(int i=0; i<40; i++){
+            y = arrY[(int)(Math.random() * 4)];
+            x = arrX[(int)(Math.random() * 72)];
+            if(capa.getCell(x,y)==null) maxScore++;
+            capa.setCell(x,y,capa.getCell(159,24));
+        }
+        capa.setCell(156,4,capa.getCell(159,0));
     }
 
     private void crearObjetos() {
@@ -157,14 +177,8 @@ public class PantallaPrincipal extends Pantalla {
         Gdx.input.setInputProcessor(escenaHUD);
         kai = new Kai(texturaKaiCaminando, texturaKaiReposo, texturaKaiBrincando, texturaKaiCayendo, texturaKaiAsustado, 128,128);
         slime = new Slime[8];
-        slime[0]= new Slime(texturaSlime, 2080, 160);
-        slime[1]= new Slime(texturaSlime, 2496, 128);
-        slime[2]= new Slime(texturaSlime, 3936, 160);
-        slime[3]= new Slime(texturaSlime, 4224, 128);
-        slime[4]= new Slime(texturaSlime, 4224, 160);
-        slime[5]= new Slime(texturaSlime, 4480, 160);
-        slime[6]= new Slime(texturaSlime, 4736, 160);
-        slime[7]= new Slime(texturaSlime, 4736, 128);
+        for(int i=0; i<8; i++)
+            slime[i] = new Slime(texturaSlime, MathUtils.random(2080,4736),MathUtils.random(128,160));
 
         //Botones
         TextureRegionDrawable trdBtnPausa = new TextureRegionDrawable(new TextureRegion(texturaBotonPausa));
@@ -196,7 +210,7 @@ public class PantallaPrincipal extends Pantalla {
 
         TextureRegionDrawable trdBtnNextLevel = new TextureRegionDrawable(new TextureRegion(texturaBotonNextLevel));
         btnNextLevel = new ImageButton(trdBtnNextLevel);
-        btnNextLevel.setPosition(ANCHO/2,ALTO/2-250);
+        btnNextLevel.setPosition(ANCHO/2-btnNextLevel.getWidth()/2,btnReplay.getY()+btnReplay.getMinHeight()/2-btnNextLevel.getHeight());
 
         TextureRegionDrawable trdBtnMenu = new TextureRegionDrawable(new TextureRegion(texturaBotonMenu));
         btnMenu = new ImageButton(trdBtnMenu);
@@ -244,7 +258,6 @@ public class PantallaPrincipal extends Pantalla {
             /*public void clicked(InputEvent event, float x, float y) {
                 inPauseEvent();
             }*/
-
         });
 
         btnUp.addListener(new ClickListener(){
@@ -254,8 +267,6 @@ public class PantallaPrincipal extends Pantalla {
                 return true;
             }
         });
-
-
         Gdx.input.setCatchBackKey(true);
     }
 
@@ -336,7 +347,6 @@ public class PantallaPrincipal extends Pantalla {
         escenaHUD.addActor(btnNextLevel);
         escenaHUD.addActor(btnMenu);
 
-
         btnResume.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -356,7 +366,6 @@ public class PantallaPrincipal extends Pantalla {
                     Gdx.input.setInputProcessor(new ProcesadorEntrada());
             }
         });
-
 
         btnReplay.addListener(new ClickListener(){
             @Override
@@ -423,7 +432,6 @@ public class PantallaPrincipal extends Pantalla {
                 }
             }
         });
-
         escenaHUD = new Stage(vistaHUD);
         escenaHUD.addActor(pad);
     }
@@ -459,17 +467,16 @@ public class PantallaPrincipal extends Pantalla {
 
     @Override
     public void render(float delta) {
-        //Gdx.app.log("EstadoPuntero:", Integer.toString(punteroHorizontal));
-
         if(estado != EstadoNivel.PAUSED && estado!= EstadoNivel.FINISHED) {
-            kai.actualizar(delta, mapa);
+            kai.actualizar(delta, mapa, camara);
             for(Slime baba: slime) {
                 baba.actualizar(mapa);
                 if((kai.sprite.getX()+400)>=baba.sprite.getX()){
                     baba.setEstadoMovimiento(Slime.EstadoMovimiento.MOV_IZQUIERDA);
                 }
-                if(kai.tocoSlime(baba, batch, delta)){
+                if(kai.tocoSlime(baba)){
                     slimeTocados++;
+                    tiempoAsustado = 0.8f;
                     kai.setEstadoMovimiento(Kai.EstadoMovimiento.ASUSTADO);
                     disminuirVida();
                 }
@@ -478,11 +485,9 @@ public class PantallaPrincipal extends Pantalla {
         }
 
         if(kai.getEstadoMovimiento()==Kai.EstadoMovimiento.ASUSTADO){
-            Gdx.app.log("EstadoM","Asustado");
             tiempoAsustado -= delta;
             if (tiempoAsustado<=0) {
                 kai.setEstadoMovimiento(Kai.EstadoMovimiento.QUIETO);
-                tiempoAsustado = 0.8f;
             }
         }
         // 60 x seg
@@ -515,7 +520,6 @@ public class PantallaPrincipal extends Pantalla {
             bitedCookie = true;
 
         }
-
         if (kai.tomoPocion(mapa)) {
             int x = (int) (kai.sprite.getX());
             int y = (int) (kai.sprite.getY());
@@ -526,17 +530,12 @@ public class PantallaPrincipal extends Pantalla {
             aumentarVida();
         }
 
-        if(kai.recogeGema(mapa)){
-            int x = (int) (kai.sprite.getX());
-            int y = (int) (kai.sprite.getY());
-
+        if(kai.recogeGema(mapa))
             atFinishEvent();
-            //menu.setScreen(new PantallaMenu(menu));
-        }
 
-        if (kai.esAlcanzado(mapa, camara)) {
+        if (kai.esAlcanzado(camara))
             menu.setScreen(new PantallaCargando(menu,Pantallas.GAMEOVER));
-        }
+
         kai.dibujar(batch);
         for(Slime baba: slime)
             baba.dibujar(batch);
@@ -557,7 +556,7 @@ public class PantallaPrincipal extends Pantalla {
 
         //Score final del nivel
         if(estado==EstadoNivel.FINISHED) {
-            texto.mostrarMensaje(batch, Integer.toString(score) + "/18", ANCHO / 2 - 110, ALTO / 2 + 120);
+            texto.mostrarMensaje(batch, Integer.toString(score) + "/" +Integer.toString(maxScore), ANCHO / 2 - 110, ALTO / 2 + 120);
             texto.mostrarMensaje(batch, Integer.toString(slimeTocados)+" fatalities", ANCHO / 2 - 55, ALTO / 2 - 15);
         }
 
@@ -576,15 +575,14 @@ public class PantallaPrincipal extends Pantalla {
                     escenaHUD.addActor(spritesVida[i+1]);
                     break;
                 }
-                else{
+                else
                     menu.setScreen(new PantallaCargando(menu,Pantallas.GAMEOVER));
-                }
             }
         }
     }
 
     private void aumentarVida() {
-        for(int i=0; i<8; i++){
+        for(int i=0; i<8; i++)
             if(spritesVida[i].getStage()!=null){
                 if(i!=0) {
                     spritesVida[i].remove();
@@ -592,22 +590,18 @@ public class PantallaPrincipal extends Pantalla {
                     break;
                 }
             }
-        }
     }
-
 
     // Actualiza la posición de la cámara para que el personaje esté en el centro,
     // excepto cuando está en la primera y última parte del mundo
     private void actualizarCamara() {
-        float posX = kai.sprite.getX(); //siempre es el sprite quien me da la x o la y del personaje
-        if(camara.position.x<4480){
-            camara.position.set((float) (camara.position.x+70*Gdx.graphics.getDeltaTime()), camara.position.y, 0);
-        }
+        //float posX = kai.sprite.getX(); //siempre es el sprite quien me da la x o la y del personaje
+        if(camara.position.x<4448)
+            camara.position.set((camara.position.x+70*Gdx.graphics.getDeltaTime()), camara.position.y, 0);
         /*if (posX>ANCHO_MAPA-ANCHO/2) {    // Si está en la última mitad
             camara.position.set(ANCHO_MAPA - ANCHO / 2, camara.position.y, 0);
             Gdx.app.log("Pos",Float.toString(camara.position.x));
-        }
-        else*/
+        }*/
         camara.update();
     }
 

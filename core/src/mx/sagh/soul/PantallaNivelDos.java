@@ -372,13 +372,13 @@ public class PantallaNivelDos extends Pantalla {
         //Gdx.app.log("EstadoPuntero:", Integer.toString(punteroHorizontal));
 
         if(estado != EstadoNivel.PAUSED) {
-            kai.actualizar(delta, mapa);
+            kai.actualizar(delta, mapa, camara);
             for(Slime baba: slime) {
                 baba.actualizar(mapa);
                 if((kai.sprite.getX()+400)>=baba.sprite.getX()){
                     baba.setEstadoMovimiento(Slime.EstadoMovimiento.MOV_IZQUIERDA);
                 }
-                if(kai.tocoSlime(baba, batch, delta)){
+                if(kai.tocoSlime(baba)){
                     slimeTocados++;
                     kai.setEstadoMovimiento(Kai.EstadoMovimiento.ASUSTADO);
                     disminuirVida();
@@ -444,7 +444,7 @@ public class PantallaNivelDos extends Pantalla {
             menu.setScreen(new PantallaMenu(menu));
         }
 
-        if (kai.esAlcanzado(mapa, camara)) {
+        if (kai.esAlcanzado(camara)) {
             menu.setScreen(new PantallaGameOver(menu));
         }
         kai.dibujar(batch);
