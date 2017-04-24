@@ -6,6 +6,7 @@ package mx.sagh.soul;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
@@ -28,6 +29,11 @@ public class PantallaLogros extends Pantalla {
 
     //sonidos
     private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("click.mp3"));
+
+    //Preferencias
+    Preferences prefs = Gdx.app.getPreferences("Achievements");
+    private Texto texto;
+    public static float posX;
 
     //texturas
     private Texture texturaFondo;
@@ -61,29 +67,21 @@ public class PantallaLogros extends Pantalla {
 
     private void crearObjetos() {
         batch = new SpriteBatch();
-
+        texto = new Texto();
         // Crea los topos y los guarda en el arreglo
         arrLogros = new Array<Objeto>(NUM_NIVELES);
+        posX = ANCHO / 3 + 50;
         for (int x = 0; x < NUM_NIVELES; x++) {
             float posX = (x*Pantalla.ANCHO) + (Pantalla.ANCHO/2 - texturaLogro.getWidth()/2);
             float posY = (Pantalla.ALTO/2 - texturaLogro.getHeight()/2);
             Logro logro = new Logro(texturaLogro, posX, posY);
             arrLogros.add(logro);
         }
-
         escena = new Stage(vista, batch);
         Image imgFondo = new Image(texturaFondo);
         escena.addActor(imgFondo);
 
         //Botones
-
-        /*TextureRegionDrawable trdBtnPrev = new TextureRegionDrawable(new TextureRegion(texturaBotonAnterior));
-        btnPrev = new ImageButton(trdBtnPrev);
-        btnPrev.setPosition(ANCHO/2-texturaLogro.getWidth()/2-texturaBotonAnterior.getWidth(),ALTO/2);
-
-        TextureRegionDrawable trdBtnNext = new TextureRegionDrawable(new TextureRegion(texturaBotonSiguiente));
-        btnNext = new ImageButton(trdBtnNext);
-        btnNext.setPosition(ANCHO/2+texturaLogro.getWidth()/2,ALTO/2);*/
 
         TextureRegionDrawable trdBtnBack = new TextureRegionDrawable(new TextureRegion(texturaBotonRetorno));
         btnBack = new ImageButton(trdBtnBack);
@@ -96,33 +94,9 @@ public class PantallaLogros extends Pantalla {
                 Gdx.app.log("clicked","Me hicieron click");
                 clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                menu.setScreen(new PantallaCargando(menu,Pantallas.EXTRAS));
+                menu.setScreen(new PantallaCargando(menu,Pantallas.MENU));
             }
         });
-        /*
-
-        btnNext.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log("clicked","Hiciste click en Next");
-                for(Objeto obj : arrLogros){
-                    Logro logro = (Logro)obj;
-                    logro.estado=EstadoLogro.CAMBIANDO_IZQ;
-                }
-            }
-        });
-
-        btnPrev.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log("clicked","Hiciste click en Prev");
-                for(Objeto obj : arrLogros){
-                    Logro logro = (Logro)obj;
-                    logro.estado=EstadoLogro.CAMBIANDO_DER;
-                }
-            }
-        });*/
-
 
         Gdx.input.setInputProcessor(escena);
         Gdx.input.setCatchBackKey(true);
@@ -130,8 +104,8 @@ public class PantallaLogros extends Pantalla {
 
     private void cargarTexturas() {
         texturaFondo = new Texture("fondoPrincipal.jpg");
-        texturaBotonRetorno = manager.get("replayButton.png");
-        texturaLogro = manager.get("achievsScreen1.png");
+        texturaBotonRetorno = manager.get("menuButton.png");
+        texturaLogro = manager.get("fondoFinNivel.png");
     }
 
 
@@ -149,7 +123,6 @@ public class PantallaLogros extends Pantalla {
 
         batch.setProjectionMatrix(camara.combined); // Para ajustar la escala con la cámara
         batch.begin();
-
         dibujarObjetos(arrLogros);
         batch.end();
     }
@@ -157,6 +130,10 @@ public class PantallaLogros extends Pantalla {
     private void dibujarObjetos(Array<Objeto> arrLogros) {
         for (Objeto objeto : arrLogros) {
             objeto.dibujar(batch);
+        }
+        for(int x=0; x<NUM_NIVELES; x++) {
+            texto.mostrarMensaje(batch, prefs.getString((x+1)+"-Score", "N/A"), (x*Pantalla.ANCHO) + posX, ALTO / 2 + 125);
+            texto.mostrarMensaje(batch, prefs.getString((x+1)+"-Slimes", "N/A"), (x*Pantalla.ANCHO) + posX, ALTO / 2 - 10);
         }
     }
 
@@ -181,10 +158,10 @@ public class PantallaLogros extends Pantalla {
     public void dispose() {
         escena.dispose();
         texturaFondo.dispose();
-        manager.unload("replayButton.png");
+        manager.unload("menuButton.png");
         manager.unload("backButton.png");
         manager.unload("nextButton.png");
-        manager.unload("achievsScreen1.png");
+        manager.unload("fondoFinNivel.png");
         clickSound.dispose();
     }
 
@@ -204,7 +181,7 @@ public class PantallaLogros extends Pantalla {
                 Gdx.app.log("clicked", "Me hicieron click");
                 clickSound.play();
                 while (clickSound.isPlaying()) if (clickSound.getPosition() > 0.5f) break;
-                menu.setScreen(new PantallaCargando(menu, Pantallas.EXTRAS));
+                menu.setScreen(new PantallaCargando(menu, Pantallas.MENU));
             }
             return true;
         }

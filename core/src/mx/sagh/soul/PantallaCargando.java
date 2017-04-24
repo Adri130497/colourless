@@ -111,9 +111,9 @@ class PantallaCargando extends Pantalla
     }
 
     private void cargarRecursosLogro() {
-        manager.load("achievsScreen1.png", Texture.class);
+        manager.load("fondoFinNivel.png", Texture.class);
         manager.load("backButton.png", Texture.class);
-        manager.load("replayButton.png", Texture.class);
+        manager.load("menuButton.png", Texture.class);
         manager.load("nextButton.png", Texture.class);
 
     }

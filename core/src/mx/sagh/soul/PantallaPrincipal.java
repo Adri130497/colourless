@@ -7,6 +7,7 @@ package mx.sagh.soul;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Music;
@@ -45,6 +46,9 @@ public class PantallaPrincipal extends Pantalla {
     private final float DELTA_Y = 10;
     private final float UMBRAL = 50; // Para asegurar que hay movimiento
     private float tiempoAsustado = 0.8f;
+
+    // Preferencias
+    Preferences prefs = Gdx.app.getPreferences("Achievements");
 
     // Punteros (dedo para pan horizontal, vertical)
     private final int INACTIVO = -1;
@@ -108,7 +112,7 @@ public class PantallaPrincipal extends Pantalla {
     private Texture texturaBotonNextLevel;
     private Texture barra1,barra2,barra3,barra4,barra5,barra6,barra7,barraFull;
 
-    // Puntos del jugador y computadora
+    // Puntos del jugador
     private int score = 0;
     private int slimeTocados=0;
     private Texto texto;
@@ -347,6 +351,10 @@ public class PantallaPrincipal extends Pantalla {
         escenaHUD.addActor(btnNextLevel);
         escenaHUD.addActor(btnMenu);
 
+        prefs.putString("1-Score",Integer.toString(score)+"/"+Integer.toString(maxScore));
+        prefs.putString("1-Slimes",Integer.toString(slimeTocados)+" fatalities");
+        prefs.flush();
+
         btnResume.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -551,13 +559,14 @@ public class PantallaPrincipal extends Pantalla {
         }
 
         batch.begin();
-        texto.mostrarMensaje(batch, Integer.toString(score), ANCHO / 2 - 600, ALTO / 35 + 680);
-        texto.mostrarMensaje(batch, "Slime: "+Integer.toString(slimeTocados), ANCHO / 2 - 550, ALTO / 35 + 640);
+
+        texto.mostrarMensaje(batch, "Score: " + Integer.toString(score), vida1.getX(), ALTO / 35 + 680);
+        //texto.mostrarMensaje(batch, "Slime: "+Integer.toString(slimeTocados), ANCHO / 2 - 550, ALTO / 35 + 640);
 
         //Score final del nivel
         if(estado==EstadoNivel.FINISHED) {
-            texto.mostrarMensaje(batch, Integer.toString(score) + "/" +Integer.toString(maxScore), ANCHO / 2 - 110, ALTO / 2 + 120);
-            texto.mostrarMensaje(batch, Integer.toString(slimeTocados)+" fatalities", ANCHO / 2 - 55, ALTO / 2 - 15);
+            texto.mostrarMensaje(batch, Integer.toString(score) + "/" +Integer.toString(maxScore), ANCHO / 3 + 50, ALTO / 2 + 125);
+            texto.mostrarMensaje(batch, Integer.toString(slimeTocados)+" fatalities", ANCHO / 3 + 50, ALTO / 2 - 10);
         }
 
         batch.end();
@@ -597,7 +606,7 @@ public class PantallaPrincipal extends Pantalla {
     private void actualizarCamara() {
         //float posX = kai.sprite.getX(); //siempre es el sprite quien me da la x o la y del personaje
         if(camara.position.x<4448)
-            camara.position.set((camara.position.x+70*Gdx.graphics.getDeltaTime()), camara.position.y, 0);
+            camara.position.set((camara.position.x+120*Gdx.graphics.getDeltaTime()), camara.position.y, 0);
         /*if (posX>ANCHO_MAPA-ANCHO/2) {    // Si está en la última mitad
             camara.position.set(ANCHO_MAPA - ANCHO / 2, camara.position.y, 0);
             Gdx.app.log("Pos",Float.toString(camara.position.x));

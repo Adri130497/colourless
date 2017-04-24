@@ -113,7 +113,7 @@ public class PantallaAjustes extends Pantalla {
         TextureRegionDrawable trdBtnL = new TextureRegionDrawable(new TextureRegion(texturaBotonL));
         final ImageButton btnL = new ImageButton(trdBtnL);
         btnL.setSize(120,120);
-        btnL.setPosition(imgControlChange.getX()-23,imgControlChange.getY()-11.5f);
+        btnL.setPosition(imgControlChange.getX()+imgControlChange.getWidth()-btnL.getWidth()+23,imgControlChange.getY()-11.5f);
         escena.addActor(btnL);
 
         TextureRegionDrawable trdBtnBack = new TextureRegionDrawable(new TextureRegion(texturaBotonRegreso));

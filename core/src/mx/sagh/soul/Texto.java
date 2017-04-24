@@ -12,6 +12,8 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class Texto extends Actor {
     private BitmapFont font;
+    public EstadoLogro estado;
+    private float xOriginal;
 
     public Texto(){
         font = new BitmapFont(Gdx.files.internal("WorldOfWater.fnt"));
@@ -23,7 +25,25 @@ public class Texto extends Actor {
         GlyphLayout glyp = new GlyphLayout();
         glyp.setText(font, mensaje);
         float anchoTexto = glyp.width;
-        font.draw(batch,glyp,x-anchoTexto/2,y);
+        font.draw(batch,glyp,x,y);
     }
 
+    // Actualiza la posición del objeto
+    public void actualizar() {
+        if(estado == EstadoLogro.CAMBIANDO_IZQ){
+            this.setX(this.getX()-20);
+            if(xOriginal-this.getX()>=Pantalla.ANCHO) {
+                estado = EstadoLogro.ESTATICO;
+                xOriginal = this.getX();
+            }
+        }
+        if(estado == EstadoLogro.CAMBIANDO_DER){
+            this.setX(this.getX()+20);
+            if(this.getX()-xOriginal>=Pantalla.ANCHO) {
+                estado = EstadoLogro.ESTATICO;
+                xOriginal = this.getX();
+            }
+        }
+
+    }
 }

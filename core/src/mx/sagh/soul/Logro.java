@@ -11,33 +11,37 @@ public class Logro extends Objeto{
 
     public EstadoLogro estado;
     // Movimiento
-    private float vx = 40;   // velocidad en y (pixeles por segundo)
-    private float xActual; // El tamaño real actual (cambiando)
-    private float xOriginal;   // Altura inicial (no cambia)
+    private float xOriginal;
+    private final int MAX_SWIPES = 4;
+    private int swipeCount;
 
 
     public Logro(Texture textura, float x, float y) {
         super(textura, x, y);
         estado = EstadoLogro.ESTATICO;
         xOriginal = sprite.getX();
+        swipeCount = 0;
     }
 
     // Actualiza la posición del objeto
     public void actualizar(float delta) {
-        if(estado == EstadoLogro.CAMBIANDO_IZQ){
+        if(swipeCount<MAX_SWIPES && estado == EstadoLogro.CAMBIANDO_IZQ){
             sprite.setX(sprite.getX()-20);
+            PantallaLogros.posX-=4;// -20 / 5(niveles) pixeles por render
             if(xOriginal-sprite.getX()>=Pantalla.ANCHO) {
                 estado = EstadoLogro.ESTATICO;
                 xOriginal = sprite.getX();
+                swipeCount++;
             }
         }
-        if(estado == EstadoLogro.CAMBIANDO_DER){
+        if(swipeCount>0 && estado == EstadoLogro.CAMBIANDO_DER){
             sprite.setX(sprite.getX()+20);
+            PantallaLogros.posX+=4;
             if(sprite.getX()-xOriginal>=Pantalla.ANCHO) {
                 estado = EstadoLogro.ESTATICO;
                 xOriginal = sprite.getX();
+                swipeCount--;
             }
         }
-
     }
 }
