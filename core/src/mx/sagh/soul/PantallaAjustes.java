@@ -1,6 +1,7 @@
 package mx.sagh.soul;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
@@ -23,7 +24,10 @@ public class PantallaAjustes extends Pantalla {
 
     private final AssetManager manager;
     //sonidos
-    private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("click.mp3"));
+    private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("musicSounds/click.mp3"));
+
+    //Preferencias
+    public static Preferences prefs = Gdx.app.getPreferences("Settings");
 
     //Escena
     private Stage escena;
@@ -56,6 +60,8 @@ public class PantallaAjustes extends Pantalla {
 
     private void crearObjetos() {
         batch = new SpriteBatch();
+        if(prefs.getBoolean("Music",true))
+            PantallaMenu.musicMenu.play();
 
         //Imagenes estáticas
         escena = new Stage(vista, batch);
@@ -72,13 +78,15 @@ public class PantallaAjustes extends Pantalla {
 
         final Image imgControlT = new Image(texturaControlTouch);
         imgControlT.setPosition(ANCHO/2-imgControlT.getWidth()/2,imgControlChange.getY()+1);
-        if(estadoJugabilidad == EstadoJugabilidad.TOUCH)
-            escena.addActor(imgControlT);
+        //if(estadoJugabilidad == EstadoJugabilidad.TOUCH)
+
 
         final Image imgControlB = new Image(texturaControlButton);
         imgControlB.setPosition(ANCHO/2-imgControlB.getWidth()/2,imgControlChange.getY()+1);
-        if(estadoJugabilidad == EstadoJugabilidad.BOTONES)
-            escena.addActor(imgControlB);
+        //if(estadoJugabilidad == EstadoJugabilidad.BOTONES)
+        if(PantallaAjustes.prefs.getBoolean("Touch",true))
+            escena.addActor(imgControlT);
+        else escena.addActor(imgControlB);
 
         Image imgControlMS = new Image(texturaMusicSounds);
         imgControlMS.setPosition(ANCHO/2-imgControlMS.getWidth()/2,imgSettings.getY()+4*imgControlChange.getHeight());
@@ -90,25 +98,27 @@ public class PantallaAjustes extends Pantalla {
         final ImageButton btnMusicaOn = new ImageButton(trdBtnMusicOn);
         btnMusicaOn.setSize(120,120);
         btnMusicaOn.setPosition(imgControlMS.getX()-23,imgControlMS.getY()-11.5f);
-        escena.addActor(btnMusicaOn);
 
         TextureRegionDrawable trdBtnMusicOff = new TextureRegionDrawable(new TextureRegion(texturaMusicaOff));
         final ImageButton btnMusicaOff = new ImageButton(trdBtnMusicOff);
         btnMusicaOff.setSize(120,120);
         btnMusicaOff.setPosition(imgControlMS.getX()-23,imgControlMS.getY()-11.5f);
-        //escena.addActor(btnMusicaOff);
+        if(prefs.getBoolean("Music",true))
+            escena.addActor(btnMusicaOn);
+        else escena.addActor(btnMusicaOff);
 
         TextureRegionDrawable trdBtnSoundsOn = new TextureRegionDrawable(new TextureRegion(texturaSonidosOn));
         final ImageButton btnSoundsOn = new ImageButton(trdBtnSoundsOn);
         btnSoundsOn.setSize(120,120);
         btnSoundsOn.setPosition(imgControlMS.getX()+23+imgControlMS.getWidth()-btnSoundsOn.getWidth(),btnMusicaOn.getY());
-        escena.addActor(btnSoundsOn);
 
         TextureRegionDrawable trdBtnSoundsOff = new TextureRegionDrawable(new TextureRegion(texturaSonidosOff));
         final ImageButton btnSoundsOff = new ImageButton(trdBtnSoundsOff);
         btnSoundsOff.setSize(120,120);
         btnSoundsOff.setPosition(imgControlMS.getX()+23+imgControlMS.getWidth()-btnSoundsOff.getWidth(),btnMusicaOn.getY());
-        //escena.addActor(btnSoundsOff);
+        if(prefs.getBoolean("Sounds",true))
+            escena.addActor(btnSoundsOn);
+        else escena.addActor(btnSoundsOff);
 
         TextureRegionDrawable trdBtnL = new TextureRegionDrawable(new TextureRegion(texturaBotonL));
         final ImageButton btnL = new ImageButton(trdBtnL);
@@ -127,7 +137,9 @@ public class PantallaAjustes extends Pantalla {
         btnRegreso.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play();
+                prefs.flush();
+                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                    clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 if(estado == EstadoInvocado.PANTALLA_MENU)
                     menu.setScreen(new PantallaCargando(menu, Pantallas.MENU));
@@ -140,6 +152,8 @@ public class PantallaAjustes extends Pantalla {
         btnMusicaOn.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                PantallaMenu.musicMenu.stop();
+                prefs.putBoolean("Music",false);
                 escena.addActor(btnMusicaOff);
                 btnMusicaOn.remove();
             }
@@ -148,6 +162,8 @@ public class PantallaAjustes extends Pantalla {
         btnMusicaOff.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                PantallaMenu.musicMenu.play();
+                prefs.putBoolean("Music",true);
                 escena.addActor(btnMusicaOn);
                 btnMusicaOff.remove();
             }
@@ -156,6 +172,7 @@ public class PantallaAjustes extends Pantalla {
         btnSoundsOn.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                prefs.putBoolean("Sounds",false);
                 escena.addActor(btnSoundsOff);
                 btnSoundsOn.remove();
             }
@@ -164,6 +181,7 @@ public class PantallaAjustes extends Pantalla {
         btnSoundsOff.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                prefs.putBoolean("Sounds",true);
                 escena.addActor(btnSoundsOn);
                 btnSoundsOff.remove();
             }
@@ -173,14 +191,14 @@ public class PantallaAjustes extends Pantalla {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if(imgControlB.getStage() == null){
+                    prefs.putBoolean("Touch",false);
                     estadoJugabilidad = EstadoJugabilidad.BOTONES;
-                    Gdx.app.log("LOG","TOUCH OFF");
                     escena.addActor(imgControlB);
                     imgControlT.remove();
                 }
                 else if(imgControlT.getStage() == null){
+                    prefs.putBoolean("Touch",true);
                     estadoJugabilidad = EstadoJugabilidad.TOUCH;
-                    Gdx.app.log("LOG","BUTTONS OFF");
                     escena.addActor(imgControlT);
                     imgControlB.remove();
                 }

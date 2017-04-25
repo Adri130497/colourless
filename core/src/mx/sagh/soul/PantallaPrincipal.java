@@ -75,7 +75,8 @@ public class PantallaPrincipal extends Pantalla {
     private Texture texturaSlime;
 
     // Música / efectos
-    private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("click.mp3"));
+    private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("musicSounds/click.mp3"));
+    public static Music musicLevel;
 
     // HUD
     private OrthographicCamera camaraHUD;
@@ -142,7 +143,8 @@ public class PantallaPrincipal extends Pantalla {
         tookPotion = false;
         sistemaParticulasCroqueta.load(Gdx.files.internal("pezVanish.pe"),Gdx.files.internal(""));
         sistemaParticulasPocion.load(Gdx.files.internal("pocionVanish.pe"),Gdx.files.internal(""));
-        if(PantallaAjustes.estadoJugabilidad == PantallaAjustes.EstadoJugabilidad.TOUCH)
+        //if(PantallaAjustes.estadoJugabilidad == PantallaAjustes.EstadoJugabilidad.TOUCH)
+        if(PantallaAjustes.prefs.getBoolean("Touch",true))
             Gdx.input.setInputProcessor(new ProcesadorEntrada());
     }
 
@@ -171,6 +173,15 @@ public class PantallaPrincipal extends Pantalla {
 
         manager.finishLoading();    // Carga los recursos
         mapa = manager.get("mapaColourless.tmx");
+
+        //Cargar audios
+        manager.load("musicSounds/menuTheme.mp3",Music.class);
+        manager.finishLoading();
+        musicLevel = manager.get("musicSounds/level1Theme.mp3");
+        musicLevel.setLooping(true);
+        musicLevel.setVolume(0.5f);
+        if(PantallaAjustes.prefs.getBoolean("Music",true))
+            musicLevel.play();
 
         batch = new SpriteBatch();
         renderer = new OrthogonalTiledMapRenderer(mapa, batch);
@@ -292,7 +303,8 @@ public class PantallaPrincipal extends Pantalla {
                 estado = EstadoNivel.ACTIVE;
                 escenaHUD.addActor(pad);
                 escenaHUD.addActor(btnUp);
-                clickSound.play();
+                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                    clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 imgPause.remove();
                 imgGamePaused.remove();
@@ -301,7 +313,8 @@ public class PantallaPrincipal extends Pantalla {
                 btnSettings.remove();
                 btnMainMenu.remove();
                 clickSound.stop();
-                if(PantallaAjustes.estadoJugabilidad == PantallaAjustes.EstadoJugabilidad.TOUCH)
+                //if(PantallaAjustes.estadoJugabilidad == PantallaAjustes.EstadoJugabilidad.TOUCH)
+                if(PantallaAjustes.prefs.getBoolean("Touch",true))
                     Gdx.input.setInputProcessor(new ProcesadorEntrada());
             }
         });
@@ -309,7 +322,8 @@ public class PantallaPrincipal extends Pantalla {
         btnSettings.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play();
+                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                    clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 PantallaAjustes.estado = EstadoInvocado.PANTALLA_PRINCIPAL;
                 menu.setScreen(new PantallaCargando(menu,Pantallas.AJUSTES));
@@ -320,7 +334,8 @@ public class PantallaPrincipal extends Pantalla {
         btnRestart.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play();
+                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                    clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaCargando(menu,Pantallas.NIVEL_1));
                 clickSound.stop();
@@ -330,8 +345,10 @@ public class PantallaPrincipal extends Pantalla {
         btnMainMenu.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play();
+                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                    clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
+                musicLevel.stop();
                 menu.setScreen(new PantallaCargando(menu,Pantallas.MENU));
                 clickSound.stop();
             }
@@ -361,7 +378,8 @@ public class PantallaPrincipal extends Pantalla {
                 estado = EstadoNivel.ACTIVE;
                 escenaHUD.addActor(pad);
                 escenaHUD.addActor(btnUp);
-                clickSound.play();
+                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                    clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 imgPause.remove();
                 imgGamePaused.remove();
@@ -370,7 +388,8 @@ public class PantallaPrincipal extends Pantalla {
                 btnSettings.remove();
                 btnMainMenu.remove();
                 clickSound.stop();
-                if(PantallaAjustes.estadoJugabilidad == PantallaAjustes.EstadoJugabilidad.TOUCH)
+                //if(PantallaAjustes.estadoJugabilidad == PantallaAjustes.EstadoJugabilidad.TOUCH)
+                if(PantallaAjustes.prefs.getBoolean("Touch",true))
                     Gdx.input.setInputProcessor(new ProcesadorEntrada());
             }
         });
@@ -378,8 +397,11 @@ public class PantallaPrincipal extends Pantalla {
         btnReplay.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play();
+                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                    clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
+                if(PantallaAjustes.prefs.getBoolean("Music",true))
+                    musicLevel.play();
                 menu.setScreen(new PantallaCargando(menu,Pantallas.NIVEL_1));
                 clickSound.stop();
             }
@@ -388,8 +410,10 @@ public class PantallaPrincipal extends Pantalla {
         btnNextLevel.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play();
+                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                    clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
+                musicLevel.stop();
                 menu.setScreen(new PantallaNivelDos(menu));
                 clickSound.stop();
             }
@@ -398,8 +422,10 @@ public class PantallaPrincipal extends Pantalla {
         btnMenu.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickSound.play();
+                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                    clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
+                musicLevel.stop();
                 menu.setScreen(new PantallaCargando(menu,Pantallas.MENU));
                 clickSound.stop();
             }
@@ -553,7 +579,8 @@ public class PantallaPrincipal extends Pantalla {
         batch.setProjectionMatrix(camaraHUD.combined);
 
         escenaHUD.draw();
-        if(PantallaAjustes.estadoJugabilidad == PantallaAjustes.EstadoJugabilidad.TOUCH) {
+        //if(PantallaAjustes.estadoJugabilidad == PantallaAjustes.EstadoJugabilidad.TOUCH) {
+        if(PantallaAjustes.prefs.getBoolean("Touch",true)){
             pad.remove();
             btnUp.remove();
         }
@@ -567,6 +594,8 @@ public class PantallaPrincipal extends Pantalla {
         if(estado==EstadoNivel.FINISHED) {
             texto.mostrarMensaje(batch, Integer.toString(score) + "/" +Integer.toString(maxScore), ANCHO / 3 + 50, ALTO / 2 + 125);
             texto.mostrarMensaje(batch, Integer.toString(slimeTocados)+" fatalities", ANCHO / 3 + 50, ALTO / 2 - 10);
+            if(musicLevel.getVolume()>=0.00225f)
+                musicLevel.setVolume(musicLevel.getVolume()-0.00225f);
         }
 
         batch.end();
@@ -626,6 +655,7 @@ public class PantallaPrincipal extends Pantalla {
 
     @Override
     public void dispose() {
+        manager.unload("musicSounds/level1Theme.mp3");
         manager.unload("pauseButton.png");
         manager.unload("fondoMadera.png");
         manager.unload("fondoFinNivel.png");

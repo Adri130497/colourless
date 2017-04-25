@@ -19,7 +19,8 @@ public class PantallaCreditos extends Pantalla {
     private final AssetManager manager;
 
     //sonidos
-    Music windMusic = Gdx.audio.newMusic(Gdx.files.internal("wind.mp3"));
+    Music windMusic = Gdx.audio.newMusic(Gdx.files.internal("musicSounds/wind.mp3"));
+
 
     //texturas
     private Texture texturaFondo;
@@ -55,7 +56,10 @@ public class PantallaCreditos extends Pantalla {
         imgCredits = new Image(texturaCreditos);
         imgCredits.setPosition(0,-ALTO+140);
         escena.addActor(imgCredits);
-        windMusic.play();
+
+        if(PantallaAjustes.prefs.getBoolean("Music",true))
+            windMusic.play();
+
         Gdx.input.setInputProcessor(escena);
         Gdx.input.setCatchBackKey(true);
     }

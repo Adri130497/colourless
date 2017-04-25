@@ -2,6 +2,7 @@ package mx.sagh.soul;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -106,8 +107,6 @@ class PantallaCargando extends Pantalla
         manager.load("GameOverGris.jpg", Texture.class);
         manager.load("restartButton.png", Texture.class);
         manager.load("mainMenuButton.png", Texture.class);
-
-
     }
 
     private void cargarRecursosLogro() {
@@ -140,9 +139,9 @@ class PantallaCargando extends Pantalla
         manager.load("controlsChange.png", Texture.class);
         manager.load("controlsTouch.png", Texture.class);
         manager.load("backButton.png", Texture.class);
-        manager.load("thunder.mp3", Sound.class);
-        manager.load("wind.mp3", Sound.class);
-        manager.load("click.mp3", Sound.class);
+        manager.load("musicSounds/thunder.mp3", Sound.class);
+        manager.load("musicSounds/wind.mp3", Sound.class);
+        manager.load("musicSounds/click.mp3", Sound.class);
         manager.load("fondoMenu.png", Texture.class);
         manager.load("fondoPrincipal.jpg", Texture.class);
         manager.load("fondoMadera.png", Texture.class);
@@ -154,6 +153,7 @@ class PantallaCargando extends Pantalla
     }
 
     private void cargarRecursosNivel1() {
+        manager.load("musicSounds/level1Theme.mp3", Music.class);
         manager.load("FondosPantalla/fondoGris.png", Texture.class);
         manager.load("mapaColourless.tmx",TiledMap.class );
         manager.load("PezGiro/pezGiro.png",Texture.class);
@@ -161,9 +161,9 @@ class PantallaCargando extends Pantalla
         manager.load("SpritesPocion/pocionBNSprites.png", Texture.class);
         manager.load("SpritesPocion/pocionOroSprites.png", Texture.class);
         manager.load("backButton.png", Texture.class);
-        manager.load("bite1.mp3", Sound.class);
+        manager.load("musicSounds/bite1.mp3", Sound.class);
         manager.load("pauseButton.png", Texture.class);
-        manager.load("click.mp3", Sound.class);
+        manager.load("musicSounds/click.mp3", Sound.class);
         manager.load("KaiSprites/kaiRestingSprite.png", Texture.class);
         manager.load("KaiSprites/kaiWalkingSprite.png", Texture.class);
         manager.load("KaiSprites/kaiJumpingSprite.png", Texture.class);
@@ -181,11 +181,9 @@ class PantallaCargando extends Pantalla
         manager.load("lluvia2.pe", ParticleEffect.class);
         manager.load("padBack.png", Texture.class);
         manager.load("padKnob.png", Texture.class);
-        manager.load("thunder.mp3", Sound.class);
-        manager.load("wind.mp3", Sound.class);
         manager.load("SpritesSlime/slimePiso.png",Texture.class);
-        manager.load("powerDown.mp3", Sound.class);
-        manager.load("potion.mp3", Sound.class);
+        manager.load("musicSounds/powerDown.mp3", Sound.class);
+        manager.load("musicSounds/potion.mp3", Sound.class);
         manager.load("upButton.png",Texture.class);
         manager.load("fondoFinNivel.png", Texture.class);
         manager.load("gamePaused.png", Texture.class);
@@ -201,6 +199,7 @@ class PantallaCargando extends Pantalla
     }
 
     private void cargarRecursosMenu() {
+        manager.load("musicSounds/menuTheme.mp3", Music.class);
         manager.load("fondoMenu.png", Texture.class);
         manager.load("startButton.png", Texture.class);
         manager.load("loadButton.png", Texture.class);

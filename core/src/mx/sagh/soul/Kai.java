@@ -48,13 +48,13 @@ public class Kai extends Objeto{
     public Kai(Texture texturaCaminando, Texture texturaReposo, Texture texturaBrincando, Texture texturaCayendo, Texture texturaAsustado, float x, float y) {
         AssetManager manager = new AssetManager();
         //Cargar audios
-        manager.load("bite1.mp3",Sound.class);
-        manager.load("potion.mp3",Sound.class);
-        manager.load("powerDown.mp3",Sound.class);
+        manager.load("musicSounds/bite1.mp3",Sound.class);
+        manager.load("musicSounds/potion.mp3",Sound.class);
+        manager.load("musicSounds/powerDown.mp3",Sound.class);
         manager.finishLoading();
-        efectoCroqueta = manager.get("bite1.mp3");
-        efectoPocion = manager.get("potion.mp3");;
-        efectoPowerDown = manager.get("powerDown.mp3");
+        efectoCroqueta = manager.get("musicSounds/bite1.mp3");
+        efectoPocion = manager.get("musicSounds/potion.mp3");;
+        efectoPowerDown = manager.get("musicSounds/powerDown.mp3");
 
         TextureRegion texturaCompleta = new TextureRegion(texturaCaminando);
         TextureRegion[][] texturaPersonaje = texturaCompleta.split(120,120);
@@ -262,7 +262,8 @@ public class Kai extends Objeto{
                     Object tipo = celda.getTile().getProperties().get("tipo");
                     if ("pez".equals(tipo)) {
                         capa.setCell(x, y, null);    // Borra la croqueta del mapa
-                        efectoCroqueta.play();
+                        if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                            efectoCroqueta.play();
                         return true;
                     }
                 }
@@ -282,7 +283,8 @@ public class Kai extends Objeto{
                     Object tipo = celda.getTile().getProperties().get("tipo");
                     if ("pocion".equals(tipo)) {
                         capa.setCell(x, y, null);    // Borra la poción del mapa
-                        efectoPocion.play();
+                        if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                            efectoPocion.play();
                         return true;
                     }
                 }
@@ -298,7 +300,8 @@ public class Kai extends Objeto{
 
         Rectangle r = slime.sprite.getBoundingRectangle();
         if(x < r.x + r.width && x + width > r.x && y < r.y + r.height && y + height > r.y){
-            efectoPowerDown.play();
+            if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                efectoPowerDown.play();
             slime.sprite.setX(0);
             slime.setEstadoMovimiento(Slime.EstadoMovimiento.QUIETO);
             return true;
@@ -318,7 +321,8 @@ public class Kai extends Objeto{
                     Object tipo = celda.getTile().getProperties().get("tipo");
                     if ("gema".equals(tipo)) {
                         capa.setCell(x, y, null);    // Borra la gema del mapa
-                        efectoPocion.play();
+                        if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                            efectoPocion.play();
                         return true;
                     }
                 }

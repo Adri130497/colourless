@@ -21,7 +21,7 @@ public class PantallaTutorial extends Pantalla {
     private final ColourlessSoul menu;
     private final AssetManager manager;
     //sonidos
-    private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("click.mp3"));
+    private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("musicSounds/click.mp3"));
     private Sound efectoHoja;
 
     private Animation<TextureRegion> spriteAnimado;         // Animación caminando, en reposo y parándose
@@ -144,12 +144,13 @@ public class PantallaTutorial extends Pantalla {
             if(estadoTutorial == EstadoTutorial.ESTATICO) {
                 imgTutorial1.remove();
                 estadoTutorial = EstadoTutorial.CAMBIANDO;
-                efectoHoja.play();
+                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                    efectoHoja.play();
             }
             else{
                 estadoTutorial = EstadoTutorial.ESTATICO;
-                Gdx.app.log("clicked","Me hicieron click");
-                clickSound.play();
+                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                    clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaCargando(menu, Pantallas.EXTRAS));
                 clickSound.stop();

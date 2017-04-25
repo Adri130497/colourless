@@ -68,7 +68,7 @@ public class PantallaNivelDos extends Pantalla {
     private Texture texturaSlime;
 
     // Música / efectos
-    private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("click.mp3"));
+    private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("musicSounds/click.mp3"));
 
     // HUD
     private OrthographicCamera camaraHUD;

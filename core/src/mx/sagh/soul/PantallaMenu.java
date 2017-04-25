@@ -21,7 +21,8 @@ public class PantallaMenu extends Pantalla {
     private final AssetManager manager;
 
     //sonidos
-    private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("click.mp3"));
+    private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("musicSounds/click.mp3"));
+    public static Music musicMenu;
 
     //texturas
     private Texture texturaFondoMenu;
@@ -54,6 +55,15 @@ public class PantallaMenu extends Pantalla {
         imgFondo.setSize(1280,800);
         escena.addActor(imgFondo);
 
+        //Cargar audios
+        manager.load("musicSounds/menuTheme.mp3",Music.class);
+        manager.finishLoading();
+        musicMenu = manager.get("musicSounds/menuTheme.mp3");
+        musicMenu.setLooping(true);
+        musicMenu.setVolume(0.5f);
+        if(PantallaAjustes.prefs.getBoolean("Music",true))
+            musicMenu.play();
+
         //Botones del menú principal
         TextureRegionDrawable trdBtnStart = new TextureRegionDrawable(new TextureRegion(texturaBotonInicio));
         ImageButton btnStart = new ImageButton(trdBtnStart);
@@ -79,9 +89,10 @@ public class PantallaMenu extends Pantalla {
         btnStart.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log("clicked","Hiciste click en Start");
-                clickSound.play();
+                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                    clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
+                musicMenu.stop();
                 menu.setScreen(new PantallaCargando(menu, Pantallas.NIVEL_1));
                 clickSound.stop();
             }
@@ -90,8 +101,8 @@ public class PantallaMenu extends Pantalla {
         btnLoad.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log("clicked","Hiciste click en Load");
-                clickSound.play();
+                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                    clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaCargando(menu, Pantallas.NIVEL_1));
                 clickSound.stop();
@@ -101,9 +112,9 @@ public class PantallaMenu extends Pantalla {
         btnSettings.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log("clicked","Hiciste click en Settings");
                 PantallaAjustes.estado = EstadoInvocado.PANTALLA_MENU;
-                clickSound.play();
+                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                    clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaCargando(menu, Pantallas.AJUSTES));
                 clickSound.stop();
@@ -113,8 +124,8 @@ public class PantallaMenu extends Pantalla {
         btnExtras.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log("clicked","Hiciste click en Extras");
-                clickSound.play();
+                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                    clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaCargando(menu, Pantallas.EXTRAS));
                 clickSound.stop();
@@ -155,13 +166,12 @@ public class PantallaMenu extends Pantalla {
     @Override
     public void dispose() {
         escena.dispose();
+        manager.unload("musicSounds/menuTheme.mp3");
         manager.unload("fondoMenu.png");
         manager.unload("startButton.png");
         manager.unload("loadButton.png");
         manager.unload("settingsButton1.png");
         manager.unload("extrasButton.png");
-
-
         clickSound.dispose();
     }
 }

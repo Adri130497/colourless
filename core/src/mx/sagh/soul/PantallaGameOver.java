@@ -22,7 +22,7 @@ public class PantallaGameOver extends Pantalla{
     private final ColourlessSoul menu;
     private final AssetManager manager;
     //sonidos
-    private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("click.mp3"));
+    private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("musicSounds/click.mp3"));
     //texturas
     private Texture texturaFondo;
     private Texture texturaBotonRestart;
@@ -66,8 +66,8 @@ public class PantallaGameOver extends Pantalla{
         btnRestart.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log("clicked","Me hicieron click");
-                clickSound.play();
+                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                    clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaCargando(menu, Pantallas.NIVEL_1));
                 clickSound.stop();
@@ -77,8 +77,8 @@ public class PantallaGameOver extends Pantalla{
         btnMenu.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log("clicked","Me hicieron click");
-                clickSound.play();
+                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                    clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaCargando(menu, Pantallas.MENU));
                 clickSound.stop();

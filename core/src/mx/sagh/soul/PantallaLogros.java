@@ -28,7 +28,7 @@ public class PantallaLogros extends Pantalla {
     private final AssetManager manager;
 
     //sonidos
-    private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("click.mp3"));
+    private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("musicSounds/click.mp3"));
 
     //Preferencias
     Preferences prefs = Gdx.app.getPreferences("Achievements");
@@ -91,8 +91,8 @@ public class PantallaLogros extends Pantalla {
         btnBack.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log("clicked","Me hicieron click");
-                clickSound.play();
+                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                    clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaCargando(menu,Pantallas.MENU));
             }
@@ -178,8 +178,8 @@ public class PantallaLogros extends Pantalla {
             camara.unproject(v);
             if (v.x>btnBack.getX() && v.x<(btnBack.getX()+btnBack.getWidth())
                     && v.y>btnBack.getY() && v.y<(btnBack.getY()+btnBack.getHeight())) {
-                Gdx.app.log("clicked", "Me hicieron click");
-                clickSound.play();
+                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                    clickSound.play();
                 while (clickSound.isPlaying()) if (clickSound.getPosition() > 0.5f) break;
                 menu.setScreen(new PantallaCargando(menu, Pantallas.MENU));
             }

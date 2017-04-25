@@ -22,7 +22,7 @@ public class PantallaExtras extends Pantalla {
     private final ColourlessSoul menu;
     private final AssetManager manager;
     //sonidos
-    private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("click.mp3"));
+    private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("musicSounds/click.mp3"));
 
     //texturas
     private Texture texturaFondo;
@@ -80,8 +80,8 @@ public class PantallaExtras extends Pantalla {
         btnBack.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log("clicked","Me hicieron click");
-                clickSound.play();
+                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                    clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaCargando(menu, Pantallas.MENU));
                 clickSound.stop();
@@ -91,8 +91,8 @@ public class PantallaExtras extends Pantalla {
         btnAchievements.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log("clicked", "Hiciste click en Achievements");
-                clickSound.play();
+                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                    clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaCargando(menu, Pantallas.LOGROS));
                 clickSound.stop();
@@ -102,9 +102,9 @@ public class PantallaExtras extends Pantalla {
         btnCredits.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log("clicked","Hiciste click en Credits");
                 if(!clickSound.isPlaying())
-                    clickSound.play();
+                    if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                        clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaCargando(menu, Pantallas.CREDITOS));
                 clickSound.stop();
@@ -114,9 +114,9 @@ public class PantallaExtras extends Pantalla {
         btnHowToPlay.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log("clicked","Hiciste click en How To Play");
                 if(!clickSound.isPlaying())
-                    clickSound.play();
+                    if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                        clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaCargando(menu, Pantallas.TUTORIAL));
                 clickSound.stop();
