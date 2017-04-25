@@ -414,7 +414,8 @@ public class PantallaPrincipal extends Pantalla {
                     clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 musicLevel.stop();
-                menu.setScreen(new PantallaNivelDos(menu));
+                mapa.getLayers().get(1).setVisible(true);
+                menu.setScreen(new PantallaCargando(menu,Pantallas.NIVEL_1));
                 clickSound.stop();
             }
         });
@@ -594,8 +595,9 @@ public class PantallaPrincipal extends Pantalla {
         if(estado==EstadoNivel.FINISHED) {
             texto.mostrarMensaje(batch, Integer.toString(score) + "/" +Integer.toString(maxScore), ANCHO / 3 + 50, ALTO / 2 + 125);
             texto.mostrarMensaje(batch, Integer.toString(slimeTocados)+" fatalities", ANCHO / 3 + 50, ALTO / 2 - 10);
-            if(musicLevel.getVolume()>=0.00225f)
-                musicLevel.setVolume(musicLevel.getVolume()-0.00225f);
+            //if(musicLevel.getVolume()>0.00225f)
+              //  musicLevel.setVolume(musicLevel.getVolume()-0.00225f);
+
         }
 
         batch.end();
