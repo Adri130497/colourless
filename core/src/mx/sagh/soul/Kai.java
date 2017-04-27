@@ -221,6 +221,7 @@ public class Kai extends Objeto{
         }
     }
 
+
     // Inicia el salto
     public void saltar() {
         if (estadoSalto!=EstadoSalto.SUBIENDO && estadoSalto!=EstadoSalto.BAJANDO) {

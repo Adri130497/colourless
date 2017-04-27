@@ -32,6 +32,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -97,6 +98,7 @@ public class PantallaPrincipal extends Pantalla {
     private ImageButton btnReplay;
     private ImageButton btnMenu;
     private ImageButton btnNextLevel;
+    private ImageButton btnDisp;
 
     //texturas
     private Texture texturaBotonPausa;
@@ -111,6 +113,7 @@ public class PantallaPrincipal extends Pantalla {
     private Texture texturaBotonMenu;
     private Texture texturaBotonReplay;
     private Texture texturaBotonNextLevel;
+    private Texture texturaBotonDisparar;
     private Texture barra1,barra2,barra3,barra4,barra5,barra6,barra7,barraFull;
 
     // Puntos del jugador
@@ -119,6 +122,9 @@ public class PantallaPrincipal extends Pantalla {
     private Texto texto;
     private int maxScore = 0;
 
+    //Disparos
+    private Texture texturaDisparo;
+    private Array<Disparo> disparos;
 
     private final AssetManager manager;
 
@@ -134,6 +140,7 @@ public class PantallaPrincipal extends Pantalla {
     @Override
     public void show() {
         // Cuando cargan la pantalla
+        disparos=new Array();
         cargarTexturas();
         crearObjetos();
         crearMapaAleatorio();
@@ -232,6 +239,15 @@ public class PantallaPrincipal extends Pantalla {
         btnMenu.setSize(120,120);
         btnMenu.setPosition(imgEndLevel.getX()+imgEndLevel.getWidth()-btnMenu.getWidth()-50,imgEndLevel.getY()+50);
 
+        TextureRegionDrawable trdBtnDisp = new TextureRegionDrawable(new TextureRegion(texturaBotonDisparar));
+        btnDisp = new ImageButton(trdBtnDisp);
+        btnDisp.setSize(120, 120);
+        btnDisp.setPosition(ANCHO - btnDisp.getWidth(), btnDisp.getHeight());
+        escenaHUD.addActor(btnDisp);
+
+
+
+
         vida1 = new Image(barra1);
         vida2 = new Image(barra2);
         vida3 = new Image(barra3);
@@ -282,12 +298,20 @@ public class PantallaPrincipal extends Pantalla {
                 return true;
             }
         });
+
+        btnDisp.addListener(new ClickListener(){
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+                    disparar();
+                return true;
+            }
+        });
         Gdx.input.setCatchBackKey(true);
     }
 
     private void inPauseEvent() {
         Gdx.input.setInputProcessor(escenaHUD);
         estado = EstadoNivel.PAUSED;
+        btnDisp.remove();
         pad.remove();
         btnUp.remove();
         escenaHUD.addActor(imgPause);
@@ -303,6 +327,8 @@ public class PantallaPrincipal extends Pantalla {
                 estado = EstadoNivel.ACTIVE;
                 escenaHUD.addActor(pad);
                 escenaHUD.addActor(btnUp);
+                escenaHUD.addActor(btnDisp);
+
                 if(PantallaAjustes.prefs.getBoolean("Sounds",true))
                     clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
@@ -354,7 +380,10 @@ public class PantallaPrincipal extends Pantalla {
             }
         });
 
-    }
+
+        }
+
+
 
     private void atFinishEvent() {
         Gdx.input.setInputProcessor(escenaHUD);
@@ -414,6 +443,7 @@ public class PantallaPrincipal extends Pantalla {
                     clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 musicLevel.stop();
+                estado=EstadoNivel.NIVEL_2;
                 mapa.getLayers().get(1).setVisible(true);
                 menu.setScreen(new PantallaCargando(menu,Pantallas.NIVEL_1));
                 clickSound.stop();
@@ -472,6 +502,8 @@ public class PantallaPrincipal extends Pantalla {
     }
 
     private void cargarTexturas() {
+        texturaBotonDisparar=manager.get("upButton.png");
+        texturaDisparo=manager.get("SpritesDisparo/Balas3.png");
         texturaBotonPausa = manager.get("pauseButton.png");
         texturaMenuPausa=manager.get("fondoMadera.png");
         texturaFinNivel = manager.get("fondoFinNivel.png");
@@ -502,6 +534,8 @@ public class PantallaPrincipal extends Pantalla {
 
     @Override
     public void render(float delta) {
+
+        actualizarDisparos(delta);
         if(estado != EstadoNivel.PAUSED && estado!= EstadoNivel.FINISHED) {
             kai.actualizar(delta, mapa, camara);
             for(Slime baba: slime) {
@@ -574,6 +608,11 @@ public class PantallaPrincipal extends Pantalla {
         kai.dibujar(batch);
         for(Slime baba: slime)
             baba.dibujar(batch);
+
+        for (Disparo disparo:disparos){
+            disparo.dibujar(batch);
+        }
+
         batch.end();
 
         //OTRA CAMARA
@@ -606,6 +645,20 @@ public class PantallaPrincipal extends Pantalla {
         }
 
     }
+
+    private void actualizarDisparos(float delta) {
+        for(int i=disparos.size-1; i>=0; i--) {
+            Disparo disparo = disparos.get(i);
+            disparo.mover(delta);
+            if (disparo.sprite.getX()>ANCHO_MAPA) {
+                // Se salió de la pantalla
+                disparos.removeIndex(i);
+                break;
+            }
+
+            }
+    }
+
 
     private void disminuirVida() {
         for(int i=0; i<8; i++){
@@ -645,6 +698,11 @@ public class PantallaPrincipal extends Pantalla {
         camara.update();
     }
 
+    private void disparar(){
+        Disparo disparo=new Disparo(texturaDisparo,kai.sprite.getX()+kai.sprite.getWidth()/2,
+                kai.sprite.getY()+kai.sprite.getHeight()/2-texturaDisparo.getHeight()/2);
+        disparos.add(disparo);
+    }
     @Override
     public void pause() {
 
@@ -762,7 +820,8 @@ public class PantallaPrincipal extends Pantalla {
                 }
                 yVertical = v.y;
             }
-            return true;
+
+                return true;
         }
 
         @Override

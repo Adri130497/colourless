@@ -195,6 +195,10 @@ class PantallaCargando extends Pantalla
         manager.load("replayButton.png", Texture.class);
         manager.load("menuButton.png", Texture.class);
         manager.load("nextLevel.png",Texture.class);
+        manager.load("SpritesDisparo/Balas3.png",Texture.class);
+        manager.load("upButton.png",Texture.class);
+
+
 
     }
 

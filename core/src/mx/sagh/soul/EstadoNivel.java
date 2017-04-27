@@ -9,5 +9,6 @@ public enum EstadoNivel {
     RESTARTED,
     PAUSED,
     FINISHED,
-    ACTIVE
+    ACTIVE,
+    NIVEL_2
 }
