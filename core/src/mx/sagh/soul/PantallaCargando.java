@@ -70,7 +70,7 @@ class PantallaCargando extends Pantalla
         spriteCargando.setPosition(ANCHO/2-spriteCargando.getWidth()/2,ALTO/2-spriteCargando.getHeight()/2);
         cargarRecursosSigPantalla();
     }
-
+//
     private void crearPantallaNiv() {
         batch = new SpriteBatch();
         escena = new Stage(vista, batch);
