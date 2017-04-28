@@ -8,8 +8,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 /**
  * Created by roberto on 13/03/17.
@@ -33,6 +36,13 @@ class PantallaCargando extends Pantalla
     private Texture texturaCargando1;
     private Texture texturaCargando2;
 
+    private Texture texturaNivel1;
+    private Texture texturaNivel2;
+    private Texture texturaTexto1;
+    private Texture texturaTexto2;
+    private Stage escena;
+
+
     public PantallaCargando(ColourlessSoul juego, Pantallas siguientePantalla) {
         this.juego = juego;
         this.siguientePantalla = siguientePantalla;
@@ -42,6 +52,14 @@ class PantallaCargando extends Pantalla
     public void show() {
         texturaCargando1 = new Texture(Gdx.files.internal("cargando/loadingSprite1.png"));
         texturaCargando2 = new Texture(Gdx.files.internal("cargando/loadingSprite2.png"));
+        texturaNivel1= new Texture(Gdx.files.internal("FondosPantalla/TheGreatLossFondo.png"));
+        texturaNivel2= new Texture(Gdx.files.internal("FondosPantalla/TheCourageFondo.png"));
+        texturaTexto1=new Texture(Gdx.files.internal("FondosPantalla/TheGreatLossText.png"));
+        texturaTexto2=new Texture(Gdx.files.internal("FondosPantalla/TheCourageText.png"));
+        texto = new Texto();
+    }
+
+    private void crearLoading() {
         TextureRegion texturaCompleta1 = new TextureRegion(texturaCargando1);
         TextureRegion[][] texturaPersonaje1 = texturaCompleta1.split(1280,800);
         TextureRegion texturaCompleta2 = new TextureRegion(texturaCargando2);
@@ -51,7 +69,17 @@ class PantallaCargando extends Pantalla
         spriteCargando = new Sprite(texturaPersonaje1[0][0]);
         spriteCargando.setPosition(ANCHO/2-spriteCargando.getWidth()/2,ALTO/2-spriteCargando.getHeight()/2);
         cargarRecursosSigPantalla();
-        texto = new Texto();
+    }
+
+    private void crearPantallaNiv() {
+        batch = new SpriteBatch();
+        escena = new Stage(vista, batch);
+        Image imgFondo = new Image(texturaNivel1);
+        Image imgText=new Image(texturaTexto1);
+        escena.addActor(imgFondo);
+        escena.addActor(imgText);
+
+        cargarRecursosSigPantalla();
     }
 
     // Carga los recursos de la siguiente pantalla
@@ -142,7 +170,7 @@ class PantallaCargando extends Pantalla
         manager.load("musicSounds/thunder.mp3", Sound.class);
         manager.load("musicSounds/wind.mp3", Sound.class);
         manager.load("musicSounds/click.mp3", Sound.class);
-        manager.load("fondoMenu.png", Texture.class);
+        manager.load("fondoMenu.jpg", Texture.class);
         manager.load("fondoPrincipal.jpg", Texture.class);
         manager.load("fondoMadera.png", Texture.class);
         manager.load("musicOn.png", Texture.class);
@@ -198,13 +226,11 @@ class PantallaCargando extends Pantalla
         manager.load("SpritesDisparo/Balas3.png",Texture.class);
         manager.load("upButton.png",Texture.class);
 
-
-
     }
 
     private void cargarRecursosMenu() {
         manager.load("musicSounds/menuTheme.mp3", Music.class);
-        manager.load("fondoMenu.png", Texture.class);
+        manager.load("fondoMenu.jpg", Texture.class);
         manager.load("startButton.png", Texture.class);
         manager.load("loadButton.png", Texture.class);
         manager.load("extrasButton.png", Texture.class);
@@ -216,14 +242,26 @@ class PantallaCargando extends Pantalla
         TextureRegion region;
         borrarPantalla(0.5f, 0.5f, 0.5f);
         batch.setProjectionMatrix(camara.combined);
-        batch.begin();
-        spriteCargando.draw(batch);
+
+        switch (siguientePantalla){
+            case NIVEL_1:
+                crearPantallaNiv();
+                escena.draw();
+                break;
+            default:
+                batch.begin();
+                crearLoading();
+                spriteCargando.draw(batch);
+                timerAnimacion += Gdx.graphics.getDeltaTime();
+                region = spriteAnimado.getKeyFrame(timerAnimacion);
+                batch.draw(region,spriteCargando.getX(),spriteCargando.getY());
+                batch.end();
+
+                break;
+        }
         // Actualizar
 
-        timerAnimacion += Gdx.graphics.getDeltaTime();
-        region = spriteAnimado.getKeyFrame(timerAnimacion);
-        batch.draw(region,spriteCargando.getX(),spriteCargando.getY());
-        batch.end();
+
         // Actualizar carga
         actualizarCargaRecursos();
     }

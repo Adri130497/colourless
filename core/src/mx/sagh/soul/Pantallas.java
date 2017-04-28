@@ -8,6 +8,7 @@ public enum Pantallas
 {
     MENU,
     NIVEL_1,
+    NIVEL_2,
     AJUSTES,
     EXTRAS,
     CREDITOS,

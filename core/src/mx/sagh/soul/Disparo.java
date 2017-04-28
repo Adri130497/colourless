@@ -1,6 +1,7 @@
 package mx.sagh.soul;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Rectangle;
 
 /**
  * Created by Adrian on 26/04/2017.
@@ -25,4 +26,19 @@ public class Disparo extends Objeto {
         return sprite.getBoundingRectangle().overlaps(slime.sprite.getBoundingRectangle());
     }
 
+    public boolean tocoSlime(Slime slime){
+        int x = (int)sprite.getX()-30;
+        int y = (int)sprite.getY()+30;
+        int width = (int)sprite.getWidth()-30;
+        int height = (int)sprite.getHeight()-30;
+
+        Rectangle r = slime.sprite.getBoundingRectangle();
+        if(x < r.x + r.width && x + width > r.x && y < r.y + r.height && y + height > r.y){
+            if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+            slime.sprite.setX(0);
+            slime.setEstadoMovimiento(Slime.EstadoMovimiento.QUIETO);
+            return true;
+        }
+        return false;
+    }
 }

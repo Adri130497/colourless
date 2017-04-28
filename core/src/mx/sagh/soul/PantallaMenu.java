@@ -93,6 +93,7 @@ public class PantallaMenu extends Pantalla {
                     clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 musicMenu.stop();
+                Gdx.app.log("hiciste click en start","true");
                 menu.setScreen(new PantallaCargando(menu, Pantallas.NIVEL_1));
                 clickSound.stop();
             }
@@ -137,7 +138,7 @@ public class PantallaMenu extends Pantalla {
     }
 
     private void cargarTexturas() {
-        texturaFondoMenu = manager.get("fondoMenu.png");
+        texturaFondoMenu = manager.get("fondoMenu.jpg");
         texturaBotonInicio = manager.get("startButton.png");
         texturaBotonCargar = manager.get("loadButton.png");
         texturaBotonAjustes = manager.get("settingsButton1.png");
@@ -167,7 +168,7 @@ public class PantallaMenu extends Pantalla {
     public void dispose() {
         escena.dispose();
         manager.unload("musicSounds/menuTheme.mp3");
-        manager.unload("fondoMenu.png");
+        manager.unload("fondoMenu.jpg");
         manager.unload("startButton.png");
         manager.unload("loadButton.png");
         manager.unload("settingsButton1.png");
