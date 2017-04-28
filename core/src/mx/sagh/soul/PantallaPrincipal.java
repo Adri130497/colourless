@@ -502,7 +502,7 @@ public class PantallaPrincipal extends Pantalla {
     }
 
     private void cargarTexturas() {
-        texturaBotonDisparar=manager.get("upButton.png");
+        texturaBotonDisparar=manager.get("BotonDisparo.png");
         texturaDisparo=manager.get("SpritesDisparo/Balas3.png");
         texturaBotonPausa = manager.get("pauseButton.png");
         texturaMenuPausa=manager.get("fondoMadera.png");
