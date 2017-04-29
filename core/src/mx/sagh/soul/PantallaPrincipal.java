@@ -242,7 +242,7 @@ public class PantallaPrincipal extends Pantalla {
         TextureRegionDrawable trdBtnDisp = new TextureRegionDrawable(new TextureRegion(texturaBotonDisparar));
         btnDisp = new ImageButton(trdBtnDisp);
         btnDisp.setSize(120, 120);
-        btnDisp.setPosition(ANCHO - btnDisp.getWidth(), btnDisp.getHeight());
+        btnDisp.setPosition(ANCHO-btnUp.getWidth()-200,0);
         escenaHUD.addActor(btnDisp);
 
 
@@ -445,7 +445,7 @@ public class PantallaPrincipal extends Pantalla {
                 musicLevel.stop();
                 estado=EstadoNivel.NIVEL_2;
                 mapa.getLayers().get(1).setVisible(true);
-                menu.setScreen(new PantallaCargando(menu,Pantallas.NIVEL_1));
+                menu.setScreen(new PantallaCargando(menu,Pantallas.NIVEL_2));
                 clickSound.stop();
             }
         });
@@ -502,7 +502,7 @@ public class PantallaPrincipal extends Pantalla {
     }
 
     private void cargarTexturas() {
-        texturaBotonDisparar=manager.get("ShootButton.png");
+        texturaBotonDisparar=manager.get("shootButton.png");
         texturaDisparo=manager.get("SpritesDisparo/Balas3.png");
         texturaBotonPausa = manager.get("pauseButton.png");
         texturaMenuPausa=manager.get("fondoMadera.png");
@@ -742,6 +742,8 @@ public class PantallaPrincipal extends Pantalla {
         manager.unload("SpritesBarraVida/vida7.png");
         manager.unload("SpritesBarraVida/vidaFull.png");
         manager.unload("SpritesSlime/slimePiso.png");
+        manager.unload("shootButton.png");
+
 
     }
 

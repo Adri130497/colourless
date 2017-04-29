@@ -31,7 +31,6 @@ class PantallaCargando extends Pantalla
 
     private ColourlessSoul juego;
     private Pantallas siguientePantalla;
-    private Texto texto;
 
     private Texture texturaCargando1;
     private Texture texturaCargando2;
@@ -56,7 +55,6 @@ class PantallaCargando extends Pantalla
         texturaNivel2= new Texture(Gdx.files.internal("FondosPantalla/TheCourageFondo.png"));
         texturaTexto1=new Texture(Gdx.files.internal("FondosPantalla/TheGreatLossText.png"));
         texturaTexto2=new Texture(Gdx.files.internal("FondosPantalla/TheCourageText.png"));
-        texto = new Texto();
     }
 
     private void crearLoading() {
@@ -114,7 +112,8 @@ class PantallaCargando extends Pantalla
             case TUTORIAL:
                 cargarRecursosTutorial();
                 break;
-
+            case NIVEL_2:
+                cargarRecursosNivel1();
 
         }
     }
@@ -225,6 +224,9 @@ class PantallaCargando extends Pantalla
         manager.load("nextLevel.png",Texture.class);
         manager.load("SpritesDisparo/Balas3.png",Texture.class);
         manager.load("upButton.png",Texture.class);
+        manager.load("shootButton.png",Texture.class);
+        manager.load("FondosPantalla/fondoRojo.png",Texture.class);
+
 
     }
 
@@ -248,6 +250,11 @@ class PantallaCargando extends Pantalla
                 crearPantallaNiv();
                 escena.draw();
                 break;
+            case NIVEL_2:
+                crearPantallaNiv2();
+                escena.draw();
+                Gdx.app.log("Nivel2","true");
+                break;
             default:
                 batch.begin();
                 crearLoading();
@@ -264,6 +271,17 @@ class PantallaCargando extends Pantalla
 
         // Actualizar carga
         actualizarCargaRecursos();
+    }
+
+    private void crearPantallaNiv2() {
+        batch = new SpriteBatch();
+        escena = new Stage(vista, batch);
+        Image imgFondo = new Image(texturaNivel2);
+        Image imgText=new Image(texturaTexto2);
+        escena.addActor(imgFondo);
+        escena.addActor(imgText);
+
+        cargarRecursosSigPantalla();
     }
 
     private void actualizarCargaRecursos() {
@@ -296,6 +314,8 @@ class PantallaCargando extends Pantalla
                 case TUTORIAL:
                     juego.setScreen(new PantallaTutorial(juego));   // 100% de carga
                     break;
+                case NIVEL_2:
+                    juego.setScreen(new PantallaPrincipal(juego));
 
 
             }
@@ -316,5 +336,9 @@ class PantallaCargando extends Pantalla
     public void dispose() {
         texturaCargando1.dispose();
         texturaCargando2.dispose();
+        texturaNivel1.dispose();
+        texturaNivel2.dispose();
+        texturaTexto1.dispose();
+        texturaTexto2.dispose();
     }
 }
