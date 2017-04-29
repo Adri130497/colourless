@@ -60,7 +60,6 @@ public class PantallaMenu extends Pantalla {
         manager.finishLoading();
         musicMenu = manager.get("musicSounds/menuTheme.mp3");
         musicMenu.setLooping(true);
-        musicMenu.setVolume(0.5f);
         if(PantallaAjustes.prefs.getBoolean("Music",true))
             musicMenu.play();
 
@@ -93,7 +92,6 @@ public class PantallaMenu extends Pantalla {
                     clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 musicMenu.stop();
-                Gdx.app.log("hiciste click en start","true");
                 menu.setScreen(new PantallaCargando(menu, Pantallas.NIVEL_1));
                 clickSound.stop();
             }
@@ -105,6 +103,7 @@ public class PantallaMenu extends Pantalla {
                 if(PantallaAjustes.prefs.getBoolean("Sounds",true))
                     clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
+                musicMenu.stop();
                 menu.setScreen(new PantallaCargando(menu, Pantallas.NIVEL_1));
                 clickSound.stop();
             }

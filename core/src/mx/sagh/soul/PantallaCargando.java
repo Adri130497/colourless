@@ -25,6 +25,8 @@ class PantallaCargando extends Pantalla
     private Sprite spriteCargando;
     private Animation<TextureRegion> spriteAnimado;
     private float timerAnimacion = TIEMPO_ENTRE_FRAMES;
+    private float tiempoVisible = 1.7f;
+    private Transparencia estadoAlpha = Transparencia.SOLIDO;
 
     // AssetManager
     private AssetManager manager;
@@ -32,15 +34,19 @@ class PantallaCargando extends Pantalla
     private ColourlessSoul juego;
     private Pantallas siguientePantalla;
 
+
+    //texturas
+    private Image imgTituloN1, imgTituloN2;
+    private Image imgFondoN1, imgFondoN2;
+
     private Texture texturaCargando1;
     private Texture texturaCargando2;
 
     private Texture texturaNivel1;
     private Texture texturaNivel2;
-    private Texture texturaTexto1;
-    private Texture texturaTexto2;
+    private Texture tituloNivel1;
+    private Texture tituloNivel2;
     private Stage escena;
-
 
     public PantallaCargando(ColourlessSoul juego, Pantallas siguientePantalla) {
         this.juego = juego;
@@ -49,12 +55,23 @@ class PantallaCargando extends Pantalla
 
     @Override
     public void show() {
+        cargarTexturas();
+        crearObjetos();
+    }
+
+    private void cargarTexturas() {
         texturaCargando1 = new Texture(Gdx.files.internal("cargando/loadingSprite1.png"));
         texturaCargando2 = new Texture(Gdx.files.internal("cargando/loadingSprite2.png"));
-        texturaNivel1= new Texture(Gdx.files.internal("FondosPantalla/TheGreatLossFondo.png"));
-        texturaNivel2= new Texture(Gdx.files.internal("FondosPantalla/TheCourageFondo.png"));
-        texturaTexto1=new Texture(Gdx.files.internal("FondosPantalla/TheGreatLossText.png"));
-        texturaTexto2=new Texture(Gdx.files.internal("FondosPantalla/TheCourageText.png"));
+        texturaNivel1 = new Texture(Gdx.files.internal("FondosPantalla/TheGreatLossFondo.png"));
+        texturaNivel2 = new Texture(Gdx.files.internal("FondosPantalla/TheCourageFondo.png"));
+        tituloNivel1 = new Texture(Gdx.files.internal("FondosPantalla/TheGreatLossText.png"));
+        tituloNivel2 = new Texture(Gdx.files.internal("FondosPantalla/TheCourageText.png"));
+    }
+
+    private void crearObjetos() {
+        crearLoading();
+        crearPantallaNiv1();
+        crearPantallaNiv2();
     }
 
     private void crearLoading() {
@@ -66,18 +83,68 @@ class PantallaCargando extends Pantalla
         spriteAnimado.setPlayMode(Animation.PlayMode.LOOP);
         spriteCargando = new Sprite(texturaPersonaje1[0][0]);
         spriteCargando.setPosition(ANCHO/2-spriteCargando.getWidth()/2,ALTO/2-spriteCargando.getHeight()/2);
-        cargarRecursosSigPantalla();
     }
 //
-    private void crearPantallaNiv() {
+    private void crearPantallaNiv1() {
         batch = new SpriteBatch();
         escena = new Stage(vista, batch);
-        Image imgFondo = new Image(texturaNivel1);
-        Image imgText=new Image(texturaTexto1);
-        escena.addActor(imgFondo);
-        escena.addActor(imgText);
+        imgFondoN1 = new Image(texturaNivel1);
+        imgTituloN1 = new Image(tituloNivel1);
+        imgTituloN1.setScale(0.5f);
+        imgTituloN1.setPosition(ANCHO/2- imgTituloN1.getWidth()/4, ALTO/2- imgTituloN1.getHeight()/4);
+    }
 
+    private void crearPantallaNiv2() {
+        batch = new SpriteBatch();
+        escena = new Stage(vista, batch);
+        imgFondoN2 = new Image(texturaNivel2);
+        imgTituloN2=new Image(tituloNivel2);
+        imgTituloN1.setScale(0.5f);
+        imgTituloN1.setPosition(ANCHO/2- imgTituloN1.getWidth()/4, ALTO/2- imgTituloN1.getHeight()/4);
+    }
+
+    @Override
+    public void render(float delta) {
+        TextureRegion region;
+        borrarPantalla(0.5f, 0.5f, 0.5f);
+        batch.setProjectionMatrix(camara.combined);
+
+        switch (siguientePantalla){
+            case NIVEL_1:
+                if(estadoAlpha == Transparencia.SOLIDO)
+                    imgTituloN1.setColor(1, 1, 1, imgTituloN1.getColor().a-0.02f);
+                else
+                    imgTituloN1.setColor(1, 1, 1, imgTituloN1.getColor().a+0.02f);
+
+                if(imgTituloN1.getColor().a<=0)
+                    estadoAlpha = Transparencia.TRANSPARENTE;
+                if(imgTituloN1.getColor().a>=1)
+                    estadoAlpha = Transparencia.SOLIDO;
+
+                escena.addActor(imgFondoN1);
+                escena.addActor(imgTituloN1);
+                break;
+            case NIVEL_2:
+                imgTituloN2.setColor(1, 1, 1, imgTituloN2.getColor().a-0.01f);
+                escena.addActor(imgFondoN2);
+                escena.addActor(imgTituloN2);
+
+                break;
+            default:
+                batch.begin();
+                spriteCargando.draw(batch);
+
+                timerAnimacion += Gdx.graphics.getDeltaTime();
+                region = spriteAnimado.getKeyFrame(timerAnimacion);
+                batch.draw(region,spriteCargando.getX(),spriteCargando.getY());
+                batch.end();
+                break;
+        }
         cargarRecursosSigPantalla();
+        escena.draw();
+        // Actualizar carga
+        tiempoVisible -= delta;
+        actualizarCargaRecursos();
     }
 
     // Carga los recursos de la siguiente pantalla
@@ -226,8 +293,6 @@ class PantallaCargando extends Pantalla
         manager.load("upButton.png",Texture.class);
         manager.load("shootButton.png",Texture.class);
         manager.load("FondosPantalla/fondoRojo.png",Texture.class);
-
-
     }
 
     private void cargarRecursosMenu() {
@@ -239,51 +304,6 @@ class PantallaCargando extends Pantalla
         manager.load("settingsButton1.png", Texture.class);
     }
 
-    @Override
-    public void render(float delta) {
-        TextureRegion region;
-        borrarPantalla(0.5f, 0.5f, 0.5f);
-        batch.setProjectionMatrix(camara.combined);
-
-        switch (siguientePantalla){
-            case NIVEL_1:
-                crearPantallaNiv();
-                escena.draw();
-                break;
-            case NIVEL_2:
-                crearPantallaNiv2();
-                escena.draw();
-                Gdx.app.log("Nivel2","true");
-                break;
-            default:
-                batch.begin();
-                crearLoading();
-                spriteCargando.draw(batch);
-                timerAnimacion += Gdx.graphics.getDeltaTime();
-                region = spriteAnimado.getKeyFrame(timerAnimacion);
-                batch.draw(region,spriteCargando.getX(),spriteCargando.getY());
-                batch.end();
-
-                break;
-        }
-        // Actualizar
-
-
-        // Actualizar carga
-        actualizarCargaRecursos();
-    }
-
-    private void crearPantallaNiv2() {
-        batch = new SpriteBatch();
-        escena = new Stage(vista, batch);
-        Image imgFondo = new Image(texturaNivel2);
-        Image imgText=new Image(texturaTexto2);
-        escena.addActor(imgFondo);
-        escena.addActor(imgText);
-
-        cargarRecursosSigPantalla();
-    }
-
     private void actualizarCargaRecursos() {
         if (manager.update()) { // Terminó?
             switch (siguientePantalla) {
@@ -291,7 +311,8 @@ class PantallaCargando extends Pantalla
                     juego.setScreen(new PantallaMenu(juego));   // 100% de carga
                     break;
                 case NIVEL_1:
-                    juego.setScreen(new PantallaPrincipal(juego));   // 100% de carga
+                    if(tiempoVisible<=0)
+                        juego.setScreen(new PantallaPrincipal(juego));   // 100% de carga
                     break;
                 case AJUSTES:
                     juego.setScreen(new PantallaAjustes(juego));   // 100% de carga
@@ -303,7 +324,8 @@ class PantallaCargando extends Pantalla
                     juego.setScreen(new PantallaCreditos(juego));   // 100% de carga
                     break;
                 case LOGROS:
-                    juego.setScreen(new PantallaLogros(juego));   // 100% de carga
+                    if(tiempoVisible<=0)
+                        juego.setScreen(new PantallaLogros(juego));   // 100% de carga
                     break;
                 case GAMEOVER:
                     juego.setScreen(new PantallaGameOver(juego));   // 100% de carga
@@ -312,12 +334,12 @@ class PantallaCargando extends Pantalla
                     juego.setScreen(new PantallaGanaNivel(juego));   // 100% de carga
                     break;
                 case TUTORIAL:
-                    juego.setScreen(new PantallaTutorial(juego));   // 100% de carga
+                    if(tiempoVisible<=0)
+                        juego.setScreen(new PantallaTutorial(juego));   // 100% de carga
                     break;
                 case NIVEL_2:
-                    juego.setScreen(new PantallaPrincipal(juego));
-
-
+                    if(tiempoVisible<=0)
+                        juego.setScreen(new PantallaPrincipal(juego));
             }
         }
     }
@@ -338,7 +360,13 @@ class PantallaCargando extends Pantalla
         texturaCargando2.dispose();
         texturaNivel1.dispose();
         texturaNivel2.dispose();
-        texturaTexto1.dispose();
-        texturaTexto2.dispose();
+        tituloNivel1.dispose();
+        tituloNivel2.dispose();
+    }
+
+    public enum Transparencia {
+        TRANSPARENTE,
+        SOLIDO
     }
 }
+

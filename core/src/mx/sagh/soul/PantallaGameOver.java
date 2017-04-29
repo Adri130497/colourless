@@ -66,6 +66,7 @@ public class PantallaGameOver extends Pantalla{
         btnRestart.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                PantallaPrincipal.musicLevel.stop();
                 if(PantallaAjustes.prefs.getBoolean("Sounds",true))
                     clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
@@ -77,6 +78,7 @@ public class PantallaGameOver extends Pantalla{
         btnMenu.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                PantallaPrincipal.musicLevel.stop();
                 if(PantallaAjustes.prefs.getBoolean("Sounds",true))
                     clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;

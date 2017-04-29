@@ -66,6 +66,7 @@ public class Slime extends Objeto{
     }
 
 
+
     private void moverHorizontal(TiledMap mapa) {
         TiledMapTileLayer capa = (TiledMapTileLayer) mapa.getLayers().get(0);
         float nuevaX = sprite.getX();

@@ -138,6 +138,7 @@ public class PantallaAjustes extends Pantalla {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 prefs.flush();
+                PantallaMenu.musicMenu.stop();
                 if(PantallaAjustes.prefs.getBoolean("Sounds",true))
                     clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
