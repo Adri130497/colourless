@@ -369,7 +369,7 @@ public class PantallaNivelDos extends Pantalla {
         escenaHUD.addActor(btnMenu);
 
         prefs.putString("1-Score",Integer.toString(score)+"/"+Integer.toString(maxScore));
-        prefs.putString("1-Slimes",Integer.toString(slimeTocados)+" fatalities");
+        prefs.putString("1-Slimes",Integer.toString(slimeTocados)+" Hits");
         prefs.flush();
 
         btnResume.addListener(new ClickListener(){
@@ -595,7 +595,7 @@ public class PantallaNivelDos extends Pantalla {
         //Score final del nivel
         if(estado==EstadoNivel.FINISHED) {
             texto.mostrarMensaje(batch, Integer.toString(score) + "/" +Integer.toString(maxScore), ANCHO / 3 + 50, ALTO / 2 + 125);
-            texto.mostrarMensaje(batch, Integer.toString(slimeTocados)+" fatalities", ANCHO / 3 + 50, ALTO / 2 - 10);
+            texto.mostrarMensaje(batch, Integer.toString(slimeTocados)+" Hits", ANCHO / 3 + 50, ALTO / 2 - 10);
             //if(musicLevel.getVolume()>0.00225f)
             //  musicLevel.setVolume(musicLevel.getVolume()-0.00225f);
 

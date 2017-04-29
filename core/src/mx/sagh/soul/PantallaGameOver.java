@@ -54,12 +54,12 @@ public class PantallaGameOver extends Pantalla{
         //Botones
         TextureRegionDrawable trdBtnRestart = new TextureRegionDrawable(new TextureRegion(texturaBotonRestart));
         ImageButton btnRestart = new ImageButton(trdBtnRestart);
-        btnRestart.setPosition(ANCHO/3-150,ALTO/4);
+        btnRestart.setPosition(ANCHO/3-150,ALTO/3);
         escena.addActor(btnRestart);
 
         TextureRegionDrawable trdBtnMain = new TextureRegionDrawable(new TextureRegion(texturaBotonMenu));
         ImageButton btnMenu = new ImageButton(trdBtnMain);
-        btnMenu.setPosition(ANCHO/2+150,ALTO/4);
+        btnMenu.setPosition(ANCHO/3-150,ALTO/5);
         escena.addActor(btnMenu);
 
         // Evento del boton
