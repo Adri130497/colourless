@@ -1,6 +1,8 @@
 package mx.sagh.soul;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -18,11 +20,11 @@ public class ColourlessSoul extends Game {
 	public void create() {
 		// Lo preparamos para que cargue mapas
 		assetManager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
+		Preferences prefs = Gdx.app.getPreferences("Settings");
+		prefs.putBoolean("Touch",true);
+		prefs.flush();
 		// Pone la pantalla inicial (Splash)
 		setScreen(new PantallaInicial(this));
-
-		PantallaAjustes.estadoJugabilidad = PantallaAjustes.EstadoJugabilidad.TOUCH;
-
 	}
 	// Para que las otras pantallas usen el assetManager
 	public AssetManager getAssetManager() {

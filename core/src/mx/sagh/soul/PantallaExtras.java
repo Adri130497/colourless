@@ -2,6 +2,7 @@ package mx.sagh.soul;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
@@ -31,6 +32,8 @@ public class PantallaExtras extends Pantalla {
     private Texture texturaBotonHowToPlay;
     private Texture texturaBotonRetorno;
 
+    //Preferencias
+    private Preferences settings = Gdx.app.getPreferences("Settings");
     //Escena
     private Stage escena;
     private SpriteBatch batch;
@@ -80,7 +83,7 @@ public class PantallaExtras extends Pantalla {
         btnBack.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                if(settings.getBoolean("Sounds",true))
                     clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaCargando(menu, Pantallas.MENU));
@@ -91,7 +94,7 @@ public class PantallaExtras extends Pantalla {
         btnAchievements.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                if(settings.getBoolean("Sounds",true))
                     clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaCargando(menu, Pantallas.LOGROS));
@@ -103,7 +106,7 @@ public class PantallaExtras extends Pantalla {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if(!clickSound.isPlaying())
-                    if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                    if(settings.getBoolean("Sounds",true))
                         clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaCargando(menu, Pantallas.CREDITOS));
@@ -115,7 +118,7 @@ public class PantallaExtras extends Pantalla {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if(!clickSound.isPlaying())
-                    if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                    if(settings.getBoolean("Sounds",true))
                         clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaCargando(menu, Pantallas.TUTORIAL));
@@ -141,9 +144,9 @@ public class PantallaExtras extends Pantalla {
         // 60 x seg
         borrarPantalla();
         escena.draw();
-        if (Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.BACK))
             menu.setScreen(new PantallaMenu(menu));
-        }
+
     }
 
 

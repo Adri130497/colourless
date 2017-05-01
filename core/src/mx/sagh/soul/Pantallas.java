@@ -9,6 +9,7 @@ public enum Pantallas
     MENU,
     NIVEL_1,
     NIVEL_2,
+    NIVEL_3,
     AJUSTES,
     EXTRAS,
     CREDITOS,

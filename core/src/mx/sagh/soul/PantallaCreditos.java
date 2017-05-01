@@ -3,6 +3,7 @@ package mx.sagh.soul;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
@@ -21,6 +22,7 @@ public class PantallaCreditos extends Pantalla {
     //sonidos
     Music windMusic = Gdx.audio.newMusic(Gdx.files.internal("musicSounds/wind.mp3"));
 
+    private Preferences prefs = Gdx.app.getPreferences("Settings");
 
     //texturas
     private Texture texturaFondo;
@@ -57,7 +59,7 @@ public class PantallaCreditos extends Pantalla {
         imgCredits.setPosition(0,-ALTO+140);
         escena.addActor(imgCredits);
 
-        if(PantallaAjustes.prefs.getBoolean("Music",true))
+        if(prefs.getBoolean("Music",true))
             windMusic.play();
 
         Gdx.input.setInputProcessor(escena);
@@ -81,14 +83,13 @@ public class PantallaCreditos extends Pantalla {
         if(imgCredits.getColor().a<=0){
             windMusic.stop();
             Gdx.app.log("MUSIC",Float.toString(windMusic.getVolume()));
-            menu.setScreen(new PantallaCargando(menu, Pantallas.EXTRAS));
+            menu.setScreen(new PantallaExtras(menu));
         }
         borrarPantalla();
         escena.draw();
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
-            menu.setScreen(new PantallaExtras(menu));
-        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.BACK))
+            vanish = true;
     }
 
     private void actualizarObjetos(float delta) {

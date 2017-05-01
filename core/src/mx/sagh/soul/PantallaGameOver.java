@@ -2,6 +2,7 @@ package mx.sagh.soul;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
@@ -14,6 +15,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
+import static mx.sagh.soul.PantallaPrincipal.musicLevel1;
+import static mx.sagh.soul.PantallaPrincipal.musicLevel2;
+import static mx.sagh.soul.PantallaPrincipal.musicLevel3;
+
 /**
  * Created by Adrian on 28/03/2017.
  */
@@ -23,10 +28,14 @@ public class PantallaGameOver extends Pantalla{
     private final AssetManager manager;
     //sonidos
     private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("musicSounds/click.mp3"));
+
     //texturas
     private Texture texturaFondo;
     private Texture texturaBotonRestart;
     private Texture texturaBotonMenu;
+
+    private Preferences currentLevel = Gdx.app.getPreferences("CurrentLevel");
+    private Preferences settings = Gdx.app.getPreferences("Settings");
 
     //Escena
     private Stage escena;
@@ -45,6 +54,15 @@ public class PantallaGameOver extends Pantalla{
 
     }
 
+    private void regresarAMenu(){
+        stopMusic();
+        if (settings.getBoolean("Sounds", true))
+            clickSound.play();
+        while (clickSound.isPlaying()) if (clickSound.getPosition() > 0.5f) break;
+        menu.setScreen(new PantallaMenu(menu));
+        clickSound.stop();
+    }
+
     private void crearObjetos() {
         batch = new SpriteBatch();
         escena = new Stage(vista, batch);
@@ -54,61 +72,76 @@ public class PantallaGameOver extends Pantalla{
         //Botones
         TextureRegionDrawable trdBtnRestart = new TextureRegionDrawable(new TextureRegion(texturaBotonRestart));
         ImageButton btnRestart = new ImageButton(trdBtnRestart);
-        btnRestart.setPosition(ANCHO/3-150,ALTO/3);
+        btnRestart.setPosition(ANCHO / 3 - 150, ALTO / 3);
         escena.addActor(btnRestart);
 
         TextureRegionDrawable trdBtnMain = new TextureRegionDrawable(new TextureRegion(texturaBotonMenu));
         ImageButton btnMenu = new ImageButton(trdBtnMain);
-        btnMenu.setPosition(ANCHO/3-150,ALTO/5);
+        btnMenu.setPosition(ANCHO / 3 - 150, ALTO / 5);
         escena.addActor(btnMenu);
 
         // Evento del boton
-        btnRestart.addListener(new ClickListener(){
+        btnRestart.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                PantallaPrincipal.musicLevel.stop();
-                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                stopMusic();
+                if (settings.getBoolean("Sounds", true))
                     clickSound.play();
-                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                menu.setScreen(new PantallaCargando(menu, Pantallas.NIVEL_1));
+                while (clickSound.isPlaying()) if (clickSound.getPosition() > 0.5f) break;
+
+                switch (currentLevel.getInteger("Nivel", 1)) {
+                    case 1:
+                        menu.setScreen(new PantallaCargando(menu, Pantallas.NIVEL_1));
+                        break;
+                    case 2:
+                        menu.setScreen(new PantallaCargando(menu, Pantallas.NIVEL_2));
+                        break;
+                    case 3:
+                        menu.setScreen(new PantallaCargando(menu, Pantallas.NIVEL_3));
+                        break;
+                }
                 clickSound.stop();
             }
         });
 
-        btnMenu.addListener(new ClickListener(){
+        btnMenu.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                PantallaPrincipal.musicLevel.stop();
-                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
-                    clickSound.play();
-                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                menu.setScreen(new PantallaCargando(menu, Pantallas.MENU));
-                clickSound.stop();
+                regresarAMenu();
             }
         });
 
         Gdx.input.setInputProcessor(escena);
-        Gdx.input.setCatchBackKey(false);
-
-
-
+        Gdx.input.setCatchBackKey(true);
     }
 
     private void cargarTexturas() {
         texturaFondo = manager.get("GameOverGris.jpg");
         texturaBotonRestart = manager.get("restartButton.png");
         texturaBotonMenu = manager.get("mainMenuButton.png");
-
-
-
     }
+
+    private void stopMusic(){
+        switch (currentLevel.getInteger("Nivel",1)){
+            case 1:
+                musicLevel1.stop();
+                break;
+            case 2:
+                musicLevel2.stop();
+                break;
+            case 3:
+                musicLevel3.stop();
+                break;
+        }
+    }
+
     @Override
     public void render(float delta) {
         // 60 x seg
         borrarPantalla();
         escena.draw();
-
-
+        if(Gdx.input.isKeyJustPressed(Input.Keys.BACK))
+            regresarAMenu();
     }
 
     @Override

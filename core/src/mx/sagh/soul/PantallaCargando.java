@@ -1,6 +1,7 @@
 package mx.sagh.soul;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -25,7 +26,7 @@ class PantallaCargando extends Pantalla
     private Sprite spriteCargando;
     private Animation<TextureRegion> spriteAnimado;
     private float timerAnimacion = TIEMPO_ENTRE_FRAMES;
-    private float tiempoVisible = 1.7f;
+    private float tiempoVisible = 2.5f;
     private Transparencia estadoAlpha = Transparencia.SOLIDO;
 
     // AssetManager
@@ -36,16 +37,14 @@ class PantallaCargando extends Pantalla
 
 
     //texturas
-    private Image imgTituloN1, imgTituloN2;
-    private Image imgFondoN1, imgFondoN2;
+    private Image imgTituloN1, imgTituloN2, imgTituloN3;
+    private Image imgFondoN1, imgFondoN2, imgFondoN3;
 
     private Texture texturaCargando1;
     private Texture texturaCargando2;
 
-    private Texture texturaNivel1;
-    private Texture texturaNivel2;
-    private Texture tituloNivel1;
-    private Texture tituloNivel2;
+    private Texture texturaNivel1, texturaNivel2, texturaNivel3;
+    private Texture tituloNivel1, tituloNivel2, tituloNivel3;
     private Stage escena;
 
     public PantallaCargando(ColourlessSoul juego, Pantallas siguientePantalla) {
@@ -64,14 +63,18 @@ class PantallaCargando extends Pantalla
         texturaCargando2 = new Texture(Gdx.files.internal("cargando/loadingSprite2.png"));
         texturaNivel1 = new Texture(Gdx.files.internal("FondosPantalla/TheGreatLossFondo.png"));
         texturaNivel2 = new Texture(Gdx.files.internal("FondosPantalla/TheCourageFondo.png"));
+        texturaNivel3 = new Texture(Gdx.files.internal("FondosPantalla/TheHopeFondo.png"));
         tituloNivel1 = new Texture(Gdx.files.internal("FondosPantalla/TheGreatLossText.png"));
         tituloNivel2 = new Texture(Gdx.files.internal("FondosPantalla/TheCourageText.png"));
+        tituloNivel3 = new Texture(Gdx.files.internal("FondosPantalla/TheHopeText.png"));
     }
 
     private void crearObjetos() {
         crearLoading();
         crearPantallaNiv1();
         crearPantallaNiv2();
+        crearPantallaNiv3();
+        Gdx.input.setCatchBackKey(true);
     }
 
     private void crearLoading() {
@@ -98,9 +101,29 @@ class PantallaCargando extends Pantalla
         batch = new SpriteBatch();
         escena = new Stage(vista, batch);
         imgFondoN2 = new Image(texturaNivel2);
-        imgTituloN2=new Image(tituloNivel2);
-        imgTituloN1.setScale(0.5f);
-        imgTituloN1.setPosition(ANCHO/2- imgTituloN1.getWidth()/4, ALTO/2- imgTituloN1.getHeight()/4);
+        imgTituloN2 = new Image(tituloNivel2);
+        imgTituloN2.setScale(0.5f);
+        imgTituloN2.setPosition(ANCHO/2- imgTituloN2.getWidth()/4, ALTO/2- imgTituloN2.getHeight()/4);
+    }
+
+    private void crearPantallaNiv3() {
+        batch = new SpriteBatch();
+        escena = new Stage(vista, batch);
+        imgFondoN3 = new Image(texturaNivel3);
+        imgTituloN3 = new Image(tituloNivel3);
+        imgTituloN3.setScale(0.5f);
+        imgTituloN3.setPosition(ANCHO/2- imgTituloN3.getWidth()/4, ALTO/2- imgTituloN3.getHeight()/4);
+    }
+
+    private void cambiarAlpha(Image img){
+        if(estadoAlpha == Transparencia.SOLIDO)
+            img.setColor(1, 1, 1, img.getColor().a-0.02f);
+        else
+            img.setColor(1, 1, 1, img.getColor().a+0.02f);
+        if(img.getColor().a<=0)
+            estadoAlpha = Transparencia.TRANSPARENTE;
+        if(img.getColor().a>=1)
+            estadoAlpha = Transparencia.SOLIDO;
     }
 
     @Override
@@ -111,29 +134,23 @@ class PantallaCargando extends Pantalla
 
         switch (siguientePantalla){
             case NIVEL_1:
-                if(estadoAlpha == Transparencia.SOLIDO)
-                    imgTituloN1.setColor(1, 1, 1, imgTituloN1.getColor().a-0.02f);
-                else
-                    imgTituloN1.setColor(1, 1, 1, imgTituloN1.getColor().a+0.02f);
-
-                if(imgTituloN1.getColor().a<=0)
-                    estadoAlpha = Transparencia.TRANSPARENTE;
-                if(imgTituloN1.getColor().a>=1)
-                    estadoAlpha = Transparencia.SOLIDO;
-
+                cambiarAlpha(imgTituloN1);
                 escena.addActor(imgFondoN1);
                 escena.addActor(imgTituloN1);
                 break;
             case NIVEL_2:
-                imgTituloN2.setColor(1, 1, 1, imgTituloN2.getColor().a-0.01f);
+                cambiarAlpha(imgTituloN2);
                 escena.addActor(imgFondoN2);
                 escena.addActor(imgTituloN2);
-
+                break;
+            case NIVEL_3:
+                cambiarAlpha(imgTituloN3);
+                escena.addActor(imgFondoN3);
+                escena.addActor(imgTituloN3);
                 break;
             default:
                 batch.begin();
                 spriteCargando.draw(batch);
-
                 timerAnimacion += Gdx.graphics.getDeltaTime();
                 region = spriteAnimado.getKeyFrame(timerAnimacion);
                 batch.draw(region,spriteCargando.getX(),spriteCargando.getY());
@@ -155,7 +172,7 @@ class PantallaCargando extends Pantalla
             case MENU:
                 cargarRecursosMenu();
                 break;
-            case NIVEL_1:
+            case NIVEL_1: case NIVEL_2: case NIVEL_3:
                 cargarRecursosNivel1();
                 break;
             case AJUSTES:
@@ -179,9 +196,6 @@ class PantallaCargando extends Pantalla
             case TUTORIAL:
                 cargarRecursosTutorial();
                 break;
-            case NIVEL_2:
-                cargarRecursosNivel1();
-
         }
     }
 
@@ -189,6 +203,8 @@ class PantallaCargando extends Pantalla
         manager.load("FondosTutorial/howTo1.png", Texture.class);
         manager.load("FondosTutorial/howToSprites1.png", Texture.class);
         manager.load("FondosTutorial/howToSprites2.png", Texture.class);
+        manager.load("FondosTutorial/howToSprites3.png", Texture.class);
+        manager.load("FondosTutorial/howToSprites4.png", Texture.class);
     }
 
     private void cargarRecursosGanaste() {
@@ -248,10 +264,10 @@ class PantallaCargando extends Pantalla
 
     private void cargarRecursosNivel1() {
         manager.load("musicSounds/level1Theme.mp3", Music.class);
-        manager.load("FondosPantalla/fondoGris.png", Texture.class);
+        manager.load("musicSounds/level2Theme.mp3", Music.class);
+        manager.load("musicSounds/level3Theme.mp3", Music.class);
         manager.load("mapaColourless.tmx",TiledMap.class );
         manager.load("PezGiro/pezGiro.png",Texture.class);
-        manager.load("PezGiro/pezVanish.png",Texture.class);
         manager.load("SpritesPocion/pocionBNSprites.png", Texture.class);
         manager.load("SpritesPocion/pocionOroSprites.png", Texture.class);
         manager.load("backButton.png", Texture.class);
@@ -292,7 +308,12 @@ class PantallaCargando extends Pantalla
         manager.load("SpritesDisparo/Balas3.png",Texture.class);
         manager.load("upButton.png",Texture.class);
         manager.load("shootButton.png",Texture.class);
-        manager.load("FondosPantalla/fondoRojo.png",Texture.class);
+        manager.load("FondosTutorial/bannerLeft1.png",Texture.class);
+        manager.load("FondosTutorial/bannerLeft2.png",Texture.class);
+        manager.load("FondosTutorial/bannerRight1.png",Texture.class);
+        manager.load("FondosTutorial/bannerRight2.png",Texture.class);
+        manager.load("FondosTutorial/bannerRight3.png",Texture.class);
+        manager.load("FondosTutorial/linea.png",Texture.class);
     }
 
     private void cargarRecursosMenu() {
@@ -302,6 +323,9 @@ class PantallaCargando extends Pantalla
         manager.load("loadButton.png", Texture.class);
         manager.load("extrasButton.png", Texture.class);
         manager.load("settingsButton1.png", Texture.class);
+        manager.load("tutorialBanner.png", Texture.class);
+        manager.load("yes.png", Texture.class);
+        manager.load("no.png", Texture.class);
     }
 
     private void actualizarCargaRecursos() {
@@ -310,7 +334,7 @@ class PantallaCargando extends Pantalla
                 case MENU:
                     juego.setScreen(new PantallaMenu(juego));   // 100% de carga
                     break;
-                case NIVEL_1:
+                case NIVEL_1: case NIVEL_2: case NIVEL_3:
                     if(tiempoVisible<=0)
                         juego.setScreen(new PantallaPrincipal(juego));   // 100% de carga
                     break;
@@ -337,9 +361,6 @@ class PantallaCargando extends Pantalla
                     if(tiempoVisible<=0)
                         juego.setScreen(new PantallaTutorial(juego));   // 100% de carga
                     break;
-                case NIVEL_2:
-                    if(tiempoVisible<=0)
-                        juego.setScreen(new PantallaPrincipal(juego));
             }
         }
     }
@@ -360,8 +381,10 @@ class PantallaCargando extends Pantalla
         texturaCargando2.dispose();
         texturaNivel1.dispose();
         texturaNivel2.dispose();
+        texturaNivel3.dispose();
         tituloNivel1.dispose();
         tituloNivel2.dispose();
+        tituloNivel3.dispose();
     }
 
     public enum Transparencia {

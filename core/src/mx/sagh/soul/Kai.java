@@ -1,6 +1,7 @@
 package mx.sagh.soul;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Sound;
@@ -44,6 +45,8 @@ public class Kai extends Objeto{
 
     // Sonidos
     private Sound efectoCroqueta, efectoPocion, efectoPowerDown;
+
+    private Preferences prefs = Gdx.app.getPreferences("Settings");
 
     public Kai(Texture texturaCaminando, Texture texturaReposo, Texture texturaBrincando, Texture texturaCayendo, Texture texturaAsustado, float x, float y) {
         AssetManager manager = new AssetManager();
@@ -255,7 +258,7 @@ public class Kai extends Objeto{
 
     // Revisa si toca un item (croqueta o pocion de vida)
     public boolean recolectarItems(TiledMap mapa) {
-        TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(2); //puedes recuperar una capa del mapa
+        TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(3); //puedes recuperar una capa del mapa
         int i, j;
         for(i=0; i<4; i++)
             for(j=0; j<3; j++) {
@@ -266,7 +269,7 @@ public class Kai extends Objeto{
                     Object tipo = celda.getTile().getProperties().get("tipo");
                     if ("pez".equals(tipo)) {
                         capa.setCell(x, y, null);    // Borra la croqueta del mapa
-                        if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                        if(prefs.getBoolean("Sounds",true))
                             efectoCroqueta.play();
                         return true;
                     }
@@ -276,7 +279,7 @@ public class Kai extends Objeto{
     }
 
     public boolean tomoPocion(TiledMap mapa) {
-        TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(2); //puedes recuperar una capa del mapa
+        TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(3); //puedes recuperar una capa del mapa
         int i, j;
         for(i=0; i<4; i++)
             for(j=0; j<3; j++) {
@@ -287,7 +290,7 @@ public class Kai extends Objeto{
                     Object tipo = celda.getTile().getProperties().get("tipo");
                     if ("pocion".equals(tipo)) {
                         capa.setCell(x, y, null);    // Borra la poción del mapa
-                        if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                        if(prefs.getBoolean("Sounds",true))
                             efectoPocion.play();
                         return true;
                     }
@@ -304,7 +307,7 @@ public class Kai extends Objeto{
 
         Rectangle r = slime.sprite.getBoundingRectangle();
         if(x < r.x + r.width && x + width > r.x && y < r.y + r.height && y + height > r.y){
-            if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+            if(prefs.getBoolean("Sounds",true))
                 efectoPowerDown.play();
             slime.sprite.setX(0);
             slime.setEstadoMovimiento(Slime.EstadoMovimiento.QUIETO);
@@ -314,7 +317,7 @@ public class Kai extends Objeto{
     }
 
     public boolean recogeGema(TiledMap mapa){
-        TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(2); //puedes recuperar una capa del mapa
+        TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(3); //puedes recuperar una capa del mapa
         int i, j;
         for(i=0; i<4; i++)
             for(j=0; j<3; j++) {
@@ -325,7 +328,7 @@ public class Kai extends Objeto{
                     Object tipo = celda.getTile().getProperties().get("tipo");
                     if ("gema".equals(tipo)) {
                         capa.setCell(x, y, null);    // Borra la gema del mapa
-                        if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                        if(prefs.getBoolean("Sounds",true))
                             efectoPocion.play();
                         return true;
                     }

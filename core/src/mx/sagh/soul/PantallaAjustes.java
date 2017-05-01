@@ -1,6 +1,7 @@
 package mx.sagh.soul;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
@@ -20,14 +21,14 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 public class PantallaAjustes extends Pantalla {
     private final ColourlessSoul menu;
     public static EstadoInvocado estado;
-    public static  EstadoJugabilidad estadoJugabilidad;
 
     private final AssetManager manager;
     //sonidos
     private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("musicSounds/click.mp3"));
 
     //Preferencias
-    public static Preferences prefs = Gdx.app.getPreferences("Settings");
+    private Preferences prefs = Gdx.app.getPreferences("Settings");
+    private Preferences currentLevel = Gdx.app.getPreferences("CurrentLevel");
 
     //Escena
     private Stage escena;
@@ -84,7 +85,7 @@ public class PantallaAjustes extends Pantalla {
         final Image imgControlB = new Image(texturaControlButton);
         imgControlB.setPosition(ANCHO/2-imgControlB.getWidth()/2,imgControlChange.getY()+1);
         //if(estadoJugabilidad == EstadoJugabilidad.BOTONES)
-        if(PantallaAjustes.prefs.getBoolean("Touch",true))
+        if(prefs.getBoolean("Touch",true))
             escena.addActor(imgControlT);
         else escena.addActor(imgControlB);
 
@@ -139,13 +140,14 @@ public class PantallaAjustes extends Pantalla {
             public void clicked(InputEvent event, float x, float y) {
                 prefs.flush();
                 PantallaMenu.musicMenu.stop();
-                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                if(prefs.getBoolean("Sounds",true))
                     clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 if(estado == EstadoInvocado.PANTALLA_MENU)
-                    menu.setScreen(new PantallaCargando(menu, Pantallas.MENU));
-                else if(estado ==EstadoInvocado.PANTALLA_PRINCIPAL)
-                    menu.setScreen(new PantallaCargando(menu, Pantallas.NIVEL_1));
+                    menu.setScreen(new PantallaMenu(menu));
+                else if(estado ==EstadoInvocado.PANTALLA_PRINCIPAL) {
+                    cargarPantalla();
+                }
                 clickSound.stop();
             }
         });
@@ -193,13 +195,11 @@ public class PantallaAjustes extends Pantalla {
             public void clicked(InputEvent event, float x, float y) {
                 if(imgControlB.getStage() == null){
                     prefs.putBoolean("Touch",false);
-                    estadoJugabilidad = EstadoJugabilidad.BOTONES;
                     escena.addActor(imgControlB);
                     imgControlT.remove();
                 }
                 else if(imgControlT.getStage() == null){
                     prefs.putBoolean("Touch",true);
-                    estadoJugabilidad = EstadoJugabilidad.TOUCH;
                     escena.addActor(imgControlT);
                     imgControlB.remove();
                 }
@@ -207,9 +207,22 @@ public class PantallaAjustes extends Pantalla {
         });
 
         Gdx.input.setInputProcessor(escena);
-        Gdx.input.setCatchBackKey(false);
+        Gdx.input.setCatchBackKey(true);
     }
 
+    private void cargarPantalla() {
+        switch (currentLevel.getInteger("Nivel", 1)) {
+            case 1:
+                menu.setScreen(new PantallaCargando(menu, Pantallas.NIVEL_1));
+                break;
+            case 2:
+                menu.setScreen(new PantallaCargando(menu, Pantallas.NIVEL_2));
+                break;
+            case 3:
+                menu.setScreen(new PantallaCargando(menu, Pantallas.NIVEL_3));
+                break;
+        }
+    }
 
 
     private void cargarTexturas() {
@@ -230,6 +243,13 @@ public class PantallaAjustes extends Pantalla {
     public void render(float delta) {
         borrarPantalla();
         escena.draw();
+        if(Gdx.input.isKeyJustPressed(Input.Keys.BACK)){
+            if(estado == EstadoInvocado.PANTALLA_MENU)
+                menu.setScreen(new PantallaMenu(menu));
+            else if(estado ==EstadoInvocado.PANTALLA_PRINCIPAL) {
+                cargarPantalla();
+            }
+        }
     }
 
     @Override

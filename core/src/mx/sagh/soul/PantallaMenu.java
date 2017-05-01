@@ -1,6 +1,7 @@
 package mx.sagh.soul;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
@@ -24,17 +25,24 @@ public class PantallaMenu extends Pantalla {
     private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("musicSounds/click.mp3"));
     public static Music musicMenu;
 
+
+    private Preferences prefs = Gdx.app.getPreferences("Settings");
+
     //texturas
     private Texture texturaFondoMenu;
     private Texture texturaBotonInicio;
     private Texture texturaBotonCargar;
     private Texture texturaBotonAjustes;
     private Texture texturaBotonExtras;
+    private Texture texturaBannerTutorial;
+    private Texture texturaBotonYes;
+    private Texture texturaBotonNo;
 
     //Escena
     private Stage escena;
     private SpriteBatch batch;
 
+    Preferences currentLevel = Gdx.app.getPreferences("CurrentLevel");
 
     public PantallaMenu(ColourlessSoul menu) {
         this.menu = menu;
@@ -60,7 +68,7 @@ public class PantallaMenu extends Pantalla {
         manager.finishLoading();
         musicMenu = manager.get("musicSounds/menuTheme.mp3");
         musicMenu.setLooping(true);
-        if(PantallaAjustes.prefs.getBoolean("Music",true))
+        if(prefs.getBoolean("Music",true))
             musicMenu.play();
 
         //Botones del menú principal
@@ -84,12 +92,49 @@ public class PantallaMenu extends Pantalla {
         btnExtras.setPosition(2*ANCHO/3, 2*ALTO/3-4*btnLoad.getHeight());
         escena.addActor(btnExtras);
 
+        TextureRegionDrawable trdBannerTuto = new TextureRegionDrawable(new TextureRegion(texturaBannerTutorial));
+        final Image banner = new Image(trdBannerTuto);
+        banner.setPosition(ANCHO/2-banner.getWidth()/2,ALTO/2-banner.getHeight()/2);
+
+        TextureRegionDrawable trdBtnYes = new TextureRegionDrawable(new TextureRegion(texturaBotonYes));
+        final ImageButton btnYes = new ImageButton(trdBtnYes);
+        btnYes.setPosition(ANCHO/2-btnYes.getWidth()/2-100,ALTO/2-btnYes.getHeight()/2-100);
+
+        TextureRegionDrawable trdBtnNo = new TextureRegionDrawable(new TextureRegion(texturaBotonNo));
+        final ImageButton btnNo = new ImageButton(trdBtnNo);
+        btnNo.setPosition(ANCHO/2-btnNo.getWidth()/2+100,ALTO/2-btnNo.getHeight()/2-100);
+
         // Evento del boton
         btnStart.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                currentLevel.putInteger("Nivel",1);
+                currentLevel.flush();
+                if(prefs.getBoolean("Sounds",true))
                     clickSound.play();
+                escena.addActor(banner);
+                escena.addActor(btnYes);
+                escena.addActor(btnNo);
+            }
+        });
+
+        btnYes.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                prefs.putBoolean("Tutorial1",true);
+                prefs.flush();
+                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
+                musicMenu.stop();
+                menu.setScreen(new PantallaCargando(menu, Pantallas.NIVEL_1));
+                clickSound.stop();
+            }
+        });
+
+        btnNo.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                prefs.putBoolean("Tutorial1",false);
+                prefs.flush();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 musicMenu.stop();
                 menu.setScreen(new PantallaCargando(menu, Pantallas.NIVEL_1));
@@ -100,11 +145,23 @@ public class PantallaMenu extends Pantalla {
         btnLoad.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                prefs.putBoolean("Tutorial1",false);
+                prefs.flush();
+                if(prefs.getBoolean("Sounds",true))
                     clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 musicMenu.stop();
-                menu.setScreen(new PantallaCargando(menu, Pantallas.NIVEL_1));
+                switch (currentLevel.getInteger("Nivel",1)) {
+                    case 1:
+                        menu.setScreen(new PantallaCargando(menu, Pantallas.NIVEL_1));
+                        break;
+                    case 2:
+                        menu.setScreen(new PantallaCargando(menu, Pantallas.NIVEL_2));
+                        break;
+                    case 3:
+                        menu.setScreen(new PantallaCargando(menu, Pantallas.NIVEL_3));
+                        break;
+                }
                 clickSound.stop();
             }
         });
@@ -113,7 +170,7 @@ public class PantallaMenu extends Pantalla {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 PantallaAjustes.estado = EstadoInvocado.PANTALLA_MENU;
-                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                if(prefs.getBoolean("Sounds",true))
                     clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaCargando(menu, Pantallas.AJUSTES));
@@ -124,7 +181,7 @@ public class PantallaMenu extends Pantalla {
         btnExtras.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                if(prefs.getBoolean("Sounds",true))
                     clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaCargando(menu, Pantallas.EXTRAS));
@@ -142,6 +199,9 @@ public class PantallaMenu extends Pantalla {
         texturaBotonCargar = manager.get("loadButton.png");
         texturaBotonAjustes = manager.get("settingsButton1.png");
         texturaBotonExtras = manager.get("extrasButton.png");
+        texturaBannerTutorial = manager.get("tutorialBanner.png");
+        texturaBotonYes = manager.get("yes.png");
+        texturaBotonNo = manager.get("no.png");
     }
 
 
@@ -172,6 +232,9 @@ public class PantallaMenu extends Pantalla {
         manager.unload("loadButton.png");
         manager.unload("settingsButton1.png");
         manager.unload("extrasButton.png");
+        manager.unload("tutorialBanner.png");
+        manager.unload("yes.png");
+        manager.unload("no.png");
         clickSound.dispose();
     }
 }

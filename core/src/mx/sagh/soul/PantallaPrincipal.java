@@ -44,6 +44,7 @@ public class PantallaPrincipal extends Pantalla {
     private TiledMap mapa;
 
     private EstadoDisparo estadoDisparo;
+    private EstadoTutorial estadoTutorial;
 
     private final float DELTA_X = 10;    // Desplazamiento del personaje
     private final float DELTA_Y = 10;
@@ -52,6 +53,8 @@ public class PantallaPrincipal extends Pantalla {
 
     // Preferencias
     Preferences prefs = Gdx.app.getPreferences("Achievements");
+    Preferences currentLevel = Gdx.app.getPreferences("CurrentLevel");
+    private Preferences settings = Gdx.app.getPreferences("Settings");
 
     // Punteros (dedo para pan horizontal, vertical)
     private final int INACTIVO = -1;
@@ -77,7 +80,7 @@ public class PantallaPrincipal extends Pantalla {
 
     // Música / efectos
     private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("musicSounds/click.mp3"));
-    public static Music musicLevel;
+    public static Music musicLevel1, musicLevel2, musicLevel3;
 
     // HUD
     private OrthographicCamera camaraHUD;
@@ -99,6 +102,13 @@ public class PantallaPrincipal extends Pantalla {
     private ImageButton btnMenu;
     private ImageButton btnNextLevel;
     private ImageButton btnDisp;
+
+    //Imagenes tutorial
+    private Texture texturaBannerL1, texturaBannerL2, texturaBannerR1, texturaBannerR2, texturaBannerR3, texturaline;
+    private Image bannerL1, bannerL2, bannerR1, bannerR2, bannerR3, line;
+    private float tiempoTouch = 2.0f;
+    private int saltos = 0;
+    private int shoots = 0;
 
     //texturas
     private Texture texturaBotonPausa;
@@ -133,11 +143,12 @@ public class PantallaPrincipal extends Pantalla {
     private final AssetManager manager;
 
     private boolean bitedCookie, tookPotion;
-    public EstadoNivel estadoNivel;
+    private EstadoNivel estadoNivel;
 
 
     public PantallaPrincipal(ColourlessSoul menu) {
         this.menu = menu;
+
         manager=menu.getAssetManager();
     }
 
@@ -154,29 +165,62 @@ public class PantallaPrincipal extends Pantalla {
         sistemaParticulasCroqueta.load(Gdx.files.internal("pezVanish.pe"),Gdx.files.internal(""));
         sistemaParticulasPocion.load(Gdx.files.internal("pocionVanish.pe"),Gdx.files.internal(""));
         //if(PantallaAjustes.estadoJugabilidad == PantallaAjustes.EstadoJugabilidad.TOUCH)
-        if(PantallaAjustes.prefs.getBoolean("Touch",true))
+        if(settings.getBoolean("Touch",true))
             Gdx.input.setInputProcessor(new ProcesadorEntrada());
     }
 
     private void crearMapaAleatorio() {
-        TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(2); //puedes recuperar una capa del mapa
+        switch (currentLevel.getInteger("Nivel",1)){
+            case 1:
+                mapa.getLayers().get(0).setVisible(true);
+                mapa.getLayers().get(1).setVisible(false);
+                mapa.getLayers().get(2).setVisible(false);
+                break;
+            case 2:
+                mapa.getLayers().get(1).setVisible(true);
+                mapa.getLayers().get(2).setVisible(false);
+                break;
+            case 3:
+                mapa.getLayers().get(2).setVisible(true);
+                break;
+        }
+        TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(3); //puedes recuperar una capa del mapa
+        //Colocar pociones, sin importar que ya las haya tomado en otro nivel
+        capa.setCell(93,4,capa.getCell(159,23));
+        capa.setCell(129,4,capa.getCell(159,23));
+        //Arreglo de posibles posiciones donde se puedan colocar los peces de forma aleatoria
         int arrY[] = {4,6,8,10};
         int arrX[] = {10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92, 94, 96, 98, 100, 102, 104, 106, 108, 110, 112, 114, 116, 118, 120, 122, 124, 126, 128, 130, 132, 134, 136, 138, 140, 142, 144, 146, 148, 150, 152};
         for (int b: arrY)   for(int a: arrX)    capa.setCell(a,b,null);
         int x, y;
+        //Colocar los peces de forma aleatoria
         for(int i=0; i<40; i++){
             y = arrY[(int)(Math.random() * 4)];
             x = arrX[(int)(Math.random() * 72)];
             if(capa.getCell(x,y)==null) maxScore++;
             capa.setCell(x,y,capa.getCell(159,24));
         }
-        capa.setCell(156,4,capa.getCell(159,0));
+
+
+        //Colocar las gemas al final, dependiendo el nivel
+        switch (currentLevel.getInteger("Nivel",1)){
+            case 1:
+                capa.setCell(156,4,capa.getCell(159,0));
+                break;
+            case 2:
+                capa.setCell(156,4,capa.getCell(159,2));
+                break;
+            case 3:
+                capa.setCell(156,4,capa.getCell(159,4));
+                break;
+        }
     }
 
     private void crearObjetos() {
         texto = new Texto();
         estadoNivel = EstadoNivel.ACTIVE;
         estadoDisparo = EstadoDisparo.LIBRE;
+        estadoTutorial = EstadoTutorial.FINGERS;
 
         manager.setLoader(TiledMap.class,
                 new TmxMapLoader(new InternalFileHandleResolver()));
@@ -186,12 +230,14 @@ public class PantallaPrincipal extends Pantalla {
         mapa = manager.get("mapaColourless.tmx");
 
         //Cargar audios
-        manager.load("musicSounds/menuTheme.mp3",Music.class);
-        manager.finishLoading();
-        musicLevel = manager.get("musicSounds/level1Theme.mp3");
-        musicLevel.setLooping(true);
-        if(PantallaAjustes.prefs.getBoolean("Music",true))
-            musicLevel.play();
+        musicLevel1 = manager.get("musicSounds/level1Theme.mp3");
+        musicLevel1.setLooping(true);
+        musicLevel2 = manager.get("musicSounds/level2Theme.mp3");
+        musicLevel2.setLooping(true);
+        musicLevel3 = manager.get("musicSounds/level3Theme.mp3");
+        musicLevel3.setLooping(true);
+        if(settings.getBoolean("Music",true))
+            playMusic();
 
         batch = new SpriteBatch();
         renderer = new OrthogonalTiledMapRenderer(mapa, batch);
@@ -204,7 +250,7 @@ public class PantallaPrincipal extends Pantalla {
         Gdx.input.setInputProcessor(escenaHUD);
         kai = new Kai(texturaKaiCaminando, texturaKaiReposo, texturaKaiBrincando, texturaKaiCayendo, texturaKaiAsustado, 128,128);
         //slime = new Slime[8];
-        for(int i=0; i<8; i++)
+        for(int i=0; i<8*currentLevel.getInteger("Nivel",1); i++)
             slimes.add(new Slime(texturaSlime, MathUtils.random(2080,4736),MathUtils.random(128,160)));
             //slime[i] = new Slime(texturaSlime, MathUtils.random(2080,4736),MathUtils.random(128,160));
 
@@ -218,13 +264,39 @@ public class PantallaPrincipal extends Pantalla {
         TextureRegionDrawable trdBtnUp = new TextureRegionDrawable(new TextureRegion(texturaBotonUp));
         btnUp = new ImageButton(trdBtnUp);
         btnUp.setPosition(ANCHO-btnUp.getWidth(),0);
-        escenaHUD.addActor(btnUp);
 
         TextureRegionDrawable trdBtnDisp = new TextureRegionDrawable(new TextureRegion(texturaBotonDisparar));
         btnDisp = new ImageButton(trdBtnDisp);
         btnDisp.setPosition(btnUp.getX() - btnDisp.getWidth(),0);
-        escenaHUD.addActor(btnDisp);
 
+        if(!settings.getBoolean("Tutorial1",true) && !settings.getBoolean("Touch",true)) {
+            escenaHUD.addActor(btnUp);
+            if(currentLevel.getInteger("Nivel",1)>=2) escenaHUD.addActor(btnDisp);
+            escenaHUD.addActor(pad);
+        }
+
+        //Tutorial de inicio
+        bannerL1 = new Image(texturaBannerL1);
+        bannerL1.setPosition(ANCHO/4-bannerL1.getWidth()/2,ALTO/2);
+        bannerL2 = new Image(texturaBannerL2);
+        bannerL2.setPosition(ANCHO/4-bannerL2.getWidth()/2,ALTO/2);
+        bannerR1 = new Image(texturaBannerR1);
+        bannerR1.setPosition(3*ANCHO/4-bannerR1.getWidth()/2,ALTO/2);
+        bannerR2 = new Image(texturaBannerR2);
+        bannerR2.setPosition(3*ANCHO/4-bannerR2.getWidth()/2,ALTO/2);
+        bannerR3 = new Image(texturaBannerR3);
+        bannerR3.setPosition(3*ANCHO/4-bannerR3.getWidth()/2,ALTO/2);
+        line = new Image(texturaline);
+        line.setPosition(ANCHO/2-10,ALTO/2-line.getHeight()/2);
+        if(settings.getBoolean("Tutorial1",true)){
+            escenaHUD.addActor(bannerL1);
+            escenaHUD.addActor(bannerR1);
+        }
+        else if(settings.getBoolean("Tutorial2",true)){
+            escenaHUD.addActor(bannerR3);
+            escenaHUD.addActor(line);
+            estadoTutorial = EstadoTutorial.SHOOT;
+        }
         //Pantalla pausa
         imgPause = new Image(texturaMenuPausa);
         imgPause.setPosition(ANCHO/2-imgPause.getWidth()/2,ALTO/2-imgPause.getHeight()/2);
@@ -303,13 +375,36 @@ public class PantallaPrincipal extends Pantalla {
 
         btnDisp.addListener(new ClickListener(){
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-                if(estadoDisparo != EstadoDisparo.DISPARANDO)
-                    disparar();
+                if(currentLevel.getInteger("Nivel",1)>=2)
+                    if(estadoDisparo != EstadoDisparo.DISPARANDO)
+                        disparar();
                 return true;
             }
         });
 
         Gdx.input.setCatchBackKey(true);
+    }
+
+    private void resumeGame(){
+        estadoNivel = EstadoNivel.ACTIVE;
+        if(!settings.getBoolean("Tutorial1",true) && !settings.getBoolean("Touch",true)) {
+            escenaHUD.addActor(btnUp);
+            if(currentLevel.getInteger("Nivel",1)>=2) escenaHUD.addActor(btnDisp);
+            escenaHUD.addActor(pad);
+        }
+        if(settings.getBoolean("Sounds",true))
+            clickSound.play();
+        while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
+        imgPause.remove();
+        imgGamePaused.remove();
+        btnResume.remove();
+        btnRestart.remove();
+        btnSettings.remove();
+        btnMainMenu.remove();
+        clickSound.stop();
+        //if(PantallaAjustes.estadoJugabilidad == PantallaAjustes.EstadoJugabilidad.TOUCH)
+        if(settings.getBoolean("Touch",true))
+            Gdx.input.setInputProcessor(new ProcesadorEntrada());
     }
 
     private void inPauseEvent() {
@@ -329,32 +424,15 @@ public class PantallaPrincipal extends Pantalla {
         btnResume.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                estadoNivel = EstadoNivel.ACTIVE;
-                escenaHUD.addActor(pad);
-                escenaHUD.addActor(btnUp);
-                escenaHUD.addActor(btnDisp);
-
-                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
-                    clickSound.play();
-                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                imgPause.remove();
-                imgGamePaused.remove();
-                btnResume.remove();
-                btnRestart.remove();
-                btnSettings.remove();
-                btnMainMenu.remove();
-                clickSound.stop();
-                //if(PantallaAjustes.estadoJugabilidad == PantallaAjustes.EstadoJugabilidad.TOUCH)
-                if(PantallaAjustes.prefs.getBoolean("Touch",true))
-                    Gdx.input.setInputProcessor(new ProcesadorEntrada());
+                resumeGame();
             }
         });
 
         btnSettings.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                musicLevel.stop();
-                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                stopMusic();
+                if(settings.getBoolean("Sounds",true))
                     clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 PantallaAjustes.estado = EstadoInvocado.PANTALLA_PRINCIPAL;
@@ -366,11 +444,21 @@ public class PantallaPrincipal extends Pantalla {
         btnRestart.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                musicLevel.stop();
-                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                stopMusic();
+                if(settings.getBoolean("Sounds",true))
                     clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                menu.setScreen(new PantallaCargando(menu,Pantallas.NIVEL_1));
+                switch (currentLevel.getInteger("Nivel",1)){
+                    case 1:
+                        menu.setScreen(new PantallaCargando(menu,Pantallas.NIVEL_1));
+                        break;
+                    case 2:
+                        menu.setScreen(new PantallaCargando(menu,Pantallas.NIVEL_2));
+                        break;
+                    case 3:
+                        menu.setScreen(new PantallaCargando(menu,Pantallas.NIVEL_3));
+                        break;
+                }
                 clickSound.stop();
             }
         });
@@ -378,8 +466,8 @@ public class PantallaPrincipal extends Pantalla {
         btnMainMenu.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                musicLevel.stop();
-                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                stopMusic();
+                if(settings.getBoolean("Sounds",true))
                     clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaCargando(menu,Pantallas.MENU));
@@ -405,41 +493,32 @@ public class PantallaPrincipal extends Pantalla {
         escenaHUD.addActor(btnNextLevel);
         escenaHUD.addActor(btnMenu);
 
-        prefs.putString("1-Score",Integer.toString(score)+"/"+Integer.toString(maxScore));
-        prefs.putString("1-Slimes",Integer.toString(slimeTocados)+" Hits");
+        int nivel = currentLevel.getInteger("Nivel",1);
+        if(score >= Integer.parseInt(prefs.getString(nivel+"-Score","0"+"/"+Integer.toString(maxScore)).substring(0,prefs.getString(nivel+"-Score","0"+"/"+Integer.toString(maxScore)).indexOf("/"))))
+            prefs.putString(nivel+"-Score",Integer.toString(score)+"/"+Integer.toString(maxScore));
+        if(slimeTocados <= Integer.parseInt(prefs.getString(nivel+"-Slimes","50 Hits").substring(0,prefs.getString(nivel+"-Slimes","50 Hits").indexOf(" "))))
+            prefs.putString(nivel+"-Slimes",Integer.toString(slimeTocados)+" Hits");
         prefs.flush();
-
-        btnResume.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                estadoNivel = EstadoNivel.ACTIVE;
-                escenaHUD.addActor(pad);
-                escenaHUD.addActor(btnUp);
-                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
-                    clickSound.play();
-                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                imgPause.remove();
-                imgGamePaused.remove();
-                btnResume.remove();
-                btnRestart.remove();
-                btnSettings.remove();
-                btnMainMenu.remove();
-                clickSound.stop();
-                //if(PantallaAjustes.estadoJugabilidad == PantallaAjustes.EstadoJugabilidad.TOUCH)
-                if(PantallaAjustes.prefs.getBoolean("Touch",true))
-                    Gdx.input.setInputProcessor(new ProcesadorEntrada());
-            }
-        });
 
         btnReplay.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                if(settings.getBoolean("Sounds",true))
                     clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                if(PantallaAjustes.prefs.getBoolean("Music",true))
-                    musicLevel.play();
-                menu.setScreen(new PantallaCargando(menu,Pantallas.NIVEL_1));
+                if(settings.getBoolean("Music",true))
+                    playMusic();
+                switch (currentLevel.getInteger("Nivel",1)){
+                    case 1:
+                        menu.setScreen(new PantallaCargando(menu,Pantallas.NIVEL_1));
+                        break;
+                    case 2:
+                        menu.setScreen(new PantallaCargando(menu,Pantallas.NIVEL_2));
+                        break;
+                    case 3:
+                        menu.setScreen(new PantallaCargando(menu,Pantallas.NIVEL_3));
+                        break;
+                }
                 clickSound.stop();
             }
         });
@@ -447,13 +526,27 @@ public class PantallaPrincipal extends Pantalla {
         btnNextLevel.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                musicLevel.stop();
-                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                stopMusic();
+                if(currentLevel.getInteger("Nivel",1)==1) {
+                    if(settings.getBoolean("Tutorial1",true)) {
+                        settings.putBoolean("Tutorial2", true);
+                        settings.flush();
+                    }
+                    currentLevel.putInteger("Nivel", 2);
+                }
+                else    currentLevel.putInteger("Nivel",3);
+                currentLevel.flush();
+                if(settings.getBoolean("Sounds",true))
                     clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                estadoNivel = EstadoNivel.NIVEL_2;
-                mapa.getLayers().get(1).setVisible(true);
-                menu.setScreen(new PantallaCargando(menu,Pantallas.NIVEL_1));
+                switch (currentLevel.getInteger("Nivel",1)){
+                    case 2:
+                        menu.setScreen(new PantallaCargando(menu,Pantallas.NIVEL_2));
+                        break;
+                    case 3:
+                        menu.setScreen(new PantallaCargando(menu,Pantallas.NIVEL_3));
+                        break;
+                }
                 clickSound.stop();
             }
         });
@@ -461,8 +554,17 @@ public class PantallaPrincipal extends Pantalla {
         btnMenu.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                musicLevel.stop();
-                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                stopMusic();
+                if(currentLevel.getInteger("Nivel",1)==1) {
+                    if(settings.getBoolean("Tutorial1",true)) {
+                        settings.putBoolean("Tutorial2", true);
+                        settings.flush();
+                    }
+                    currentLevel.putInteger("Nivel", 2);
+                }
+                else    currentLevel.putInteger("Nivel",3);
+                currentLevel.flush();
+                if(settings.getBoolean("Sounds",true))
                     clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaCargando(menu,Pantallas.MENU));
@@ -506,7 +608,6 @@ public class PantallaPrincipal extends Pantalla {
             }
         });
         escenaHUD = new Stage(vistaHUD);
-        escenaHUD.addActor(pad);
     }
 
     private void cargarTexturas() {
@@ -521,7 +622,7 @@ public class PantallaPrincipal extends Pantalla {
         texturaKaiCaminando = manager.get("KaiSprites/kaiWalkingSprite.png");
         texturaKaiReposo = manager.get("KaiSprites/kaiRestingSprite.png");
         texturaKaiBrincando = manager.get("KaiSprites/kaiJumpingSprite.png");
-        texturaKaiCayendo =manager.get("KaiSprites/kaiFallingSprite.png");
+        texturaKaiCayendo = manager.get("KaiSprites/kaiFallingSprite.png");
         texturaKaiAsustado = manager.get("KaiSprites/kaiGotHitSprite.png");
         texturaBotonUp = manager.get("upButton.png");
         texturaBotonReplay = manager.get("replayButton.png");
@@ -538,6 +639,12 @@ public class PantallaPrincipal extends Pantalla {
         barra7 = manager.get("SpritesBarraVida/vida7.png");
         barraFull = manager.get("SpritesBarraVida/vidaFull.png");
         texturaSlime = manager.get("SpritesSlime/slimePiso.png");
+        texturaBannerL1 = manager.get("FondosTutorial/bannerLeft1.png");
+        texturaBannerL2 = manager.get("FondosTutorial/bannerLeft2.png");
+        texturaBannerR1 = manager.get("FondosTutorial/bannerRight1.png");
+        texturaBannerR2 = manager.get("FondosTutorial/bannerRight2.png");
+        texturaBannerR3 = manager.get("FondosTutorial/bannerRight3.png");
+        texturaline = manager.get("FondosTutorial/linea.png");
     }
 
     @Override
@@ -574,6 +681,10 @@ public class PantallaPrincipal extends Pantalla {
         renderer.render();
 
         batch.begin();
+
+        if(settings.getBoolean("Tutorial1",true) || settings.getBoolean("Tutorial2",true)){
+            tutorial(delta);
+        }
 
         if (bitedCookie) {
             sistemaParticulasCroqueta.update(delta);
@@ -628,7 +739,7 @@ public class PantallaPrincipal extends Pantalla {
 
         escenaHUD.draw();
         //if(PantallaAjustes.estadoJugabilidad == PantallaAjustes.EstadoJugabilidad.TOUCH) {
-        if(PantallaAjustes.prefs.getBoolean("Touch",true)){
+        if(settings.getBoolean("Touch",true)){
             pad.remove();
             btnUp.remove();
             btnDisp.remove();
@@ -643,16 +754,71 @@ public class PantallaPrincipal extends Pantalla {
         if(estadoNivel ==EstadoNivel.FINISHED) {
             texto.mostrarMensaje(batch, Integer.toString(score) + "/" +Integer.toString(maxScore), ANCHO / 3 + 50, ALTO / 2 + 125);
             texto.mostrarMensaje(batch, Integer.toString(slimeTocados)+" Hits", ANCHO / 3 + 50, ALTO / 2 - 10);
-            //if(musicLevel.getVolume()>0.00225f)
-              //  musicLevel.setVolume(musicLevel.getVolume()-0.00225f);
+            //if(musicLevel1.getVolume()>0.00225f)|
+              //  musicLevel1.setVolume(musicLevel1.getVolume()-0.00225f);
 
         }
 
         batch.end();
         if (Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
-            menu.setScreen(new PantallaCargando(menu,Pantallas.MENU));
+            if(estadoNivel==EstadoNivel.ACTIVE)
+                inPauseEvent();
+            else if(estadoNivel==EstadoNivel.PAUSED)
+                resumeGame();
+            else if (estadoNivel==EstadoNivel.FINISHED){
+                stopMusic();
+                if(currentLevel.getInteger("Nivel",1)==1)
+                    currentLevel.putInteger("Nivel", 2);
+                else    currentLevel.putInteger("Nivel",3);
+                currentLevel.flush();
+                if(settings.getBoolean("Sounds",true))
+                    clickSound.play();
+                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
+                menu.setScreen(new PantallaMenu(menu));
+                clickSound.stop();
+            }
         }
 
+    }
+
+    private void tutorial(float delta){
+        if(punteroHorizontal!=INACTIVO || punteroVertical!=INACTIVO)
+            tiempoTouch-=delta;
+        switch (estadoTutorial){
+            case FINGERS:
+                if(tiempoTouch<=0) {
+                    bannerL1.remove();
+                    bannerR1.remove();
+                    escenaHUD.addActor(line);
+                    estadoTutorial = EstadoTutorial.SLIDE;
+                    escenaHUD.addActor(bannerL2);
+                    tiempoTouch = 2.0f;
+                }
+                break;
+            case SLIDE:
+                if(tiempoTouch<=0) {
+                    bannerL2.remove();
+                    estadoTutorial = EstadoTutorial.JUMP;
+                    escenaHUD.addActor(bannerR2);
+                }
+                break;
+            case JUMP:
+                if(saltos>=3) {
+                    bannerR2.remove();
+                    line.remove();
+                    settings.putBoolean("Tutorial1",false);
+                    settings.flush();
+                }
+                break;
+            case SHOOT:
+                if(shoots>=3) {
+                    bannerR3.remove();
+                    line.remove();
+                    settings.putBoolean("Tutorial2",false);
+                    settings.flush();
+                }
+                break;
+        }
     }
 
     private void actualizarDisparos(float delta) {
@@ -709,12 +875,41 @@ public class PantallaPrincipal extends Pantalla {
     private void actualizarCamara() {
         //float posX = kai.sprite.getX(); //siempre es el sprite quien me da la x o la y del personaje
         if(camara.position.x<4448)
-            camara.position.set((camara.position.x+120*Gdx.graphics.getDeltaTime()), camara.position.y, 0);
+            if(!settings.getBoolean("Tutorial1",true) || estadoTutorial==EstadoTutorial.SLIDE  || estadoTutorial==EstadoTutorial.JUMP)
+                camara.position.set((camara.position.x+(100+20*currentLevel.getInteger("Nivel",1))*Gdx.graphics.getDeltaTime()), camara.position.y, 0);
         /*if (posX>ANCHO_MAPA-ANCHO/2) {    // Si está en la última mitad
             camara.position.set(ANCHO_MAPA - ANCHO / 2, camara.position.y, 0);
             Gdx.app.log("Pos",Float.toString(camara.position.x));
         }*/
         camara.update();
+    }
+
+    private void playMusic(){
+        switch (currentLevel.getInteger("Nivel",1)){
+            case 1:
+                musicLevel1.play();
+                break;
+            case 2:
+                musicLevel2.play();
+                break;
+            case 3:
+                musicLevel3.play();
+                break;
+        }
+    }
+
+    private void stopMusic(){
+        switch (currentLevel.getInteger("Nivel",1)){
+            case 1:
+                musicLevel1.stop();
+                break;
+            case 2:
+                musicLevel2.stop();
+                break;
+            case 3:
+                musicLevel3.stop();
+                break;
+        }
     }
 
     private void disparar(){
@@ -736,6 +931,8 @@ public class PantallaPrincipal extends Pantalla {
     @Override
     public void dispose() {
         manager.unload("musicSounds/level1Theme.mp3");
+        manager.unload("musicSounds/level2Theme.mp3");
+        manager.unload("musicSounds/level3Theme.mp3");
         manager.unload("shootButton.png");
         manager.unload("pauseButton.png");
         manager.unload("fondoMadera.png");
@@ -763,7 +960,12 @@ public class PantallaPrincipal extends Pantalla {
         manager.unload("SpritesBarraVida/vida7.png");
         manager.unload("SpritesBarraVida/vidaFull.png");
         manager.unload("SpritesSlime/slimePiso.png");
-
+        manager.unload("FondosTutorial/bannerLeft1.png");
+        manager.unload("FondosTutorial/bannerLeft2.png");
+        manager.unload("FondosTutorial/bannerRight1.png");
+        manager.unload("FondosTutorial/bannerRight2.png");
+        manager.unload("FondosTutorial/bannerRight3.png");
+        manager.unload("FondosTutorial/linea.png");
     }
 
     private class ProcesadorEntrada implements InputProcessor {
@@ -815,6 +1017,7 @@ public class PantallaPrincipal extends Pantalla {
                 punteroVertical = INACTIVO;
                 dy = 0; // Deja de moverse en y
             }
+            tiempoTouch = 2.0f;
             return true;
         }
 
@@ -822,27 +1025,38 @@ public class PantallaPrincipal extends Pantalla {
         public boolean touchDragged(int screenX, int screenY, int pointer) {
             v.set(screenX, screenY, 0);
             camaraHUD.unproject(v);
-            if ( pointer == punteroHorizontal && Math.abs(v.x-xHorizontal)>UMBRAL ) {
-                if (v.x > xHorizontal) {
-                    kai.setEstadoMovimiento(Kai.EstadoMovimiento.MOV_DERECHA);
-                    dx = DELTA_X;   // Derecha
-                } else {
-                    kai.setEstadoMovimiento(Kai.EstadoMovimiento.MOV_IZQUIERDA);
-                    dx = -DELTA_X;  // Izquierda
+            if(estadoTutorial==EstadoTutorial.SLIDE || estadoTutorial==EstadoTutorial.JUMP || !settings.getBoolean("Tutorial1",true)) {
+                if (pointer == punteroHorizontal && Math.abs(v.x - xHorizontal) > UMBRAL) {
+                    if (v.x > xHorizontal) {
+                        kai.setEstadoMovimiento(Kai.EstadoMovimiento.MOV_DERECHA);
+                        dx = DELTA_X;   // Derecha
+                    } else {
+                        kai.setEstadoMovimiento(Kai.EstadoMovimiento.MOV_IZQUIERDA);
+                        dx = -DELTA_X;  // Izquierda
+                    }
+                    xHorizontal = v.x;
                 }
-                xHorizontal = v.x;
-            } else if ( pointer == punteroVertical && Math.abs(v.y-yVertical)>UMBRAL ) {
-                if (v.y > yVertical && kai.getEstadoSalto() != Kai.EstadoSalto.SUBIENDO) {
-                    kai.saltar();
-                    dy = DELTA_Y;   // Arriba
-                } else if(v.y < yVertical && estadoDisparo != EstadoDisparo.DISPARANDO) {
-                    disparar();
-                    dy = -DELTA_Y;  // Abajo
-                }
-                yVertical = v.y;
             }
-
-                return true;
+            if(estadoTutorial==EstadoTutorial.JUMP || !settings.getBoolean("Tutorial1",true)) {
+                if (pointer == punteroVertical && Math.abs(v.y - yVertical) > UMBRAL) {
+                    if (v.y > yVertical && kai.getEstadoSalto() != Kai.EstadoSalto.SUBIENDO) {
+                        kai.saltar();
+                        saltos++;
+                        dy = DELTA_Y;   // Arriba
+                    }
+                }
+            }
+            if(currentLevel.getInteger("Nivel",1)>=2) {
+                if (pointer == punteroVertical && Math.abs(v.y - yVertical) > UMBRAL) {
+                    if (v.y < yVertical && estadoDisparo != EstadoDisparo.DISPARANDO) {
+                        disparar();
+                        shoots++;
+                        dy = -DELTA_Y;  // Abajo
+                    }
+                    yVertical = v.y;
+                }
+            }
+            return true;
         }
 
         @Override
@@ -860,5 +1074,12 @@ public class PantallaPrincipal extends Pantalla {
     public enum EstadoDisparo {
         DISPARANDO,
         LIBRE
+    }
+
+    private enum EstadoTutorial{
+        FINGERS,
+        SLIDE,
+        JUMP,
+        SHOOT
     }
 }

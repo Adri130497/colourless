@@ -47,6 +47,9 @@ public class PantallaLogros extends Pantalla {
     private final int NUM_NIVELES = 5;
     private Array<Objeto> arrLogros;
 
+    //Preferencias
+    private Preferences settings = Gdx.app.getPreferences("Settings");
+
     //Escena
     private Stage escena;
     private SpriteBatch batch;
@@ -91,7 +94,7 @@ public class PantallaLogros extends Pantalla {
         btnBack.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                if(settings.getBoolean("Sounds",true))
                     clickSound.play();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaCargando(menu,Pantallas.MENU));
@@ -117,10 +120,8 @@ public class PantallaLogros extends Pantalla {
 
         borrarPantalla();
         escena.draw();
-        if(Gdx.input.isKeyJustPressed(Input.Keys.BACK)){
-            menu.setScreen(new PantallaCargando(menu,Pantallas.MENU));
-        }
-
+        if(Gdx.input.isKeyJustPressed(Input.Keys.BACK))
+            menu.setScreen(new PantallaExtras(menu));
         batch.setProjectionMatrix(camara.combined); // Para ajustar la escala con la cámara
         batch.begin();
         dibujarObjetos(arrLogros);
@@ -178,7 +179,7 @@ public class PantallaLogros extends Pantalla {
             camara.unproject(v);
             if (v.x>btnBack.getX() && v.x<(btnBack.getX()+btnBack.getWidth())
                     && v.y>btnBack.getY() && v.y<(btnBack.getY()+btnBack.getHeight())) {
-                if(PantallaAjustes.prefs.getBoolean("Sounds",true))
+                if(settings.getBoolean("Sounds",true))
                     clickSound.play();
                 while (clickSound.isPlaying()) if (clickSound.getPosition() > 0.5f) break;
                 menu.setScreen(new PantallaCargando(menu, Pantallas.MENU));
