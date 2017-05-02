@@ -219,7 +219,7 @@ public class PantallaIntro extends Pantalla{
 
         @Override
         public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-            touch++;
+            if(touch==3) touch++;
             return true;
         }
 
