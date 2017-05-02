@@ -264,6 +264,7 @@ class PantallaCargando extends Pantalla{
         manager.load("creditsButton.png", Texture.class);
         manager.load("howToButton.png", Texture.class);
         manager.load("achievementsButton.png", Texture.class);
+        manager.load("nombreMateria.png", Texture.class);
     }
 
     private void cargarRecursosAjustes() {
@@ -286,6 +287,7 @@ class PantallaCargando extends Pantalla{
         manager.load("musicSounds.png", Texture.class);
         manager.load("soundsOn.png", Texture.class);
         manager.load("soundsOff.png", Texture.class);
+        manager.load("resetGame.png", Texture.class);
     }
 
     private void cargarRecursosNivel1() {

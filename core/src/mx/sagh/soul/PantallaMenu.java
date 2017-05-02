@@ -134,6 +134,7 @@ public class PantallaMenu extends Pantalla {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 prefs.putBoolean("Tutorial1",false);
+                prefs.putBoolean("Tutorial2",false);
                 prefs.flush();
                 while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 musicMenu.stop();
@@ -146,6 +147,7 @@ public class PantallaMenu extends Pantalla {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 prefs.putBoolean("Tutorial1",false);
+                prefs.putBoolean("Tutorial2",false);
                 prefs.flush();
                 if(prefs.getBoolean("Sounds",true))
                     clickSound.play();

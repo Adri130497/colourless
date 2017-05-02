@@ -93,7 +93,7 @@ public class PantallaCreditos extends Pantalla {
     }
 
     private void actualizarObjetos(float delta) {
-        if(imgCredits.getY()!=0) imgCredits.setY(imgCredits.getY()+1);
+        if(imgCredits.getY()!=0) imgCredits.setY(imgCredits.getY()+2);
     }
 
 

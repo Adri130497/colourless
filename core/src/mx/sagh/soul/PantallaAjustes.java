@@ -29,6 +29,7 @@ public class PantallaAjustes extends Pantalla {
     //Preferencias
     private Preferences prefs = Gdx.app.getPreferences("Settings");
     private Preferences currentLevel = Gdx.app.getPreferences("CurrentLevel");
+    private Preferences achievements = Gdx.app.getPreferences("Achievements");
 
     //Escena
     private Stage escena;
@@ -46,6 +47,7 @@ public class PantallaAjustes extends Pantalla {
     private Texture texturaMusicSounds;
     private Texture texturaBotonRegreso;
     private Texture texturaBotonL;
+    private Texture texturaReset;
 
 
     public PantallaAjustes(ColourlessSoul menu) {
@@ -95,6 +97,11 @@ public class PantallaAjustes extends Pantalla {
 
         //Botones
 
+        TextureRegionDrawable trdBtnReset = new TextureRegionDrawable(new TextureRegion(texturaReset));
+        final ImageButton btnReset = new ImageButton(trdBtnReset);
+        btnReset.setPosition(ANCHO/2-btnReset.getWidth()/2,150);
+        escena.addActor(btnReset);
+
         TextureRegionDrawable trdBtnMusicOn = new TextureRegionDrawable(new TextureRegion(texturaMusicaOn));
         final ImageButton btnMusicaOn = new ImageButton(trdBtnMusicOn);
         btnMusicaOn.setSize(120,120);
@@ -135,6 +142,20 @@ public class PantallaAjustes extends Pantalla {
 
 
         // Evento del boton
+        btnReset.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                achievements.clear();
+                achievements.flush();
+                currentLevel.clear();
+                currentLevel.flush();
+                if(prefs.getBoolean("Sounds",true))
+                    clickSound.play();
+                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
+                clickSound.stop();
+            }
+        });
+
         btnRegreso.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -241,6 +262,7 @@ public class PantallaAjustes extends Pantalla {
         texturaControlButton = manager.get("controlsButton.png");
         texturaBotonL = manager.get("changeButtonL.png");
         texturaBotonRegreso = manager.get("backButton.png");
+        texturaReset = manager.get("resetGame.png");
     }
     @Override
     public void render(float delta) {
@@ -280,6 +302,7 @@ public class PantallaAjustes extends Pantalla {
         manager.unload("controlsButton.png");
         manager.unload("changeButtonL.png");
         manager.unload("backButton.png");
+        manager.unload("resetGame.png");
         clickSound.dispose();
     }
 

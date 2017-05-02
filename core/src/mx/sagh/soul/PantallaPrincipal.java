@@ -257,7 +257,7 @@ public class PantallaPrincipal extends Pantalla {
 
         crearHUD();
         Gdx.input.setInputProcessor(escenaHUD);
-        kai = new Kai(texturaKaiCaminando, texturaKaiReposo, texturaKaiBrincando, texturaKaiCayendo, texturaKaiAsustado, 128,128);
+        kai = new Kai(texturaKaiCaminando, texturaKaiReposo, texturaKaiBrincando, texturaKaiCayendo, texturaKaiAsustado, 228,128);
         //slime = new Slime[8];
         for(int i=0; i<8+5*(currentLevel.getInteger("Nivel",1)-1); i++)
             slimes.add(new Slime(texturaSlime, MathUtils.random(2080,4736),MathUtils.random(128,160)));
@@ -301,7 +301,7 @@ public class PantallaPrincipal extends Pantalla {
             escenaHUD.addActor(bannerL1);
             escenaHUD.addActor(bannerR1);
         }
-        else if(settings.getBoolean("Tutorial2",true)){
+        else if(settings.getBoolean("Tutorial2",false)){
             escenaHUD.addActor(bannerR3);
             escenaHUD.addActor(line);
             estadoTutorial = EstadoTutorial.SHOOT;
@@ -808,7 +808,7 @@ public class PantallaPrincipal extends Pantalla {
     }
 
     private void tutorial(float delta){
-        if(punteroHorizontal!=INACTIVO && punteroVertical!=INACTIVO)
+        if(punteroHorizontal!=INACTIVO || punteroVertical!=INACTIVO)
             tiempoTouch-=delta;
         switch (estadoTutorial){
             case FINGERS:

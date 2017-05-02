@@ -31,6 +31,7 @@ public class PantallaExtras extends Pantalla {
     private Texture texturaBotonAcercaDe;
     private Texture texturaBotonHowToPlay;
     private Texture texturaBotonRetorno;
+    private Texture texturaLeyenda;
 
     //Preferencias
     private Preferences settings = Gdx.app.getPreferences("Settings");
@@ -55,6 +56,11 @@ public class PantallaExtras extends Pantalla {
         escena = new Stage(vista, batch);
         Image imgFondo = new Image(texturaFondo);
         escena.addActor(imgFondo);
+
+        Image imgLeyenda = new Image(texturaLeyenda);
+        imgLeyenda.setScale(0.7f);
+        imgLeyenda.setPosition(ANCHO/2-imgLeyenda.getWidth()*0.7f/2,40);
+        escena.addActor(imgLeyenda);
 
         //Boton
 
@@ -136,6 +142,7 @@ public class PantallaExtras extends Pantalla {
         texturaBotonAcercaDe = manager.get("creditsButton.png");
         texturaBotonHowToPlay = manager.get("howToButton.png");
         texturaBotonRetorno = manager.get("backButton.png");
+        texturaLeyenda = manager.get("nombreMateria.png");
     }
 
 
@@ -168,6 +175,7 @@ public class PantallaExtras extends Pantalla {
         manager.unload("creditsButton.png");
         manager.unload("howToButton.png");
         manager.unload("backButton.png");
+        manager.unload("nombreMateria.png");
         clickSound.dispose();
         clickSound.stop();
     }
