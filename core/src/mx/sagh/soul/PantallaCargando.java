@@ -19,8 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
  * Created by roberto on 13/03/17.
  */
 
-class PantallaCargando extends Pantalla
-{
+class PantallaCargando extends Pantalla{
     // Animación cargando
     private static final float TIEMPO_ENTRE_FRAMES = 0.2f;
     private Sprite spriteCargando;
@@ -37,14 +36,14 @@ class PantallaCargando extends Pantalla
 
 
     //texturas
-    private Image imgTituloN1, imgTituloN2, imgTituloN3;
-    private Image imgFondoN1, imgFondoN2, imgFondoN3;
+    private Image imgTituloN1, imgTituloN2, imgTituloN3, imgTituloN4;
+    private Image imgFondoN1, imgFondoN2, imgFondoN3, imgFondoN4;
 
     private Texture texturaCargando1;
     private Texture texturaCargando2;
 
-    private Texture texturaNivel1, texturaNivel2, texturaNivel3;
-    private Texture tituloNivel1, tituloNivel2, tituloNivel3;
+    private Texture texturaNivel1, texturaNivel2, texturaNivel3, texturaNivel4;
+    private Texture tituloNivel1, tituloNivel2, tituloNivel3, tituloNivel4;
     private Stage escena;
 
     public PantallaCargando(ColourlessSoul juego, Pantallas siguientePantalla) {
@@ -63,10 +62,12 @@ class PantallaCargando extends Pantalla
         texturaCargando2 = new Texture(Gdx.files.internal("cargando/loadingSprite2.png"));
         texturaNivel1 = new Texture(Gdx.files.internal("FondosPantalla/TheGreatLossFondo.png"));
         texturaNivel2 = new Texture(Gdx.files.internal("FondosPantalla/TheCourageFondo.png"));
-        texturaNivel3 = new Texture(Gdx.files.internal("FondosPantalla/TheHopeFondo.png"));
+        texturaNivel3 = new Texture(Gdx.files.internal("FondosPantalla/TheSpringFondo.png"));
+        texturaNivel4 = new Texture(Gdx.files.internal("FondosPantalla/TheHopeFondo.png"));
         tituloNivel1 = new Texture(Gdx.files.internal("FondosPantalla/TheGreatLossText.png"));
         tituloNivel2 = new Texture(Gdx.files.internal("FondosPantalla/TheCourageText.png"));
-        tituloNivel3 = new Texture(Gdx.files.internal("FondosPantalla/TheHopeText.png"));
+        tituloNivel3 = new Texture(Gdx.files.internal("FondosPantalla/TheSpringText.png"));
+        tituloNivel4 = new Texture(Gdx.files.internal("FondosPantalla/TheHopeText.png"));
     }
 
     private void crearObjetos() {
@@ -74,6 +75,7 @@ class PantallaCargando extends Pantalla
         crearPantallaNiv1();
         crearPantallaNiv2();
         crearPantallaNiv3();
+        crearPantallaNiv4();
         Gdx.input.setCatchBackKey(true);
     }
 
@@ -115,6 +117,15 @@ class PantallaCargando extends Pantalla
         imgTituloN3.setPosition(ANCHO/2- imgTituloN3.getWidth()/4, ALTO/2- imgTituloN3.getHeight()/4);
     }
 
+    private void crearPantallaNiv4() {
+        batch = new SpriteBatch();
+        escena = new Stage(vista, batch);
+        imgFondoN4 = new Image(texturaNivel4);
+        imgTituloN4 = new Image(tituloNivel4);
+        imgTituloN4.setScale(0.5f);
+        imgTituloN4.setPosition(ANCHO/2- imgTituloN4.getWidth()/4, ALTO/2- imgTituloN4.getHeight()/4);
+    }
+
     private void cambiarAlpha(Image img){
         if(estadoAlpha == Transparencia.SOLIDO)
             img.setColor(1, 1, 1, img.getColor().a-0.02f);
@@ -148,6 +159,11 @@ class PantallaCargando extends Pantalla
                 escena.addActor(imgFondoN3);
                 escena.addActor(imgTituloN3);
                 break;
+            case NIVEL_4:
+                cambiarAlpha(imgTituloN4);
+                escena.addActor(imgFondoN4);
+                escena.addActor(imgTituloN4);
+                break;
             default:
                 batch.begin();
                 spriteCargando.draw(batch);
@@ -169,10 +185,13 @@ class PantallaCargando extends Pantalla
         manager = juego.getAssetManager();
 
         switch (siguientePantalla) {
+            case INTRO:
+                cargarRecursosIntro();
+                break;
             case MENU:
                 cargarRecursosMenu();
                 break;
-            case NIVEL_1: case NIVEL_2: case NIVEL_3:
+            case NIVEL_1: case NIVEL_2: case NIVEL_3: case NIVEL_4:
                 cargarRecursosNivel1();
                 break;
             case AJUSTES:
@@ -197,6 +216,13 @@ class PantallaCargando extends Pantalla
                 cargarRecursosTutorial();
                 break;
         }
+    }
+
+    private void cargarRecursosIntro() {
+        manager.load("IntroHistoria/cuadro1.png", Texture.class);
+        manager.load("IntroHistoria/cuadro2.png", Texture.class);
+        manager.load("IntroHistoria/cuadro3.png", Texture.class);
+        manager.load("IntroHistoria/cuadro4.png", Texture.class);
     }
 
     private void cargarRecursosTutorial() {
@@ -331,10 +357,13 @@ class PantallaCargando extends Pantalla
     private void actualizarCargaRecursos() {
         if (manager.update()) { // Terminó?
             switch (siguientePantalla) {
+                case INTRO:
+                    juego.setScreen(new PantallaIntro(juego));   // 100% de carga
+                    break;
                 case MENU:
                     juego.setScreen(new PantallaMenu(juego));   // 100% de carga
                     break;
-                case NIVEL_1: case NIVEL_2: case NIVEL_3:
+                case NIVEL_1: case NIVEL_2: case NIVEL_3: case NIVEL_4:
                     if(tiempoVisible<=0)
                         juego.setScreen(new PantallaPrincipal(juego));   // 100% de carga
                     break;
@@ -382,9 +411,11 @@ class PantallaCargando extends Pantalla
         texturaNivel1.dispose();
         texturaNivel2.dispose();
         texturaNivel3.dispose();
+        texturaNivel4.dispose();
         tituloNivel1.dispose();
         tituloNivel2.dispose();
         tituloNivel3.dispose();
+        tituloNivel4.dispose();
     }
 
     public enum Transparencia {

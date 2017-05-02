@@ -26,8 +26,8 @@ public class Slime extends Objeto{
 
     public Slime(Texture textura, float x, float y) {
         TextureRegion texturaCompleta = new TextureRegion(textura);
-        TextureRegion[][] texturaPersonaje = texturaCompleta.split(197,64);
-        spriteAnimado = new Animation(0.15f, texturaPersonaje[0][0], texturaPersonaje[0][1], texturaPersonaje[0][2]);
+        TextureRegion[][] texturaPersonaje = texturaCompleta.split(160,81);
+        spriteAnimado = new Animation(0.15f, texturaPersonaje[0][0], texturaPersonaje[0][1], texturaPersonaje[0][2], texturaPersonaje[0][3], texturaPersonaje[0][4], texturaPersonaje[0][5], texturaPersonaje[0][4], texturaPersonaje[0][3], texturaPersonaje[0][2], texturaPersonaje[0][1]);
         spriteAnimado.setPlayMode(Animation.PlayMode.LOOP);
         sprite = new Sprite(texturaPersonaje[0][0]);    // QUIETO
         sprite.setPosition(x,y);

@@ -54,6 +54,9 @@ public class PantallaLogros extends Pantalla {
     private Stage escena;
     private SpriteBatch batch;
 
+    //Títulos de nivel
+    private Array<String> titles;
+
     public PantallaLogros(ColourlessSoul menu) {
         this.menu = menu;
         manager = menu.getAssetManager();
@@ -71,6 +74,12 @@ public class PantallaLogros extends Pantalla {
     private void crearObjetos() {
         batch = new SpriteBatch();
         texto = new Texto();
+        titles = new Array();
+        titles.add("The Great Loss");
+        titles.add("The Courage");
+        titles.add("The Spring");
+        titles.add("The Hope");
+        titles.add("The Thing");
         // Crea los topos y los guarda en el arreglo
         arrLogros = new Array<Objeto>(NUM_NIVELES);
         posX = ANCHO / 3 + 50;
@@ -135,6 +144,7 @@ public class PantallaLogros extends Pantalla {
         for(int x=0; x<NUM_NIVELES; x++) {
             texto.mostrarMensaje(batch, prefs.getString((x+1)+"-Score", "N/A"), (x*Pantalla.ANCHO) + posX, ALTO / 2 + 125);
             texto.mostrarMensaje(batch, prefs.getString((x+1)+"-Slimes", "N/A"), (x*Pantalla.ANCHO) + posX, ALTO / 2 - 10);
+            texto.mostrarMensaje(batch, titles.get(x), (x*Pantalla.ANCHO) + posX + 50, ALTO / 2 + 200);
         }
     }
 

@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Disparo extends Objeto {
 
-    private final float VELOCIDAD_X = 400;      // Velocidad horizontal (a la derecha)
+    private final float VELOCIDAD_X = 600;      // Velocidad horizontal (a la derecha)
     // Recibe la imagen
     public Disparo(Texture textura, float x, float y) {
         super(textura, x, y);

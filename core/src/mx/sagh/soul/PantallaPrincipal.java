@@ -175,16 +175,22 @@ public class PantallaPrincipal extends Pantalla {
                 mapa.getLayers().get(0).setVisible(true);
                 mapa.getLayers().get(1).setVisible(false);
                 mapa.getLayers().get(2).setVisible(false);
+                mapa.getLayers().get(3).setVisible(false);
                 break;
             case 2:
                 mapa.getLayers().get(1).setVisible(true);
                 mapa.getLayers().get(2).setVisible(false);
+                mapa.getLayers().get(3).setVisible(false);
                 break;
             case 3:
                 mapa.getLayers().get(2).setVisible(true);
+                mapa.getLayers().get(3).setVisible(false);
+                break;
+            case 4:
+                mapa.getLayers().get(3).setVisible(true);
                 break;
         }
-        TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(3); //puedes recuperar una capa del mapa
+        TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(4); //puedes recuperar una capa del mapa
         //Colocar pociones, sin importar que ya las haya tomado en otro nivel
         capa.setCell(93,4,capa.getCell(159,23));
         capa.setCell(129,4,capa.getCell(159,23));
@@ -212,6 +218,9 @@ public class PantallaPrincipal extends Pantalla {
                 break;
             case 3:
                 capa.setCell(156,4,capa.getCell(159,4));
+                break;
+            case 4:
+                capa.setCell(156,4,capa.getCell(159,6));
                 break;
         }
     }
@@ -250,7 +259,7 @@ public class PantallaPrincipal extends Pantalla {
         Gdx.input.setInputProcessor(escenaHUD);
         kai = new Kai(texturaKaiCaminando, texturaKaiReposo, texturaKaiBrincando, texturaKaiCayendo, texturaKaiAsustado, 128,128);
         //slime = new Slime[8];
-        for(int i=0; i<8*currentLevel.getInteger("Nivel",1); i++)
+        for(int i=0; i<8+5*(currentLevel.getInteger("Nivel",1)-1); i++)
             slimes.add(new Slime(texturaSlime, MathUtils.random(2080,4736),MathUtils.random(128,160)));
             //slime[i] = new Slime(texturaSlime, MathUtils.random(2080,4736),MathUtils.random(128,160));
 
@@ -458,6 +467,9 @@ public class PantallaPrincipal extends Pantalla {
                     case 3:
                         menu.setScreen(new PantallaCargando(menu,Pantallas.NIVEL_3));
                         break;
+                    case 4:
+                        menu.setScreen(new PantallaCargando(menu,Pantallas.NIVEL_4));
+                        break;
                 }
                 clickSound.stop();
             }
@@ -518,6 +530,9 @@ public class PantallaPrincipal extends Pantalla {
                     case 3:
                         menu.setScreen(new PantallaCargando(menu,Pantallas.NIVEL_3));
                         break;
+                    case 4:
+                        menu.setScreen(new PantallaCargando(menu,Pantallas.NIVEL_4));
+                        break;
                 }
                 clickSound.stop();
             }
@@ -534,7 +549,11 @@ public class PantallaPrincipal extends Pantalla {
                     }
                     currentLevel.putInteger("Nivel", 2);
                 }
-                else    currentLevel.putInteger("Nivel",3);
+                else if(currentLevel.getInteger("Nivel",1)==2)
+                    currentLevel.putInteger("Nivel",3);
+                else currentLevel.putInteger("Nivel",4);
+
+
                 currentLevel.flush();
                 if(settings.getBoolean("Sounds",true))
                     clickSound.play();
@@ -545,6 +564,9 @@ public class PantallaPrincipal extends Pantalla {
                         break;
                     case 3:
                         menu.setScreen(new PantallaCargando(menu,Pantallas.NIVEL_3));
+                        break;
+                    case 4:
+                        menu.setScreen(new PantallaCargando(menu,Pantallas.NIVEL_4));
                         break;
                 }
                 clickSound.stop();
@@ -562,7 +584,9 @@ public class PantallaPrincipal extends Pantalla {
                     }
                     currentLevel.putInteger("Nivel", 2);
                 }
-                else    currentLevel.putInteger("Nivel",3);
+                else if(currentLevel.getInteger("Nivel",1)==2)
+                    currentLevel.putInteger("Nivel",3);
+                else currentLevel.putInteger("Nivel",4);
                 currentLevel.flush();
                 if(settings.getBoolean("Sounds",true))
                     clickSound.play();
@@ -769,7 +793,9 @@ public class PantallaPrincipal extends Pantalla {
                 stopMusic();
                 if(currentLevel.getInteger("Nivel",1)==1)
                     currentLevel.putInteger("Nivel", 2);
-                else    currentLevel.putInteger("Nivel",3);
+                else if(currentLevel.getInteger("Nivel",1)==2)
+                    currentLevel.putInteger("Nivel",3);
+                else currentLevel.putInteger("Nivel",4);
                 currentLevel.flush();
                 if(settings.getBoolean("Sounds",true))
                     clickSound.play();
@@ -782,7 +808,7 @@ public class PantallaPrincipal extends Pantalla {
     }
 
     private void tutorial(float delta){
-        if(punteroHorizontal!=INACTIVO || punteroVertical!=INACTIVO)
+        if(punteroHorizontal!=INACTIVO && punteroVertical!=INACTIVO)
             tiempoTouch-=delta;
         switch (estadoTutorial){
             case FINGERS:
@@ -876,7 +902,7 @@ public class PantallaPrincipal extends Pantalla {
         //float posX = kai.sprite.getX(); //siempre es el sprite quien me da la x o la y del personaje
         if(camara.position.x<4448)
             if(!settings.getBoolean("Tutorial1",true) || estadoTutorial==EstadoTutorial.SLIDE  || estadoTutorial==EstadoTutorial.JUMP)
-                camara.position.set((camara.position.x+(100+20*currentLevel.getInteger("Nivel",1))*Gdx.graphics.getDeltaTime()), camara.position.y, 0);
+                camara.position.set((camara.position.x+(100+15*currentLevel.getInteger("Nivel",1))*Gdx.graphics.getDeltaTime()), camara.position.y, 0);
         /*if (posX>ANCHO_MAPA-ANCHO/2) {    // Si está en la última mitad
             camara.position.set(ANCHO_MAPA - ANCHO / 2, camara.position.y, 0);
             Gdx.app.log("Pos",Float.toString(camara.position.x));
@@ -895,6 +921,9 @@ public class PantallaPrincipal extends Pantalla {
             case 3:
                 musicLevel3.play();
                 break;
+            case 4:
+                musicLevel3.play();
+                break;
         }
     }
 
@@ -907,6 +936,9 @@ public class PantallaPrincipal extends Pantalla {
                 musicLevel2.stop();
                 break;
             case 3:
+                musicLevel3.stop();
+                break;
+            case 4:
                 musicLevel3.stop();
                 break;
         }

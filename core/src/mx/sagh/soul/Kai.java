@@ -258,7 +258,7 @@ public class Kai extends Objeto{
 
     // Revisa si toca un item (croqueta o pocion de vida)
     public boolean recolectarItems(TiledMap mapa) {
-        TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(3); //puedes recuperar una capa del mapa
+        TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(4); //puedes recuperar una capa del mapa
         int i, j;
         for(i=0; i<4; i++)
             for(j=0; j<3; j++) {
@@ -279,7 +279,7 @@ public class Kai extends Objeto{
     }
 
     public boolean tomoPocion(TiledMap mapa) {
-        TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(3); //puedes recuperar una capa del mapa
+        TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(4); //puedes recuperar una capa del mapa
         int i, j;
         for(i=0; i<4; i++)
             for(j=0; j<3; j++) {
@@ -317,7 +317,7 @@ public class Kai extends Objeto{
     }
 
     public boolean recogeGema(TiledMap mapa){
-        TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(3); //puedes recuperar una capa del mapa
+        TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(4); //puedes recuperar una capa del mapa
         int i, j;
         for(i=0; i<4; i++)
             for(j=0; j<3; j++) {

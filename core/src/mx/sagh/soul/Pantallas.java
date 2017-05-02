@@ -1,15 +1,16 @@
 package mx.sagh.soul;
 
 /**
- * Created by roberto on 13/03/17.
+ * Created by Aldo on 13/03/17.
  */
 
-public enum Pantallas
-{
+public enum Pantallas{
+    INTRO,
     MENU,
     NIVEL_1,
     NIVEL_2,
     NIVEL_3,
+    NIVEL_4,
     AJUSTES,
     EXTRAS,
     CREDITOS,
@@ -17,4 +18,4 @@ public enum Pantallas
     GAMEOVER,
     GANASTE,
     TUTORIAL
-    }
+}

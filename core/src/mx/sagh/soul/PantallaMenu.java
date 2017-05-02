@@ -161,6 +161,9 @@ public class PantallaMenu extends Pantalla {
                     case 3:
                         menu.setScreen(new PantallaCargando(menu, Pantallas.NIVEL_3));
                         break;
+                    case 4:
+                        menu.setScreen(new PantallaCargando(menu, Pantallas.NIVEL_4));
+                        break;
                 }
                 clickSound.stop();
             }

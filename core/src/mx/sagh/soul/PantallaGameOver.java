@@ -99,6 +99,9 @@ public class PantallaGameOver extends Pantalla{
                     case 3:
                         menu.setScreen(new PantallaCargando(menu, Pantallas.NIVEL_3));
                         break;
+                    case 4:
+                        menu.setScreen(new PantallaCargando(menu, Pantallas.NIVEL_4));
+                        break;
                 }
                 clickSound.stop();
             }
@@ -129,7 +132,7 @@ public class PantallaGameOver extends Pantalla{
             case 2:
                 musicLevel2.stop();
                 break;
-            case 3:
+            case 3: case 4:
                 musicLevel3.stop();
                 break;
         }
