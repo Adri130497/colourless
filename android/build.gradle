@@ -18,7 +18,7 @@ android {
         exclude 'META-INF/robovm/ios/robovm.xml'
     }
     defaultConfig {
-        applicationId "mx.sagh.soul"
+        applicationId "mx.itesm.soul"
         minSdkVersion 8
         targetSdkVersion 25
     }
@@ -71,7 +71,7 @@ task run(type: Exec) {
     }
 
     def adb = path + "/platform-tools/adb"
-    commandLine "$adb", 'shell', 'am', 'start', '-n', 'mx.sagh.soul/mx.sagh.soul.AndroidLauncher'
+    commandLine "$adb", 'shell', 'am', 'start', '-n', 'mx.itesm.soul/AndroidLauncher'
 }
 
 // sets up the Android Eclipse project, using the old Ant based build.
