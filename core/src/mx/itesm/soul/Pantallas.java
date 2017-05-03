@@ -11,6 +11,7 @@ public enum Pantallas{
     NIVEL_2,
     NIVEL_3,
     NIVEL_4,
+    NIVEL_FINAL,
     AJUSTES,
     EXTRAS,
     CREDITOS,
