@@ -36,6 +36,8 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import java.awt.geom.Arc2D;
+
 import static mx.itesm.soul.ColourlessSoul.clickSound;
 
 public class PantallaPrincipal extends Pantalla {
@@ -47,6 +49,7 @@ public class PantallaPrincipal extends Pantalla {
 
     private EstadoDisparo estadoDisparo;
     private EstadoTutorial estadoTutorial;
+    private EstadoThumb estadoThumb;
 
     private final float DELTA_X = 10;    // Desplazamiento del personaje
     private final float DELTA_Y = 10;
@@ -106,7 +109,9 @@ public class PantallaPrincipal extends Pantalla {
 
     //Imagenes tutorial
     private Texture texturaBannerL1, texturaBannerL2, texturaBannerR1, texturaBannerR2, texturaBannerR3, texturaline;
+    private Texture texturaDedo1, texturaDedo2, texturaCircunferencia, texturaCirculo;
     private Image bannerL1, bannerL2, bannerR1, bannerR2, bannerR3, line;
+    private Image thumb1, thumb2, circunferencia1, circulo1, circunferencia2, circulo2;
     private float tiempoTouch = 1.0f;
     private int saltos = 0;
     private int shoots = 0;
@@ -288,10 +293,25 @@ public class PantallaPrincipal extends Pantalla {
         //Tutorial de inicio
         bannerL1 = new Image(texturaBannerL1);
         bannerL1.setPosition(ANCHO/4-bannerL1.getWidth()/2,ALTO/2);
+        thumb1 = new Image(texturaDedo1);
+        thumb1.setPosition(150,140);
+        circunferencia1 = new Image(texturaCircunferencia);
+        circunferencia1.setPosition(263,244);
+        circulo1 = new Image(texturaCirculo);
+        circulo1.setPosition(248,230);
+
         bannerL2 = new Image(texturaBannerL2);
         bannerL2.setPosition(ANCHO/4-bannerL2.getWidth()/2,ALTO/2);
+
         bannerR1 = new Image(texturaBannerR1);
         bannerR1.setPosition(3*ANCHO/4-bannerR1.getWidth()/2,ALTO/2);
+        thumb2 = new Image(texturaDedo2);
+        thumb2.setPosition(ANCHO-150-thumb2.getWidth(),140);
+        circunferencia2 = new Image(texturaCircunferencia);
+        circunferencia2.setPosition(ANCHO-263-circunferencia2.getWidth(),244);
+        circulo2 = new Image(texturaCirculo);
+        circulo2.setPosition(ANCHO-248-circulo2.getWidth(),230);
+
         bannerR2 = new Image(texturaBannerR2);
         bannerR2.setPosition(3*ANCHO/4-bannerR2.getWidth()/2,ALTO/2);
         bannerR3 = new Image(texturaBannerR3);
@@ -300,15 +320,20 @@ public class PantallaPrincipal extends Pantalla {
         line.setPosition(ANCHO/2-10,ALTO/2-line.getHeight()/2);
 
         if(settings.getBoolean("Tutorial1",true)){
-            Gdx.app.log("TUto","True");
             escenaHUD.addActor(bannerL1);
             escenaHUD.addActor(bannerR1);
+            escenaHUD.addActor(circunferencia1);
+            escenaHUD.addActor(circunferencia2);
+            escenaHUD.addActor(thumb1);
+            escenaHUD.addActor(thumb2);
         }
-        else if(settings.getBoolean("Tutorial2",true)){
-            Gdx.app.log("TUto2","True");
+        else if(currentLevel.getInteger("Nivel",1)==2 && settings.getBoolean("Tutorial2",true)){
             escenaHUD.addActor(bannerR3);
             escenaHUD.addActor(line);
             estadoTutorial = EstadoTutorial.SHOOT;
+            estadoThumb = EstadoThumb.ABAJO;
+            thumb2.setPosition(thumb2.getX(),180);
+            escenaHUD.addActor(thumb2);
         }
         //Pantalla pausa
         imgPause = new Image(texturaMenuPausa);
@@ -458,23 +483,7 @@ public class PantallaPrincipal extends Pantalla {
                 stopMusic();
                 if(settings.getBoolean("Sounds",true))
                     clickSound.play();
-                switch (currentLevel.getInteger("Nivel",1)){
-                    case 1:
-                        menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.NIVEL_1));
-                        break;
-                    case 2:
-                        menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.NIVEL_2));
-                        break;
-                    case 3:
-                        menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.NIVEL_3));
-                        break;
-                    case 4:
-                        menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.NIVEL_4));
-                        break;
-                    case 5:
-                        menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.NIVEL_FINAL));
-                        break;
-                }
+                changeLevel();
                 clickSound.stop();
             }
         });
@@ -522,23 +531,7 @@ public class PantallaPrincipal extends Pantalla {
                     clickSound.play();
                 if(settings.getBoolean("Music",true))
                     playMusic();
-                switch (currentLevel.getInteger("Nivel",1)){
-                    case 1:
-                        menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.NIVEL_1));
-                        break;
-                    case 2:
-                        menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.NIVEL_2));
-                        break;
-                    case 3:
-                        menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.NIVEL_3));
-                        break;
-                    case 4:
-                        menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.NIVEL_4));
-                        break;
-                    case 5:
-                        menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.NIVEL_FINAL));
-                        break;
-                }
+                changeLevel();
                 clickSound.stop();
             }
         });
@@ -554,27 +547,14 @@ public class PantallaPrincipal extends Pantalla {
                 }
                 else if(currentLevel.getInteger("Nivel",1)==2)
                     currentLevel.putInteger("Nivel",3);
-                else currentLevel.putInteger("Nivel",4);
-
+                else if(currentLevel.getInteger("Nivel",1)==3)
+                    currentLevel.putInteger("Nivel",4);
+                else currentLevel.putInteger("Nivel",5);
 
                 currentLevel.flush();
                 if(settings.getBoolean("Sounds",true))
                     clickSound.play();
-                switch (currentLevel.getInteger("Nivel",1)){
-                    case 2:
-                        menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.NIVEL_2));
-                        break;
-                    case 3:
-                        menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.NIVEL_3));
-                        break;
-                    case 4:
-                        menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.NIVEL_4));
-                        break;
-                    case 5:
-                        menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.NIVEL_FINAL));
-                        break;
-
-                }
+                changeLevel();
                 clickSound.stop();
             }
         });
@@ -589,7 +569,9 @@ public class PantallaPrincipal extends Pantalla {
                 }
                 else if(currentLevel.getInteger("Nivel",1)==2)
                     currentLevel.putInteger("Nivel",3);
-                else currentLevel.putInteger("Nivel",4);
+                else if(currentLevel.getInteger("Nivel",1)==3)
+                    currentLevel.putInteger("Nivel",4);
+                else currentLevel.putInteger("Nivel",5);
                 currentLevel.flush();
                 if(settings.getBoolean("Sounds",true))
                     clickSound.play();
@@ -598,6 +580,26 @@ public class PantallaPrincipal extends Pantalla {
             }
         });
 
+    }
+
+    private void changeLevel() {
+        switch (currentLevel.getInteger("Nivel",1)){
+            case 1:
+                menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.NIVEL_1));
+                break;
+            case 2:
+                menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.NIVEL_2));
+                break;
+            case 3:
+                menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.NIVEL_3));
+                break;
+            case 4:
+                menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.NIVEL_4));
+                break;
+            case 5:
+                menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.NIVEL_FINAL));
+                break;
+        }
     }
 
     private void crearHUD() {
@@ -671,6 +673,10 @@ public class PantallaPrincipal extends Pantalla {
         texturaBannerR2 = manager.get("FondosTutorial/bannerRight2.png");
         texturaBannerR3 = manager.get("FondosTutorial/bannerRight3.png");
         texturaline = manager.get("FondosTutorial/linea.png");
+        texturaDedo1 = manager.get("thumb1.png");
+        texturaDedo2 = manager.get("thumb2.png");
+        texturaCircunferencia = manager.get("circle.png");
+        texturaCirculo = manager.get("feedback.png");
     }
 
     @Override
@@ -809,38 +815,80 @@ public class PantallaPrincipal extends Pantalla {
     }
 
     private void tutorial(float delta){
-        if(punteroHorizontal!=INACTIVO || punteroVertical!=INACTIVO)
-            tiempoTouch-=delta;
+        if(punteroHorizontal!=INACTIVO || punteroVertical!=INACTIVO) {
+            if(settings.getBoolean("Tutorial1",true)) {
+                tiempoTouch -= delta;
+                if (estadoTutorial == EstadoTutorial.FINGERS) {
+                    circunferencia1.remove();
+                    escenaHUD.addActor(circulo1);
+                    thumb1.toFront();
+                    circunferencia2.remove();
+                    escenaHUD.addActor(circulo2);
+                    thumb2.toFront();
+                }
+            }
+        }
         switch (estadoTutorial){
             case FINGERS:
                 if(tiempoTouch<=0) {
                     bannerL1.remove();
                     bannerR1.remove();
+                    thumb2.remove();
+                    circunferencia1.remove();
+                    circunferencia2.remove();
+                    circulo1.remove();
+                    circulo2.remove();
                     escenaHUD.addActor(line);
                     estadoTutorial = EstadoTutorial.SLIDE;
+                    estadoThumb = EstadoThumb.DERECHA;
                     escenaHUD.addActor(bannerL2);
-                    tiempoTouch = 2.0f;
+                    tiempoTouch = 1.5f;
                 }
                 break;
             case SLIDE:
+                if(estadoThumb == EstadoThumb.DERECHA) {
+                    thumb1.setPosition(thumb1.getX() + 4, thumb1.getY());
+                    if(thumb1.getX()>=330)
+                        estadoThumb = EstadoThumb.IZQUIERDA;
+                }
+                else if(estadoThumb == EstadoThumb.IZQUIERDA) {
+                    thumb1.setPosition(thumb1.getX() - 4, thumb1.getY());
+                    if(thumb1.getX()<=150)
+                        estadoThumb = EstadoThumb.DERECHA;
+                }
                 if(tiempoTouch<=0) {
                     bannerL2.remove();
+                    thumb1.remove();
                     estadoTutorial = EstadoTutorial.JUMP;
+                    estadoThumb = EstadoThumb.ARRIBA;
                     escenaHUD.addActor(bannerR2);
+                    thumb2.setPosition(thumb2.getX(),0);
+                    escenaHUD.addActor(thumb2);
                 }
                 break;
             case JUMP:
+                if(estadoThumb == EstadoThumb.ARRIBA) {
+                    thumb2.setPosition(thumb2.getX(), thumb2.getY() + 4);
+                    if(thumb2.getY()>=180)
+                        thumb2.setPosition(thumb2.getX(),0);
+                }
                 if(saltos>=3) {
                     bannerR2.remove();
+                    thumb2.remove();
                     line.remove();
                     settings.putBoolean("Tutorial1",false);
                     settings.flush();
                 }
                 break;
             case SHOOT:
+                if(estadoThumb == EstadoThumb.ABAJO) {
+                    thumb2.setPosition(thumb2.getX(), thumb2.getY() - 4);
+                    if(thumb2.getY()<=0)
+                        thumb2.setPosition(thumb2.getX(),180);
+                }
                 if(shoots>=3) {
-                    Gdx.app.log("Turo2","true");
                     bannerR3.remove();
+                    thumb2.remove();
                     line.remove();
                     settings.putBoolean("Tutorial2",false);
                     settings.flush();
@@ -903,7 +951,7 @@ public class PantallaPrincipal extends Pantalla {
     private void actualizarCamara() {
         //float posX = kai.sprite.getX(); //siempre es el sprite quien me da la x o la y del personaje
         if(camara.position.x<4440)
-            if(!settings.getBoolean("Tutorial1",true) || estadoTutorial==EstadoTutorial.SLIDE  || estadoTutorial==EstadoTutorial.JUMP)
+            if(!settings.getBoolean("Tutorial1",true) || estadoTutorial==EstadoTutorial.JUMP)
                 camara.position.set((camara.position.x+(100+15*currentLevel.getInteger("Nivel",1))*Gdx.graphics.getDeltaTime()), camara.position.y, 0);
         /*if (posX>ANCHO_MAPA-ANCHO/2) {    // Si está en la última mitad
             camara.position.set(ANCHO_MAPA - ANCHO / 2, camara.position.y, 0);
@@ -1000,6 +1048,10 @@ public class PantallaPrincipal extends Pantalla {
         manager.unload("FondosTutorial/bannerRight2.png");
         manager.unload("FondosTutorial/bannerRight3.png");
         manager.unload("FondosTutorial/linea.png");
+        manager.unload("thumb1.png");
+        manager.unload("thumb2.png");
+        manager.unload("circle.png");
+        manager.unload("feedback.png");
     }
 
     private class ProcesadorEntrada implements InputProcessor {
@@ -1050,6 +1102,12 @@ public class PantallaPrincipal extends Pantalla {
             } else if (pointer == punteroVertical) {
                 punteroVertical = INACTIVO;
                 dy = 0; // Deja de moverse en y
+            }
+            if(settings.getBoolean("Tutorial1",true) && estadoTutorial==EstadoTutorial.FINGERS){
+                circulo1.remove();
+                escenaHUD.addActor(circunferencia1);
+                circulo2.remove();
+                escenaHUD.addActor(circunferencia2);
             }
             tiempoTouch = 2.0f;
             return true;
@@ -1115,5 +1173,12 @@ public class PantallaPrincipal extends Pantalla {
         SLIDE,
         JUMP,
         SHOOT
+    }
+
+    private enum EstadoThumb{
+        IZQUIERDA,
+        DERECHA,
+        ARRIBA,
+        ABAJO
     }
 }

@@ -71,7 +71,6 @@ class PantallaCargando extends Pantalla {
         tituloNivel3 = new Texture(Gdx.files.internal("FondosPantalla/TheSpringText.png"));
         tituloNivel4 = new Texture(Gdx.files.internal("FondosPantalla/TheHopeText.png"));
         tituloNivelFinal = new Texture(Gdx.files.internal("FondosPantalla/TheThingText.png"));
-
     }
 
     private void crearObjetos() {
@@ -249,6 +248,7 @@ class PantallaCargando extends Pantalla {
         manager.load("IntroHistoria/introSprites2.png", Texture.class);
         manager.load("IntroHistoria/introSprites3.png", Texture.class);
         manager.load("IntroHistoria/introSprites4.png", Texture.class);
+        manager.load("skipButton.png", Texture.class);
     }
 
     private void cargarRecursosTutorial() {
@@ -366,6 +366,10 @@ class PantallaCargando extends Pantalla {
         manager.load("FondosTutorial/bannerRight2.png",Texture.class);
         manager.load("FondosTutorial/bannerRight3.png",Texture.class);
         manager.load("FondosTutorial/linea.png",Texture.class);
+        manager.load("thumb1.png",Texture.class);
+        manager.load("thumb2.png",Texture.class);
+        manager.load("circle.png",Texture.class);
+        manager.load("feedback.png",Texture.class);
     }
 
     private void cargarRecursosMenu() {

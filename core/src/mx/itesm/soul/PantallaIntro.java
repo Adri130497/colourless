@@ -14,8 +14,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 public class PantallaIntro extends Pantalla {
     private final mx.itesm.soul.ColourlessSoul menu;
@@ -37,6 +42,8 @@ public class PantallaIntro extends Pantalla {
     private Texture texturaIntroSprites1, texturaIntroSprites2, texturaIntroSprites3, texturaIntroSprites4;
     private Image imgC1, imgC2, imgC3, imgC4, imgC5, imgC6, imgC7;
     private int touch = 0;
+    private Texture texturaSkip;
+    private ImageButton btnSkip;
 
     //Escena
     private Stage escena;
@@ -56,18 +63,13 @@ public class PantallaIntro extends Pantalla {
         Gdx.input.setInputProcessor(new Procesador());
     }
 
-    /*private void regresarAMenu(){
-        stopMusic();
-        if (settings.getBoolean("Sounds", true))
-            clickSound.play();
-        while (clickSound.isPlaying()) if (clickSound.getPosition() > 0.5f) break;
-        menu.setScreen(new PantallaMenu(menu));
-        clickSound.stop();
-    }*/
-
     private void crearObjetos() {
         batch = new SpriteBatch();
         escena = new Stage(vista, batch);
+
+        TextureRegionDrawable trdBtnSkip = new TextureRegionDrawable(new TextureRegion(texturaSkip));
+        btnSkip = new ImageButton(trdBtnSkip);
+        btnSkip.setPosition(ANCHO-btnSkip.getWidth(),ALTO-btnSkip.getHeight());
 
         imgC1 = new Image(texturaC1);
         imgC1.setPosition(60,400);
@@ -137,6 +139,7 @@ public class PantallaIntro extends Pantalla {
         texturaIntroSprites2 = manager.get("IntroHistoria/introSprites2.png");
         texturaIntroSprites3 = manager.get("IntroHistoria/introSprites3.png");
         texturaIntroSprites4 = manager.get("IntroHistoria/introSprites4.png");
+        texturaSkip = manager.get("skipButton.png");
     }
 
     @Override
@@ -215,6 +218,8 @@ public class PantallaIntro extends Pantalla {
                     efectoHoja.play();
                 estadoIntro = EstadoIntro.CAMBIANDO2;
         }
+        escena.addActor(btnSkip);
+        btnSkip.toFront();
         escena.draw();
     }
 
@@ -250,6 +255,7 @@ public class PantallaIntro extends Pantalla {
         manager.unload("IntroHistoria/introSprites1.png");
         manager.unload("IntroHistoria/introSprites2.png");
         manager.unload("IntroHistoria/introSprites3.png");
+        manager.unload("skipButton.png");
     }
 
 
@@ -271,6 +277,12 @@ public class PantallaIntro extends Pantalla {
 
         @Override
         public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+            Vector3 v = new Vector3();
+            v.set(screenX, screenY, 0);
+            camara.unproject(v);
+            if(v.x>=btnSkip.getX() && v.x<=(btnSkip.getX()+btnSkip.getWidth()))
+                if(v.y>=btnSkip.getY() && v.y<=(btnSkip.getY()+btnSkip.getHeight()))
+                    menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.MENU));
             if(touch==3 || touch==7) touch++;
 
             return true;
