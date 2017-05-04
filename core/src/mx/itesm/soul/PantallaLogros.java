@@ -23,12 +23,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 
+import static mx.itesm.soul.ColourlessSoul.clickSound;
+
 public class PantallaLogros extends mx.itesm.soul.Pantalla {
     private final ColourlessSoul menu;
     private final AssetManager manager;
-
-    //sonidos
-    private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("musicSounds/click.mp3"));
 
     //Preferencias
     Preferences prefs = Gdx.app.getPreferences("Achievements");
@@ -97,7 +96,8 @@ public class PantallaLogros extends mx.itesm.soul.Pantalla {
 
         TextureRegionDrawable trdBtnBack = new TextureRegionDrawable(new TextureRegion(texturaBotonRetorno));
         btnBack = new ImageButton(trdBtnBack);
-        btnBack.setPosition(ANCHO/2-texturaBotonRetorno.getWidth()/2,5);
+        btnBack.setSize(120,120);
+        btnBack.setPosition(0,0);
 
         // Evento del boton
         btnBack.addListener(new ClickListener(){
@@ -105,18 +105,16 @@ public class PantallaLogros extends mx.itesm.soul.Pantalla {
             public void clicked(InputEvent event, float x, float y) {
                 if(settings.getBoolean("Sounds",true))
                     clickSound.play();
-                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                menu.setScreen(new mx.itesm.soul.PantallaCargando(menu, mx.itesm.soul.Pantallas.MENU));
+                menu.setScreen(new mx.itesm.soul.PantallaExtras(menu));
             }
         });
-
         Gdx.input.setInputProcessor(escena);
         Gdx.input.setCatchBackKey(true);
     }
 
     private void cargarTexturas() {
-        texturaFondo = new Texture("fondoPrincipal.jpg");
-        texturaBotonRetorno = manager.get("menuButton.png");
+        texturaFondo = manager.get("fondoPrincipal.jpg");
+        texturaBotonRetorno = manager.get("backButton.png");
         texturaLogro = manager.get("fondoFinNivel.png");
     }
 
@@ -168,12 +166,9 @@ public class PantallaLogros extends mx.itesm.soul.Pantalla {
     @Override
     public void dispose() {
         escena.dispose();
-        texturaFondo.dispose();
-        manager.unload("menuButton.png");
+        manager.unload("fondoPrincipal.jpg");
         manager.unload("backButton.png");
-        manager.unload("nextButton.png");
         manager.unload("fondoFinNivel.png");
-        clickSound.dispose();
     }
 
     private class Procesador implements GestureDetector.GestureListener {
@@ -191,8 +186,7 @@ public class PantallaLogros extends mx.itesm.soul.Pantalla {
                     && v.y>btnBack.getY() && v.y<(btnBack.getY()+btnBack.getHeight())) {
                 if(settings.getBoolean("Sounds",true))
                     clickSound.play();
-                while (clickSound.isPlaying()) if (clickSound.getPosition() > 0.5f) break;
-                menu.setScreen(new mx.itesm.soul.PantallaCargando(menu, mx.itesm.soul.Pantallas.MENU));
+                menu.setScreen(new mx.itesm.soul.PantallaExtras(menu));
             }
             return true;
         }

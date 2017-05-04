@@ -36,6 +36,8 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import static mx.itesm.soul.ColourlessSoul.clickSound;
+
 public class PantallaPrincipal extends Pantalla {
     private final ColourlessSoul menu;
 
@@ -79,7 +81,6 @@ public class PantallaPrincipal extends Pantalla {
 
 
     // Música / efectos
-    private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("musicSounds/click.mp3"));
     public static Music musicLevel1, musicLevel2, musicLevel3;
 
     // HUD
@@ -403,7 +404,6 @@ public class PantallaPrincipal extends Pantalla {
         }
         if(settings.getBoolean("Sounds",true))
             clickSound.play();
-        while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
         imgPause.remove();
         imgGamePaused.remove();
         btnResume.remove();
@@ -443,7 +443,6 @@ public class PantallaPrincipal extends Pantalla {
                 stopMusic();
                 if(settings.getBoolean("Sounds",true))
                     clickSound.play();
-                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 PantallaAjustes.estado = mx.itesm.soul.EstadoInvocado.PANTALLA_PRINCIPAL;
                 menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.AJUSTES));
                 clickSound.stop();
@@ -456,7 +455,6 @@ public class PantallaPrincipal extends Pantalla {
                 stopMusic();
                 if(settings.getBoolean("Sounds",true))
                     clickSound.play();
-                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 switch (currentLevel.getInteger("Nivel",1)){
                     case 1:
                         menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.NIVEL_1));
@@ -481,7 +479,6 @@ public class PantallaPrincipal extends Pantalla {
                 stopMusic();
                 if(settings.getBoolean("Sounds",true))
                     clickSound.play();
-                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.MENU));
                 clickSound.stop();
             }
@@ -517,7 +514,6 @@ public class PantallaPrincipal extends Pantalla {
             public void clicked(InputEvent event, float x, float y) {
                 if(settings.getBoolean("Sounds",true))
                     clickSound.play();
-                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 if(settings.getBoolean("Music",true))
                     playMusic();
                 switch (currentLevel.getInteger("Nivel",1)){
@@ -558,7 +554,6 @@ public class PantallaPrincipal extends Pantalla {
                 currentLevel.flush();
                 if(settings.getBoolean("Sounds",true))
                     clickSound.play();
-                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 switch (currentLevel.getInteger("Nivel",1)){
                     case 2:
                         menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.NIVEL_2));
@@ -591,7 +586,6 @@ public class PantallaPrincipal extends Pantalla {
                 currentLevel.flush();
                 if(settings.getBoolean("Sounds",true))
                     clickSound.play();
-                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.MENU));
                 clickSound.stop();
             }
@@ -800,7 +794,6 @@ public class PantallaPrincipal extends Pantalla {
                 currentLevel.flush();
                 if(settings.getBoolean("Sounds",true))
                     clickSound.play();
-                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new mx.itesm.soul.PantallaMenu(menu));
                 clickSound.stop();
             }

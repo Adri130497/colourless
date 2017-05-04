@@ -14,6 +14,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
+import static mx.itesm.soul.ColourlessSoul.clickSound;
+
 /**
  * Created by User on 28/03/2017.
  */
@@ -22,7 +24,6 @@ public class PantallaTutorial extends Pantalla {
     private final mx.itesm.soul.ColourlessSoul menu;
     private final AssetManager manager;
     //sonidos
-    private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("musicSounds/click.mp3"));
     private Sound efectoHoja;
 
     private Animation<TextureRegion> spriteAnimado1, spriteAnimado2;         // Animación caminando, en reposo y parándose
@@ -116,7 +117,6 @@ public class PantallaTutorial extends Pantalla {
         if (Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
             if(prefs.getBoolean("Sounds",true))
                 clickSound.play();
-            while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
             menu.setScreen(new mx.itesm.soul.PantallaExtras(menu));
             clickSound.stop();
         }
@@ -141,8 +141,6 @@ public class PantallaTutorial extends Pantalla {
         manager.unload("FondosTutorial/howToSprites3.png");
         manager.unload("FondosTutorial/howToSprites4.png");
         manager.unload("FondosTutorial/howTo1.png");
-        clickSound.dispose();
-        clickSound.stop();
     }
 
     private class Procesador implements InputProcessor {
@@ -178,7 +176,6 @@ public class PantallaTutorial extends Pantalla {
                 estadoTutorial = EstadoTutorial.ESTATICO;
                 if(prefs.getBoolean("Sounds",true))
                     clickSound.play();
-                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new mx.itesm.soul.PantallaExtras(menu));
                 clickSound.stop();
             }
@@ -209,6 +206,6 @@ public class PantallaTutorial extends Pantalla {
     private enum EstadoTutorial {
         ESTATICO,
         CAMBIANDO1,
-        CAMBIANDO2,
+        CAMBIANDO2
     }
 }

@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
+import static mx.itesm.soul.ColourlessSoul.clickSound;
 import static mx.itesm.soul.PantallaPrincipal.musicLevel1;
 import static mx.itesm.soul.PantallaPrincipal.musicLevel2;
 import static mx.itesm.soul.PantallaPrincipal.musicLevel3;
@@ -26,8 +27,6 @@ import static mx.itesm.soul.PantallaPrincipal.musicLevel3;
 public class PantallaGameOver extends Pantalla {
     private final mx.itesm.soul.ColourlessSoul menu;
     private final AssetManager manager;
-    //sonidos
-    private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("musicSounds/click.mp3"));
 
     //texturas
     private Texture texturaFondo;
@@ -58,7 +57,6 @@ public class PantallaGameOver extends Pantalla {
         stopMusic();
         if (settings.getBoolean("Sounds", true))
             clickSound.play();
-        while (clickSound.isPlaying()) if (clickSound.getPosition() > 0.5f) break;
         menu.setScreen(new mx.itesm.soul.PantallaMenu(menu));
         clickSound.stop();
     }
@@ -87,7 +85,6 @@ public class PantallaGameOver extends Pantalla {
                 stopMusic();
                 if (settings.getBoolean("Sounds", true))
                     clickSound.play();
-                while (clickSound.isPlaying()) if (clickSound.getPosition() > 0.5f) break;
 
                 switch (currentLevel.getInteger("Nivel", 1)) {
                     case 1:

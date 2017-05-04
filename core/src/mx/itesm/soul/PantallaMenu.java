@@ -14,6 +14,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
+import static mx.itesm.soul.ColourlessSoul.clickSound;
+
 /**
  * Created by Adrian on 11/02/2017.
  */
@@ -22,7 +24,6 @@ public class PantallaMenu extends Pantalla {
     private final AssetManager manager;
 
     //sonidos
-    private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("musicSounds/click.mp3"));
     public static Music musicMenu;
 
 
@@ -123,7 +124,6 @@ public class PantallaMenu extends Pantalla {
             public void clicked(InputEvent event, float x, float y) {
                 prefs.putBoolean("Tutorial1",true);
                 prefs.flush();
-                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 musicMenu.stop();
                 menu.setScreen(new PantallaCargando(menu, Pantallas.NIVEL_1));
                 clickSound.stop();
@@ -136,7 +136,6 @@ public class PantallaMenu extends Pantalla {
                 prefs.putBoolean("Tutorial1",false);
                 prefs.putBoolean("Tutorial2",false);
                 prefs.flush();
-                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 musicMenu.stop();
                 menu.setScreen(new PantallaCargando(menu, Pantallas.NIVEL_1));
                 clickSound.stop();
@@ -151,7 +150,6 @@ public class PantallaMenu extends Pantalla {
                 prefs.flush();
                 if(prefs.getBoolean("Sounds",true))
                     clickSound.play();
-                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 musicMenu.stop();
                 switch (currentLevel.getInteger("Nivel",1)) {
                     case 1:
@@ -177,7 +175,6 @@ public class PantallaMenu extends Pantalla {
                 PantallaAjustes.estado = EstadoInvocado.PANTALLA_MENU;
                 if(prefs.getBoolean("Sounds",true))
                     clickSound.play();
-                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaCargando(menu, Pantallas.AJUSTES));
                 clickSound.stop();
             }
@@ -188,9 +185,8 @@ public class PantallaMenu extends Pantalla {
             public void clicked(InputEvent event, float x, float y) {
                 if(prefs.getBoolean("Sounds",true))
                     clickSound.play();
-                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaCargando(menu, Pantallas.EXTRAS));
-                clickSound.stop();
+                //clickSound.stop();
             }
         });
 
@@ -240,6 +236,6 @@ public class PantallaMenu extends Pantalla {
         manager.unload("tutorialBanner.png");
         manager.unload("yes.png");
         manager.unload("no.png");
-        clickSound.dispose();
+        //clickSound.dispose();
     }
 }

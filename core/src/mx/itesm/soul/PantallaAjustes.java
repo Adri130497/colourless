@@ -15,6 +15,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
+import static mx.itesm.soul.ColourlessSoul.clickSound;
+
 /**
  * Created by Aldo on 18/02/2017.
  */
@@ -23,8 +25,6 @@ public class PantallaAjustes extends Pantalla {
     public static mx.itesm.soul.EstadoInvocado estado;
 
     private final AssetManager manager;
-    //sonidos
-    private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("musicSounds/click.mp3"));
 
     //Preferencias
     private Preferences prefs = Gdx.app.getPreferences("Settings");
@@ -151,7 +151,6 @@ public class PantallaAjustes extends Pantalla {
                 currentLevel.flush();
                 if(prefs.getBoolean("Sounds",true))
                     clickSound.play();
-                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 clickSound.stop();
             }
         });
@@ -163,7 +162,6 @@ public class PantallaAjustes extends Pantalla {
                 mx.itesm.soul.PantallaMenu.musicMenu.stop();
                 if(prefs.getBoolean("Sounds",true))
                     clickSound.play();
-                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 if(estado == mx.itesm.soul.EstadoInvocado.PANTALLA_MENU)
                     menu.setScreen(new mx.itesm.soul.PantallaMenu(menu));
                 else if(estado == mx.itesm.soul.EstadoInvocado.PANTALLA_PRINCIPAL) {

@@ -82,7 +82,6 @@ public class PantallaCreditos extends Pantalla {
         }
         if(imgCredits.getColor().a<=0){
             windMusic.stop();
-            Gdx.app.log("MUSIC",Float.toString(windMusic.getVolume()));
             menu.setScreen(new mx.itesm.soul.PantallaExtras(menu));
         }
         borrarPantalla();

@@ -222,6 +222,13 @@ class PantallaCargando extends Pantalla {
         manager.load("IntroHistoria/cuadro2.png", Texture.class);
         manager.load("IntroHistoria/cuadro3.png", Texture.class);
         manager.load("IntroHistoria/cuadro4.png", Texture.class);
+        manager.load("IntroHistoria/cuadro5.png", Texture.class);
+        manager.load("IntroHistoria/cuadro6.png", Texture.class);
+        manager.load("IntroHistoria/cuadro7.png", Texture.class);
+        manager.load("IntroHistoria/introSprites1.png", Texture.class);
+        manager.load("IntroHistoria/introSprites2.png", Texture.class);
+        manager.load("IntroHistoria/introSprites3.png", Texture.class);
+        manager.load("IntroHistoria/introSprites4.png", Texture.class);
     }
 
     private void cargarRecursosTutorial() {
@@ -245,11 +252,9 @@ class PantallaCargando extends Pantalla {
     }
 
     private void cargarRecursosLogro() {
+        manager.load("fondoPrincipal.jpg", Texture.class);
         manager.load("fondoFinNivel.png", Texture.class);
         manager.load("backButton.png", Texture.class);
-        manager.load("menuButton.png", Texture.class);
-        manager.load("nextButton.png", Texture.class);
-
     }
 
     private void cargarRecursosCredits() {

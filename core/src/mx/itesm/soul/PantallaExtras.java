@@ -15,6 +15,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
+import static mx.itesm.soul.ColourlessSoul.clickSound;
+
 /**
  * Created by User on 17/02/2017.
  */
@@ -22,8 +24,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 public class PantallaExtras extends Pantalla {
     private final ColourlessSoul menu;
     private final AssetManager manager;
-    //sonidos
-    private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("musicSounds/click.mp3"));
 
     //texturas
     private Texture texturaFondo;
@@ -91,7 +91,6 @@ public class PantallaExtras extends Pantalla {
             public void clicked(InputEvent event, float x, float y) {
                 if(settings.getBoolean("Sounds",true))
                     clickSound.play();
-                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaCargando(menu, Pantallas.MENU));
                 clickSound.stop();
             }
@@ -102,7 +101,6 @@ public class PantallaExtras extends Pantalla {
             public void clicked(InputEvent event, float x, float y) {
                 if(settings.getBoolean("Sounds",true))
                     clickSound.play();
-                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaCargando(menu, Pantallas.LOGROS));
                 clickSound.stop();
             }
@@ -114,7 +112,6 @@ public class PantallaExtras extends Pantalla {
                 if(!clickSound.isPlaying())
                     if(settings.getBoolean("Sounds",true))
                         clickSound.play();
-                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaCargando(menu, Pantallas.CREDITOS));
                 clickSound.stop();
             }
@@ -126,7 +123,6 @@ public class PantallaExtras extends Pantalla {
                 if(!clickSound.isPlaying())
                     if(settings.getBoolean("Sounds",true))
                         clickSound.play();
-                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
                 menu.setScreen(new PantallaCargando(menu, Pantallas.TUTORIAL));
                 clickSound.stop();
             }
@@ -176,7 +172,5 @@ public class PantallaExtras extends Pantalla {
         manager.unload("howToButton.png");
         manager.unload("backButton.png");
         manager.unload("nombreMateria.png");
-        clickSound.dispose();
-        clickSound.stop();
     }
 }
