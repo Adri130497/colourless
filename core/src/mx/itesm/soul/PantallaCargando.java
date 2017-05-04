@@ -14,6 +14,8 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
+import static mx.itesm.soul.ColourlessSoul.loadedOnce;
+
 /**
  * Created by roberto on 13/03/17.
  */
@@ -25,7 +27,6 @@ class PantallaCargando extends Pantalla {
     private Animation<TextureRegion> spriteAnimado;
     private float timerAnimacion = TIEMPO_ENTRE_FRAMES;
     private float tiempoVisible = 1.5f;
-    private boolean loadedOnce = false;
     private Transparencia estadoAlpha = Transparencia.SOLIDO;
 
     // AssetManager

@@ -13,6 +13,7 @@ public class ColourlessSoul extends Game {
 
 	private final AssetManager assetManager;
 	public static Music clickSound;
+	public static boolean loadedOnce;
 
 	public ColourlessSoul(){
 		assetManager=new AssetManager();
@@ -28,6 +29,7 @@ public class ColourlessSoul extends Game {
 			prefs.flush();
 		}
 		clickSound = Gdx.audio.newMusic(Gdx.files.internal("musicSounds/click.mp3"));
+		loadedOnce = false;
 		// Pone la pantalla inicial (Splash)
 		setScreen(new PantallaInicial(this));
 	}
