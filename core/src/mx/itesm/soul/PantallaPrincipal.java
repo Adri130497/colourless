@@ -468,6 +468,9 @@ public class PantallaPrincipal extends Pantalla {
                     case 4:
                         menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.NIVEL_4));
                         break;
+                    case 5:
+                        menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.NIVEL_FINAL));
+                        break;
                 }
                 clickSound.stop();
             }
@@ -529,6 +532,9 @@ public class PantallaPrincipal extends Pantalla {
                     case 4:
                         menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.NIVEL_4));
                         break;
+                    case 5:
+                        menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.NIVEL_FINAL));
+                        break;
                 }
                 clickSound.stop();
             }
@@ -564,6 +570,10 @@ public class PantallaPrincipal extends Pantalla {
                     case 4:
                         menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.NIVEL_4));
                         break;
+                    case 5:
+                        menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.NIVEL_FINAL));
+                        break;
+
                 }
                 clickSound.stop();
             }

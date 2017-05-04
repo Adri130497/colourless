@@ -35,14 +35,14 @@ class PantallaCargando extends Pantalla {
 
 
     //texturas
-    private Image imgTituloN1, imgTituloN2, imgTituloN3, imgTituloN4;
-    private Image imgFondoN1, imgFondoN2, imgFondoN3, imgFondoN4;
+    private Image imgTituloN1, imgTituloN2, imgTituloN3, imgTituloN4,imgTituloFinal;
+    private Image imgFondoN1, imgFondoN2, imgFondoN3, imgFondoN4,imgFondoFinal;
 
     private Texture texturaCargando1;
     private Texture texturaCargando2;
 
-    private Texture texturaNivel1, texturaNivel2, texturaNivel3, texturaNivel4;
-    private Texture tituloNivel1, tituloNivel2, tituloNivel3, tituloNivel4;
+    private Texture texturaNivel1, texturaNivel2, texturaNivel3, texturaNivel4,texturaNivelFinal;
+    private Texture tituloNivel1, tituloNivel2, tituloNivel3, tituloNivel4,tituloNivelFinal;
     private Stage escena;
 
     public PantallaCargando(mx.itesm.soul.ColourlessSoul juego, mx.itesm.soul.Pantallas siguientePantalla) {
@@ -63,10 +63,13 @@ class PantallaCargando extends Pantalla {
         texturaNivel2 = new Texture(Gdx.files.internal("FondosPantalla/TheCourageFondo.png"));
         texturaNivel3 = new Texture(Gdx.files.internal("FondosPantalla/TheSpringFondo.png"));
         texturaNivel4 = new Texture(Gdx.files.internal("FondosPantalla/TheHopeFondo.png"));
+        texturaNivelFinal=new Texture(Gdx.files.internal("FondosPantalla/TheThingFondo.png"));
         tituloNivel1 = new Texture(Gdx.files.internal("FondosPantalla/TheGreatLossText.png"));
         tituloNivel2 = new Texture(Gdx.files.internal("FondosPantalla/TheCourageText.png"));
         tituloNivel3 = new Texture(Gdx.files.internal("FondosPantalla/TheSpringText.png"));
         tituloNivel4 = new Texture(Gdx.files.internal("FondosPantalla/TheHopeText.png"));
+        tituloNivelFinal = new Texture(Gdx.files.internal("FondosPantalla/TheThingText.png"));
+
     }
 
     private void crearObjetos() {
@@ -75,7 +78,17 @@ class PantallaCargando extends Pantalla {
         crearPantallaNiv2();
         crearPantallaNiv3();
         crearPantallaNiv4();
+        crearPantallaNivFinal();
         Gdx.input.setCatchBackKey(true);
+    }
+
+    private void crearPantallaNivFinal() {
+        batch = new SpriteBatch();
+        escena = new Stage(vista, batch);
+        imgFondoFinal = new Image(texturaNivelFinal);
+        imgTituloFinal = new Image(tituloNivelFinal);
+        imgTituloFinal.setScale(0.5f);
+        imgTituloFinal.setPosition(ANCHO/2- imgTituloN1.getWidth()/4, ALTO/2- imgTituloN1.getHeight()/4);
     }
 
     private void crearLoading() {
@@ -163,6 +176,11 @@ class PantallaCargando extends Pantalla {
                 escena.addActor(imgFondoN4);
                 escena.addActor(imgTituloN4);
                 break;
+            case NIVEL_FINAL:
+                cambiarAlpha(imgTituloFinal);
+                escena.addActor(imgFondoFinal);
+                escena.addActor(imgTituloFinal);
+                break;
             default:
                 batch.begin();
                 spriteCargando.draw(batch);
@@ -190,7 +208,7 @@ class PantallaCargando extends Pantalla {
             case MENU:
                 cargarRecursosMenu();
                 break;
-            case NIVEL_1: case NIVEL_2: case NIVEL_3: case NIVEL_4:
+            case NIVEL_1: case NIVEL_2: case NIVEL_3:case NIVEL_4: case NIVEL_FINAL:
                 cargarRecursosNivel1();
                 break;
             case AJUSTES:
@@ -369,7 +387,7 @@ class PantallaCargando extends Pantalla {
                 case MENU:
                     juego.setScreen(new mx.itesm.soul.PantallaMenu(juego));   // 100% de carga
                     break;
-                case NIVEL_1: case NIVEL_2: case NIVEL_3: case NIVEL_4:
+                case NIVEL_1: case NIVEL_2: case NIVEL_3: case NIVEL_4: case NIVEL_FINAL:
                     if(tiempoVisible<=0)
                         juego.setScreen(new mx.itesm.soul.PantallaPrincipal(juego));   // 100% de carga
                     break;
@@ -418,10 +436,12 @@ class PantallaCargando extends Pantalla {
         texturaNivel2.dispose();
         texturaNivel3.dispose();
         texturaNivel4.dispose();
+        texturaNivelFinal.dispose();
         tituloNivel1.dispose();
         tituloNivel2.dispose();
         tituloNivel3.dispose();
         tituloNivel4.dispose();
+        tituloNivelFinal.dispose();
     }
 
     public enum Transparencia {
