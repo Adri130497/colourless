@@ -376,7 +376,8 @@ class PantallaCargando extends Pantalla {
         manager.load("settingsButton1.png", Texture.class);
         manager.load("tutorialBanner.png", Texture.class);
         manager.load("yes.png", Texture.class);
-        manager.load("no.png", Texture.class);
+        manager.load("no.png", Texture.class);;
+        manager.load("titulo.png", Texture.class);
     }
 
     private void actualizarCargaRecursos() {
@@ -389,8 +390,10 @@ class PantallaCargando extends Pantalla {
                     juego.setScreen(new mx.itesm.soul.PantallaMenu(juego));   // 100% de carga
                     break;
                 case NIVEL_1: case NIVEL_2: case NIVEL_3: case NIVEL_4: case NIVEL_FINAL:
-                    if(!loadedOnce)
+                    if(!loadedOnce) {
                         juego.setScreen(new mx.itesm.soul.PantallaPrincipal(juego));
+                        loadedOnce = true;
+                    }
                     else if(tiempoVisible<=0)
                         juego.setScreen(new mx.itesm.soul.PantallaPrincipal(juego));   // 100% de carga
                     break;

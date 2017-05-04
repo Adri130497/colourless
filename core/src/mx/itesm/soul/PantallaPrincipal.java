@@ -107,7 +107,7 @@ public class PantallaPrincipal extends Pantalla {
     //Imagenes tutorial
     private Texture texturaBannerL1, texturaBannerL2, texturaBannerR1, texturaBannerR2, texturaBannerR3, texturaline;
     private Image bannerL1, bannerL2, bannerR1, bannerR2, bannerR3, line;
-    private float tiempoTouch = 2.0f;
+    private float tiempoTouch = 1.0f;
     private int saltos = 0;
     private int shoots = 0;
 
@@ -298,11 +298,14 @@ public class PantallaPrincipal extends Pantalla {
         bannerR3.setPosition(3*ANCHO/4-bannerR3.getWidth()/2,ALTO/2);
         line = new Image(texturaline);
         line.setPosition(ANCHO/2-10,ALTO/2-line.getHeight()/2);
+
         if(settings.getBoolean("Tutorial1",true)){
+            Gdx.app.log("TUto","True");
             escenaHUD.addActor(bannerL1);
             escenaHUD.addActor(bannerR1);
         }
         else if(settings.getBoolean("Tutorial2",true)){
+            Gdx.app.log("TUto2","True");
             escenaHUD.addActor(bannerR3);
             escenaHUD.addActor(line);
             estadoTutorial = EstadoTutorial.SHOOT;
@@ -546,10 +549,7 @@ public class PantallaPrincipal extends Pantalla {
                 btnNextLevel.remove();
                 stopMusic();
                 if(currentLevel.getInteger("Nivel",1)==1) {
-                    if(settings.getBoolean("Tutorial1",true)) {
-                        settings.putBoolean("Tutorial2", true);
-                        settings.flush();
-                    }
+
                     currentLevel.putInteger("Nivel", 2);
                 }
                 else if(currentLevel.getInteger("Nivel",1)==2)
@@ -584,10 +584,7 @@ public class PantallaPrincipal extends Pantalla {
             public void clicked(InputEvent event, float x, float y) {
                 stopMusic();
                 if(currentLevel.getInteger("Nivel",1)==1) {
-                    if(settings.getBoolean("Tutorial1",true)) {
-                        settings.putBoolean("Tutorial2", true);
-                        settings.flush();
-                    }
+
                     currentLevel.putInteger("Nivel", 2);
                 }
                 else if(currentLevel.getInteger("Nivel",1)==2)
@@ -842,6 +839,7 @@ public class PantallaPrincipal extends Pantalla {
                 break;
             case SHOOT:
                 if(shoots>=3) {
+                    Gdx.app.log("Turo2","true");
                     bannerR3.remove();
                     line.remove();
                     settings.putBoolean("Tutorial2",false);

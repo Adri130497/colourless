@@ -38,6 +38,7 @@ public class PantallaMenu extends Pantalla {
     private Texture texturaBannerTutorial;
     private Texture texturaBotonYes;
     private Texture texturaBotonNo;
+    private Texture texturaTitulo;
 
     //Escena
     private Stage escena;
@@ -71,6 +72,10 @@ public class PantallaMenu extends Pantalla {
         musicMenu.setLooping(true);
         if(prefs.getBoolean("Music",true))
             musicMenu.play();
+
+        Image imgTitulo = new Image(texturaTitulo);
+        imgTitulo.setPosition(50, 350);
+        escena.addActor(imgTitulo);
 
         //Botones del menú principal
         TextureRegionDrawable trdBtnStart = new TextureRegionDrawable(new TextureRegion(texturaBotonInicio));
@@ -123,6 +128,7 @@ public class PantallaMenu extends Pantalla {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 prefs.putBoolean("Tutorial1",true);
+                prefs.putBoolean("Tutorial2",true);
                 prefs.flush();
                 musicMenu.stop();
                 menu.setScreen(new PantallaCargando(menu, Pantallas.NIVEL_1));
@@ -206,6 +212,7 @@ public class PantallaMenu extends Pantalla {
         texturaBannerTutorial = manager.get("tutorialBanner.png");
         texturaBotonYes = manager.get("yes.png");
         texturaBotonNo = manager.get("no.png");
+        texturaTitulo = manager.get("titulo.png");
     }
 
 
@@ -239,6 +246,6 @@ public class PantallaMenu extends Pantalla {
         manager.unload("tutorialBanner.png");
         manager.unload("yes.png");
         manager.unload("no.png");
-        //clickSound.dispose();
+        manager.unload("titulo.png");
     }
 }
