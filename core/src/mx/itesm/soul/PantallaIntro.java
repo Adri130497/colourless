@@ -114,7 +114,7 @@ public class PantallaIntro extends Pantalla {
         TextureRegion[][] texturaAnimada3 = texturaCompleta3.split(1280,800);
         TextureRegion texturaCompleta4 = new TextureRegion(texturaIntroSprites4);
         TextureRegion[][] texturaAnimada4 = texturaCompleta4.split(1280,800);
-        spriteAnimado2 = new Animation(0.1f, texturaAnimada3[0][0], texturaAnimada3[0][1], texturaAnimada4[0][0], texturaAnimada4[0][1]);
+        spriteAnimado2 = new Animation(0.1f, texturaAnimada3[0][0], texturaAnimada3[0][1], texturaAnimada4[0][0], texturaAnimada4[0][1], texturaAnimada4[0][2]);
 
         //Cargar audios
         manager.load("FondosTutorial/turnPage.mp3",Sound.class);
@@ -157,11 +157,13 @@ public class PantallaIntro extends Pantalla {
             timerAnimacion2 += Gdx.graphics.getDeltaTime();
             region = spriteAnimado2.getKeyFrame(timerAnimacion2);
             batch.draw(region, 0, 0);
-            if(spriteAnimado2.getKeyFrameIndex(timerAnimacion2)==3) {
+            if(spriteAnimado2.getKeyFrameIndex(timerAnimacion2)==4) {
                 touch++;
-                estadoIntro = EstadoIntro.ESTATICO;
-                menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.MENU));
+                estadoIntro = EstadoIntro.TERMINO;
             }
+        }
+        else if(estadoIntro == EstadoIntro.TERMINO){
+            menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.MENU));
         }
         batch.end();
         escena.draw();
@@ -298,7 +300,8 @@ public class PantallaIntro extends Pantalla {
     private enum EstadoIntro {
         ESTATICO,
         CAMBIANDO1,
-        CAMBIANDO2
+        CAMBIANDO2,
+        TERMINO
     }
 
 }

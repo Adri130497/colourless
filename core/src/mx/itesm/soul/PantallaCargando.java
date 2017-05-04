@@ -24,7 +24,8 @@ class PantallaCargando extends Pantalla {
     private Sprite spriteCargando;
     private Animation<TextureRegion> spriteAnimado;
     private float timerAnimacion = TIEMPO_ENTRE_FRAMES;
-    private float tiempoVisible = 2.5f;
+    private float tiempoVisible = 1.5f;
+    private boolean loadedOnce = false;
     private Transparencia estadoAlpha = Transparencia.SOLIDO;
 
     // AssetManager
@@ -388,7 +389,9 @@ class PantallaCargando extends Pantalla {
                     juego.setScreen(new mx.itesm.soul.PantallaMenu(juego));   // 100% de carga
                     break;
                 case NIVEL_1: case NIVEL_2: case NIVEL_3: case NIVEL_4: case NIVEL_FINAL:
-                    if(tiempoVisible<=0)
+                    if(!loadedOnce)
+                        juego.setScreen(new mx.itesm.soul.PantallaPrincipal(juego));
+                    else if(tiempoVisible<=0)
                         juego.setScreen(new mx.itesm.soul.PantallaPrincipal(juego));   // 100% de carga
                     break;
                 case AJUSTES:
