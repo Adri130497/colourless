@@ -34,6 +34,9 @@ public class Kai extends Objeto {
     private float timerAnimacion, timerAnimacion2, timerAnimacion3, timerAnimacion4, timerAnimacion5;                                           // Tiempo para cambiar frames de la animación
 
     private EstadoMovimiento estadoMovimiento = EstadoMovimiento.QUIETO;
+    private boolean asustado = false;
+
+    Preferences currentLevel = Gdx.app.getPreferences("CurrentLevel");
 
     // Salto
     private EstadoSalto estadoSalto = EstadoSalto.EN_PISO;
@@ -121,12 +124,25 @@ public class Kai extends Objeto {
                 case INICIANDO:
                     timerAnimacion2 += Gdx.graphics.getDeltaTime();
                     region = spriteReposo.getKeyFrame(timerAnimacion2);
+                    if(currentLevel.getInteger("Nivel",1)==5){
+                        if (sprite.getX()<Pantalla.ANCHO/2) {
+                            if (region.isFlipX()) {
+                                region.flip(true,false);
+                            }
+                        } else {
+                            if (!region.isFlipX()) {
+                                region.flip(true,false);
+                            }
+                        }
+                    }
                     batch.draw(region,sprite.getX(),sprite.getY());
                     break;
-                case ASUSTADO:
-                    timerAnimacion5 += Gdx.graphics.getDeltaTime();
-                    region = spriteAsustado.getKeyFrame(timerAnimacion5);
-                    batch.draw(region,sprite.getX(),sprite.getY());
+                default:
+                    if(asustado) {
+                        timerAnimacion5 += Gdx.graphics.getDeltaTime();
+                        region = spriteAsustado.getKeyFrame(timerAnimacion5);
+                        batch.draw(region, sprite.getX(), sprite.getY());
+                    }
                     break;
             }
         switch (estadoSalto){
@@ -217,6 +233,7 @@ public class Kai extends Objeto {
                 }
             }
         }
+
     }
 
 
@@ -241,6 +258,8 @@ public class Kai extends Objeto {
         return estadoMovimiento;
     }
     public EstadoSalto getEstadoSalto() { return estadoSalto; }
+    public boolean getAsustado(){return asustado;}
+    public void setAsustado(boolean estado){this.asustado = estado;}
 
     // Modificador de estadoMovimiento
     public void setEstadoMovimiento(EstadoMovimiento estadoMovimiento) {
@@ -253,7 +272,7 @@ public class Kai extends Objeto {
 
     // Revisa si toca un item (croqueta o pocion de vida)
     public boolean recolectarItems(TiledMap mapa) {
-        TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(4); //puedes recuperar una capa del mapa
+        TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(5); //puedes recuperar una capa del mapa
         int i, j;
         for(i=0; i<4; i++)
             for(j=0; j<3; j++) {
@@ -274,7 +293,7 @@ public class Kai extends Objeto {
     }
 
     public boolean tomoPocion(TiledMap mapa) {
-        TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(4); //puedes recuperar una capa del mapa
+        TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(5); //puedes recuperar una capa del mapa
         int i, j;
         for(i=0; i<4; i++)
             for(j=0; j<3; j++) {
@@ -294,25 +313,38 @@ public class Kai extends Objeto {
         return false;
     }
 
-    public boolean tocoSlime(mx.itesm.soul.Slime slime){
+    public boolean tocoSlime(Objeto enemigo){
         int x = (int)sprite.getX()-30;
         int y = (int)sprite.getY()+30;
         int width = (int)sprite.getWidth()-30;
         int height = (int)sprite.getHeight()-30;
 
-        Rectangle r = slime.sprite.getBoundingRectangle();
-        if(x < r.x + r.width && x + width > r.x && y < r.y + r.height && y + height > r.y){
-            if(prefs.getBoolean("Sounds",true))
-                efectoPowerDown.play();
-            slime.sprite.setX(0);
-            slime.setEstadoMovimiento(mx.itesm.soul.Slime.EstadoMovimiento.QUIETO);
-            return true;
+        if (enemigo instanceof Slime) {
+            Slime slime = (Slime)enemigo;
+            Rectangle r = slime.sprite.getBoundingRectangle();
+            if (x < r.x + r.width && x + width > r.x && y < r.y + r.height && y + height > r.y) {
+                if (prefs.getBoolean("Sounds", true))
+                    efectoPowerDown.play();
+                slime.sprite.setX(0);
+                slime.setEstadoMovimiento(mx.itesm.soul.Slime.EstadoMovimiento.QUIETO);
+                return true;
+            }
+        }
+        else if (enemigo instanceof TheThing) {
+            TheThing thing = (TheThing)enemigo;
+            Rectangle r = thing.sprite.getBoundingRectangle();
+            if (x < r.x + r.width && x + width > r.x && y < r.y + r.height && y + height > r.y) {
+                if (prefs.getBoolean("Sounds", true))
+                    efectoPowerDown.play();
+                asustado = true;
+                return true;
+            }
         }
         return false;
     }
 
     public boolean recogeGema(TiledMap mapa){
-        TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(4); //puedes recuperar una capa del mapa
+        TiledMapTileLayer capa = (TiledMapTileLayer)mapa.getLayers().get(5); //puedes recuperar una capa del mapa
         int i, j;
         for(i=0; i<4; i++)
             for(j=0; j<3; j++) {
@@ -327,6 +359,7 @@ public class Kai extends Objeto {
                             efectoPocion.play();
                         return true;
                     }
+
                 }
             }
         return false;
@@ -336,8 +369,7 @@ public class Kai extends Objeto {
         INICIANDO,
         QUIETO,
         MOV_IZQUIERDA,
-        MOV_DERECHA,
-        ASUSTADO
+        MOV_DERECHA
     }
 
     public enum EstadoSalto {

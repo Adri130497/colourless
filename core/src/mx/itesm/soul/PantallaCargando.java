@@ -260,9 +260,9 @@ class PantallaCargando extends Pantalla {
     }
 
     private void cargarRecursosGanaste() {
-        manager.load("fondoMadera.png", Texture.class);
-        manager.load("Next.png", Texture.class);
-        manager.load("mainMenuButton.png", Texture.class);
+        manager.load("musicSounds/heroicTheme.mp3", Music.class);
+        manager.load("FondosPantalla/fondoFinJuego.png", Texture.class);
+        manager.load("creditos.png", Texture.class);
     }
 
     private void cargarRecursosGameOver() {
@@ -358,6 +358,7 @@ class PantallaCargando extends Pantalla {
         manager.load("menuButton.png", Texture.class);
         manager.load("nextLevel.png",Texture.class);
         manager.load("SpritesDisparo/Balas3.png",Texture.class);
+        manager.load("SpritesDisparo/Balas2.png",Texture.class);
         manager.load("upButton.png",Texture.class);
         manager.load("shootButton.png",Texture.class);
         manager.load("FondosTutorial/bannerLeft1.png",Texture.class);
@@ -370,6 +371,11 @@ class PantallaCargando extends Pantalla {
         manager.load("thumb2.png",Texture.class);
         manager.load("circle.png",Texture.class);
         manager.load("feedback.png",Texture.class);
+        manager.load("BossFinal/bossSink1.png",Texture.class);
+        manager.load("BossFinal/bossSink2.png",Texture.class);
+        manager.load("BossFinal/bossStanding.png",Texture.class);
+        manager.load("BossFinal/bossVida1.png",Texture.class);
+        manager.load("BossFinal/bossVida2.png",Texture.class);
     }
 
     private void cargarRecursosMenu() {

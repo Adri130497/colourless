@@ -54,7 +54,6 @@ public class PantallaCreditos extends Pantalla {
         escena.addActor(imgFondo);
 
         //Boton
-
         imgCredits = new Image(texturaCreditos);
         imgCredits.setPosition(0,-ALTO+140);
         escena.addActor(imgCredits);

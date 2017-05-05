@@ -1,6 +1,9 @@
 package mx.itesm.soul;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
@@ -19,13 +22,17 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 public class PantallaGanaNivel extends Pantalla {
     private final ColourlessSoul menu;
     private final AssetManager manager;
-    //sonidos
-    private Music clickSound = Gdx.audio.newMusic(Gdx.files.internal("click.mp3"));
+
+    private Preferences prefs = Gdx.app.getPreferences("Settings");
+    // Música
+    private Music heroicMusic;
+
+
     //texturas
-    private Image imgPasar;
-    private Texture texturaBotonSigNiv;
-    private Texture texturaBotonMenu;
-    private Texture texturaSigNiv;
+    private Texture texturaFondo;
+    private Texture texturaCreditos;
+    private Image imgCredits;
+    private boolean vanish = false;
 
     //Escena
     private Stage escena;
@@ -41,70 +48,57 @@ public class PantallaGanaNivel extends Pantalla {
         // Cuando cargan la pantalla
         cargarTexturas();
         crearObjetos();
+        Gdx.input.setInputProcessor(new Procesador());
     }
 
     private void crearObjetos() {
         batch = new SpriteBatch();
         escena = new Stage(vista, batch);
-        escena = new Stage(vista, batch);
+        Image imgFondo = new Image(texturaFondo);
+        escena.addActor(imgFondo);
+        //Boton
+        imgCredits = new Image(texturaCreditos);
+        imgCredits.setPosition(0,-ALTO);
+        escena.addActor(imgCredits);
 
-        imgPasar = new Image(texturaSigNiv);
-        imgPasar.setPosition(ANCHO/2-imgPasar.getWidth()/2,ALTO/2-imgPasar.getHeight()/2);
 
-        escena.addActor(imgPasar);
+        //Cargar audios
+        heroicMusic = manager.get("musicSounds/heroicTheme.mp3");
 
-
-        //Botones
-        TextureRegionDrawable trdBtnNiv = new TextureRegionDrawable(new TextureRegion(texturaBotonSigNiv));
-        ImageButton btnNivel = new ImageButton(trdBtnNiv);
-        btnNivel.setPosition(ANCHO/2+150,ALTO/4);
-        escena.addActor(btnNivel);
-
-        TextureRegionDrawable trdBtnMain = new TextureRegionDrawable(new TextureRegion(texturaBotonMenu));
-        ImageButton btnMenu = new ImageButton(trdBtnMain);
-        btnMenu.setPosition(ANCHO/3-150,ALTO/4);
-        escena.addActor(btnMenu);
-
-        // Evento del boton
-        btnNivel.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log("clicked","Me hicieron click");
-                clickSound.play();
-                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.NIVEL_1));
-                clickSound.stop();
-                imgPasar.remove();
-            }
-        });
-
-        btnMenu.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.log("clicked","Me hicieron click");
-                clickSound.play();
-                while(clickSound.isPlaying()) if(clickSound.getPosition()>0.5f) break;
-                menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.MENU));
-                clickSound.stop();
-            }
-        });
+        if(prefs.getBoolean("Music",true))
+            heroicMusic.play();
 
         Gdx.input.setInputProcessor(escena);
-        Gdx.input.setCatchBackKey(false);
+        Gdx.input.setCatchBackKey(true);
+
     }
 
     private void cargarTexturas() {
-        texturaSigNiv = manager.get("fondoMadera.png");
-        texturaBotonSigNiv = manager.get("Next.png");
-        texturaBotonMenu = manager.get("mainMenuButton.png");
+        texturaFondo = manager.get("FondosPantalla/fondoFinJuego.png");
+        texturaCreditos = manager.get("creditos.png");
     }
 
     @Override
     public void render(float delta) {
         // 60 x seg
+        actualizarObjetos(delta);
+        if (vanish){
+            imgCredits.setColor(1,1,1,imgCredits.getColor().a-0.01f);
+            heroicMusic.setVolume(heroicMusic.getVolume()-0.009f);
+        }
+        if(imgCredits.getColor().a<=0){
+            heroicMusic.stop();
+            menu.setScreen(new mx.itesm.soul.PantallaMenu(menu));
+        }
         borrarPantalla();
         escena.draw();
 
+        if (Gdx.input.isKeyJustPressed(Input.Keys.BACK))
+            vanish = true;
+    }
+
+    private void actualizarObjetos(float delta) {
+        if(imgCredits.getY()!=0) imgCredits.setY(imgCredits.getY()+1);
     }
 
     @Override
@@ -120,12 +114,51 @@ public class PantallaGanaNivel extends Pantalla {
     @Override
     public void dispose() {
         escena.dispose();
-        manager.unload("fondoMadera.png");
-        manager.unload("Next.png");
-        manager.unload("mainMenuButton.png");
+        manager.unload("FondosPantalla/fondoFinJuego.png");
+        manager.unload("creditos.png");
+        manager.unload("musicSounds/heroicTheme.mp3");
+    }
 
-        clickSound.dispose();
-        clickSound.stop();
+    private class Procesador implements InputProcessor {
+        @Override
+        public boolean keyDown(int keycode) {
+            return false;
+        }
 
+        @Override
+        public boolean keyUp(int keycode) {
+            return false;
+        }
+
+        @Override
+        public boolean keyTyped(char character) {
+            return false;
+        }
+
+        @Override
+        public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+            vanish = true;
+            return true;
+        }
+
+        @Override
+        public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+            return false;
+        }
+
+        @Override
+        public boolean touchDragged(int screenX, int screenY, int pointer) {
+            return false;
+        }
+
+        @Override
+        public boolean mouseMoved(int screenX, int screenY) {
+            return false;
+        }
+
+        @Override
+        public boolean scrolled(int amount) {
+            return false;
+        }
     }
 }

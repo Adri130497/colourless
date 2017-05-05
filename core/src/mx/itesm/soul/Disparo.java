@@ -15,12 +15,20 @@ public class Disparo extends Objeto {
     }
 
     // Mueve el personaje a la derecha
-    public void mover(float delta) {
-        float distancia = VELOCIDAD_X*delta;
+    public void mover(float delta, int i) {
+        float distancia = VELOCIDAD_X*delta*i;
         sprite.setX(sprite.getX()+distancia);
     }
 
-    public boolean chocaCon(Slime slime) {
-        return sprite.getBoundingRectangle().overlaps(slime.sprite.getBoundingRectangle());
+    public boolean chocaCon(Objeto enemigo) {
+        if (enemigo instanceof Slime) {
+            Slime slime = (Slime) enemigo;
+            return sprite.getBoundingRectangle().overlaps(slime.sprite.getBoundingRectangle());
+        }
+        else if (enemigo instanceof TheThing) {
+            TheThing slime = (TheThing) enemigo;
+            return sprite.getBoundingRectangle().overlaps(slime.sprite.getBoundingRectangle());
+        }
+        return false;
     }
 }
