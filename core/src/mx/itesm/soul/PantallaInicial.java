@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
  * SplashScreen. Muestra el logo del Tec por 2 segundos
  */
 
-class PantallaInicial extends Pantalla
+public class PantallaInicial extends Pantalla
 {
     private float tiempoVisible = 1.2f;
 

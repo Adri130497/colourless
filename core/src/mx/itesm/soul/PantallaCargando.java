@@ -20,7 +20,7 @@ import static mx.itesm.soul.ColourlessSoul.loadedOnce;
  * Created by roberto on 13/03/17.
  */
 
-class PantallaCargando extends Pantalla {
+public class PantallaCargando extends Pantalla {
     // Animación cargando
     private static final float TIEMPO_ENTRE_FRAMES = 0.2f;
     private Sprite spriteCargando;
