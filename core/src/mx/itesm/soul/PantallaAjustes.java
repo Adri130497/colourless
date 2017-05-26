@@ -243,6 +243,9 @@ public class PantallaAjustes extends Pantalla {
             case 4:
                 menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.NIVEL_4));
                 break;
+            case 5:
+                menu.setScreen(new PantallaCargando(menu, mx.itesm.soul.Pantallas.NIVEL_FINAL));
+                break;
         }
     }
 
